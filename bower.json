@@ -1,0 +1,14 @@
+{
+  "name": "trackmapper",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "jquery": "~2.1.4",
+    "leaflet": "~0.7.3",
+    "leaflet-omnivore": "~0.3.2",
+    "d3": "~3.5.5",
+    "lightbox2": "git://github.com/jimmyangel/lightbox2",
+    "leaflet.elevation": "git://github.com/jimmyangel/Leaflet.Elevation#master",
+    "Leaflet.MakiMarkers": "~1.0.1"
+  }
+}

@@ -1,0 +1,60 @@
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+/* Here goes my styling */
+
+html, body, #container {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+body {
+  padding-top: 50px; 
+}
+#map {
+  width: auto;
+  height: 100%;
+}
+
+.navbar .navbar-brand {
+  font-weight: bold;
+  font-size: 22px;
+  color: #FFFFFF;
+}
+
+.nav {
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+.leaflet-marker-photo { 
+  border: 2px solid #fff;
+} 
+
+.legend {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    line-height: 18px;
+    color: #555;
+}
+
+.legend i {
+    width: 30px;
+    height: 5px;
+    float: left;
+    margin-right: 8px;
+    margin-top: 8px;
+}
+
+.modal-dialog {
+  width: 80%;
+}
+
