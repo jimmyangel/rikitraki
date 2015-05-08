@@ -78,7 +78,7 @@ function initmap() {
 	    }
 	});
 
-	var trackLayer = omnivore.gpx('assets/tracks/AbelTasmanWaterTaxi.GPX', null, customLayer).on('ready', function() {
+	var trackLayer = omnivore.gpx('data/tracks/AbelTasmanWaterTaxi.GPX', null, customLayer).on('ready', function() {
         map.fitBounds(trackLayer.getBounds());
         var trackLatLngs = trackLayer.getLayers()[0].getLatLngs();
         var icon = L.MakiMarkers.icon({icon: 'ferry', color: '#174A75', size: 'm'});
@@ -105,7 +105,7 @@ function initmap() {
 	    }
 	});
 
-	var tl = omnivore.gpx('assets/tracks/AbelTasman.GPX', null, customLayer).on('ready', function() {
+	var tl = omnivore.gpx('data/tracks/AbelTasman.GPX', null, customLayer).on('ready', function() {
         var tLatLngs = tl.getLayers()[0].getLatLngs();
         var icon = L.MakiMarkers.icon({icon: 'pitch', color: '#A52A2A', size: 'm'});
         var marker = L.marker(tLatLngs[0], {icon: icon}).addTo(map);
@@ -119,7 +119,7 @@ function initmap() {
 	var photoLayerGroup = new L.MarkerClusterGroup();
 
 	for (k=0; k<photoPos.length; k++) {
-		var img ='<a class="gallery" href="assets/photos/pic' + (k+1) + '.jpg" ' + 'data-lightbox="image-' + (k+1) + '" data-title="' + photoPos[k][1] + '" ><img src="assets/photos/thumb' + (k+1) + '.jpg" width="40" height="40"/></a>';
+		var img ='<a class="gallery" href="data/photos/pic' + (k+1) + '.jpg" ' + 'data-lightbox="image-' + (k+1) + '" data-title="' + photoPos[k][1] + '" ><img src="data/photos/thumb' + (k+1) + '.jpg" width="40" height="40"/></a>';
 		var photoMarker = L.marker(photoPos[k][0], {
 			clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
 			icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
