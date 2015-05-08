@@ -7,8 +7,9 @@
     "leaflet": "~0.7.3",
     "leaflet-omnivore": "~0.3.2",
     "d3": "~3.5.5",
-    "lightbox2": "git://github.com/jimmyangel/lightbox2",
     "leaflet.elevation": "git://github.com/jimmyangel/Leaflet.Elevation#master",
-    "Leaflet.MakiMarkers": "~1.0.1"
+    "Leaflet.MakiMarkers": "~1.0.1",
+    "leaflet.markercluster": "git://github.com/Leaflet/Leaflet.markercluster#master",
+    "lightbox": "git://github.com/jimmyangel/lightbox2#~2.7.4"
   }
 }

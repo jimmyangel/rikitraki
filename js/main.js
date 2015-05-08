@@ -115,18 +115,22 @@ function initmap() {
 		});
 	}).addTo(map);
 
-	var photoLayerGroup = L.layerGroup();
+	// var photoLayerGroup = L.layerGroup();
+	var photoLayerGroup = new L.MarkerClusterGroup();
 
 	for (k=0; k<photoPos.length; k++) {
-		var img ='<a href="assets/photos/pic' + (k+1) + '.jpg" ' + 'data-lightbox="image-1" data-title="' + photoPos[k][1] + '" ><img src="assets/photos/thumb' + (k+1) + '.jpg" width="40" height="40"/></a>';
+		var img ='<a class="gallery" href="assets/photos/pic' + (k+1) + '.jpg" ' + 'data-lightbox="image-' + (k+1) + '" data-title="' + photoPos[k][1] + '" ><img src="assets/photos/thumb' + (k+1) + '.jpg" width="40" height="40"/></a>';
 		var photoMarker = L.marker(photoPos[k][0], {
+			clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
 			icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
 		});
 
 		photoLayerGroup.addLayer(photoMarker);
+
 	}
 
 	photoLayerGroup.addTo(map);
+
 	layerControl.addOverlay(photoLayerGroup, 'Show photos');
 
 
@@ -144,7 +148,6 @@ function initmap() {
 		return L.DomUtil.get('legend');
 	};
 	legend.addTo(map); 
-
 }
 
 window.onload = initmap;
