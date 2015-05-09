@@ -1,7 +1,7 @@
 'use strict';
 
-// The below is to stop jshint barking at unused variables
-/* globals L, omnivore */
+// The below is to stop jshint barking at undefined variables
+/* globals L, omnivore, tmConfig */
 
 // console.log('\'Allo \'Allo!');
 
@@ -17,26 +17,29 @@ $('#about-btn').click(function() {
 var map;
 
 function initmap() {
+	// Get trackId for use later
+	console.log(tmConfig.getTrackId());
 
 	map = new L.map('map');
 	map.setMaxBounds([[-47.437951, 164.888817],[-33.900762, 179.984031]]);
-	// map.setView([45.3735, -121.6959], 13);
+	var layerControl =L.control.layers(null, null, {position: 'topleft', collapsed: true}).addTo(map);
 
+	// Populate layers from JSON config file
+	tmConfig.getLayersF(function(data) {
+		console.log(status);
 
-	// Here is the list of base layers -- first one is the default
+		var layerArray = data.layers;
 
-	var layerArray = [
-		{
-			layerName: 'Thunder Forest Outdoors Base Map',
-			layerUrl: 'http://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png',
-			attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-		},
-		{
-			layerName: 'ESRI World Imagery Base Map',
-			layerUrl: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-			attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+		// Iterate through list of base layers and add to layer control
+		for (var k=0; k<layerArray.length; k++) {
+			var bl = new L.TileLayer(layerArray[k].layerUrl, {minZoom: 6, maxZoom: 17, attribution: layerArray[k].attribution, ext: 'png'});
+			layerControl.addBaseLayer(bl, layerArray[k].layerName);
+			// First layer is the one displayed by default
+			if (k === 0) {
+				map.addLayer(bl);
+			}
 		}
-	]; 
+	});
 
 	// Photo icon placement coordinates
 	var photoPos = [
@@ -57,18 +60,6 @@ function initmap() {
 	// Do not add a marker, just center on the location
 	// geocoder.markGeocode = function(result) {map.fitBounds(result.bbox) };
 
-	// Define baseLayers data structure 
-	var baseLayers = {};
-
-	// Iterate through list of base layers
-	for (var k=0; k<layerArray.length; k++) {
-		baseLayers[layerArray[k].layerName] = new L.TileLayer(layerArray[k].layerUrl, {minZoom: 6, maxZoom: 17, attribution: layerArray[k].attribution, ext: 'png'});
-	}
-
-	// First layer is the one displayed by default
-	map.addLayer(baseLayers[layerArray[0].layerName]);
-	var layerControl = L.control.layers(baseLayers, null, {position: 'topleft', collapsed: true}).addTo(map);
-
 	// Add GPX track 1 (Water Taxi)
 
 	// Overrride default color for GPX track
@@ -78,19 +69,19 @@ function initmap() {
 	    }
 	});
 
-	var trackLayer = omnivore.gpx('data/tracks/AbelTasmanWaterTaxi.GPX', null, customLayer).on('ready', function() {
+	/* var trackLayer = omnivore.gpx('data/tracks/AbelTasmanWaterTaxi.GPX', null, customLayer).on('ready', function() {
         map.fitBounds(trackLayer.getBounds());
         var trackLatLngs = trackLayer.getLayers()[0].getLatLngs();
         var icon = L.MakiMarkers.icon({icon: 'ferry', color: '#174A75', size: 'm'});
         var marker = L.marker(trackLatLngs[0], {icon: icon}).addTo(map);
         marker.bindPopup('<b>Water Taxi</b><br>Transportation service used to reach the trailhead', {maxWidth: 200});
         layerControl.addOverlay(trackLayer, 'Show water taxi route');
-	}).addTo(map);
-
+	}).addTo(map); */
+ 
 	// Add GPX track 2 (Hike)
 	// Create the elevation control first
 	var el = L.control.elevation({
-		position: 'topleft',
+		position: 'bottomleft',
 		theme: 'steelblue-theme',
 		width: 400,
 		height: 125,
@@ -106,7 +97,8 @@ function initmap() {
 	});
 
 	var tl = omnivore.gpx('data/tracks/AbelTasman.GPX', null, customLayer).on('ready', function() {
-        var tLatLngs = tl.getLayers()[0].getLatLngs();
+    	map.fitBounds(tl.getBounds());
+    	var tLatLngs = tl.getLayers()[0].getLatLngs();
         var icon = L.MakiMarkers.icon({icon: 'pitch', color: '#A52A2A', size: 'm'});
         var marker = L.marker(tLatLngs[0], {icon: icon}).addTo(map);
         marker.bindPopup('<b>Hiking Trail</b><br>Start: Anchorage Bay<br>End: Marahau<br>Length: 17.5km<br>Max elevation gain: 127m', {maxWidth: 200});
@@ -118,7 +110,7 @@ function initmap() {
 	// var photoLayerGroup = L.layerGroup();
 	var photoLayerGroup = new L.MarkerClusterGroup();
 
-	for (k=0; k<photoPos.length; k++) {
+	for (var k=0; k<photoPos.length; k++) {
 		var img ='<a class="gallery" href="data/photos/pic' + (k+1) + '.jpg" ' + 'data-lightbox="image-' + (k+1) + '" data-title="' + photoPos[k][1] + '" ><img src="data/photos/thumb' + (k+1) + '.jpg" width="40" height="40"/></a>';
 		var photoMarker = L.marker(photoPos[k][0], {
 			clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
@@ -134,9 +126,8 @@ function initmap() {
 	layerControl.addOverlay(photoLayerGroup, 'Show photos');
 
 
-	// Add popups to the tracks
-	trackLayer.bindPopup('<b>Water Taxi</b><br><a href="http://www.marahauwatertaxis.co.nz/" target="_blank"> <img src="http://www.marahauwatertaxis.co.nz/images/slides/slide01b.jpg" width="200"/></a>', {maxWidth: 200});
-	tl.bindPopup('<b>Abel Tasman Coast Track</b><br><a href="http://doc.govt.nz/abeltasmantrack" target="_blank"> <img src="http://doc.govt.nz/global/Logos/great-walks-191.png" width="200"/></a>', {maxWidth: 200});
+	// Add popup to the track
+	tl.bindPopup('<b>Abel Tasman Coast Track</b><br><a href="http://en.wikipedia.org/wiki/Abel_Tasman_Coast_Track" target="_blank"> <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/AbelTasmanBeach.jpg/320px-AbelTasmanBeach.jpg" width="200"/></a>', {maxWidth: 200});
 
 	// Add scale
 	L.control.scale({position: 'topright'}).addTo(map);
