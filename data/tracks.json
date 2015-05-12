@@ -1,0 +1,42 @@
+{
+	"tracks": {
+		"T0001":
+		{
+			"trackId": "T0001",
+			"trackGPX": "AbelTasman.GPX",
+			"trackName": "Abel Tasman Coast Track, Anchorage Bay to Marahau, New Zealand",
+			"trackPopUp": "<b>Abel Tasman Coast Track</b><br><a href=\"http://en.wikipedia.org/wiki/Abel_Tasman_Coast_Track\" target=\"_blank\"> <img src=\"http://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/AbelTasmanBeach.jpg/320px-AbelTasmanBeach.jpg\" width=\"200\"/></a>",
+			"trackHeadPopUp": "<b>Hiking Trail</b><br>Start: Anchorage Bay<br>End: Marahau<br>Length: 17.5km<br>Max elevation gain: 127m",
+			"trackPhotos": [
+				{"picName": "pic1.jpg",  "picThumb": "thumb1.jpg",  "picLatLng": [-41.022, 173.028169], "picCaption": "Split Apple"},
+				{"picName": "pic2.jpg",  "picThumb": "thumb2.jpg",  "picLatLng": [-40.97, 173.067], "picCaption": "Adele Island"},
+				{"picName": "pic3.jpg",  "picThumb": "thumb3.jpg",  "picLatLng": [-40.97, 173.067], "picCaption": "Anchorage Bay from Pitt Head"},
+				{"picName": "pic4.jpg",  "picThumb": "thumb4.jpg",  "picLatLng": [-40.97, 173.067], "picCaption": "Vegetation along the trail"},
+				{"picName": "pic5.jpg",  "picThumb": "thumb5.jpg",  "picLatLng": [-40.97, 173.067], "picCaption": "Te Pukatea Bay"},
+				{"picName": "pic6.jpg",  "picThumb": "thumb6.jpg",  "picLatLng": [-40.97, 173.067], "picCaption": "Anchorage Bay from the highest point of the trail"},
+				{"picName": "pic7.jpg",  "picThumb": "thumb7.jpg",  "picLatLng": [-40.969911, 173.035], "picCaption": "One of the many beautiful beaches along the trail"},
+				{"picName": "pic8.jpg",  "picThumb": "thumb8.jpg",  "picLatLng": [-40.976724, 173.031], "picCaption": "Stillwell Bay"},
+				{"picName": "pic9.jpg",  "picThumb": "thumb9.jpg",  "picLatLng": [-40.984823, 173.017401], "picCaption": "Low Tide at Sandy Bay"},
+				{"picName": "pic10.jpg", "picThumb": "thumb10.jpg", "picLatLng": [-40.997, 173.018], "picCaption": "Sandy Bay"}
+			]
+		},
+		"T0002": 
+		{
+			"trackId": "T0002",
+			"trackGPX": "Pororari-Punaki River.GPX",
+			"trackName": "Pororari-Punakaiki Loop, Paparoa National Park, New Zealand",
+			"trackPopUp": "<b>Pororari-Punakaiki Loop</b><br><a href=\"http://en.wikipedia.org/wiki/Paparoa_National_Park\" target=\"_blank\"> <img src=\"http://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Pancake_Rocks%2C_Punakaiki.jpg/320px-Pancake_Rocks%2C_Punakaiki.jpg\" width=\"200\"/></a>",
+			"trackHeadPopUp": "<b>Hiking Trail</b><br>Start: Punakaiki<br>End: Punakaiki<br>Length: 11.49km<br>Max elevation gain: 173m",
+			"trackPhotos": []
+		},
+		"T0003":
+		{
+			"trackId": "T0003",
+			"trackGPX": "Bull of the Woods.GPX",
+			"trackName": "Bull of the Woods, near Estacada, Oregon",
+			"trackPopUp": "<b>Pororari-Punakaiki Loop</b><br><a href=\"http://en.wikipedia.org/wiki/Paparoa_National_Park\" target=\"_blank\"> <img src=\"http://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Pancake_Rocks%2C_Punakaiki.jpg/320px-Pancake_Rocks%2C_Punakaiki.jpg\" width=\"200\"/></a>",
+			"trackHeadPopUp": "<b>Hiking Trail</b><br>Length: 12.72km<br>Max elevation gain: 605m",
+			"trackPhotos": []
+		}
+	}
+}
