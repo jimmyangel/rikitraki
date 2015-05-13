@@ -9,5 +9,9 @@ var tmData = {
 		$.getJSON('data/tracks.json', f).fail(function(jqxhr, textStatus, error) {throw error;});
 
 		return f;
+	},
+	getGeoTags: function (tId, f) {
+		$.getJSON('data/' + tId + '/photos/geotags.json', f).fail(function(jqxhr, textStatus, error) {throw error;});
+		return f;
 	}
 };

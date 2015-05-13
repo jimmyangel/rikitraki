@@ -10,6 +10,7 @@
     "leaflet.elevation": "git://github.com/jimmyangel/Leaflet.Elevation#master",
     "Leaflet.MakiMarkers": "~1.0.1",
     "leaflet.markercluster": "git://github.com/Leaflet/Leaflet.markercluster#master",
-    "lightbox": "git://github.com/jimmyangel/lightbox2#~2.7.4"
+    "lightbox": "git://github.com/jimmyangel/lightbox2#master",
+    "exif-js": "git://github.com/jseidelin/exif-js"
   }
 }
