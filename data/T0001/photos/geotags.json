@@ -1,0 +1,17 @@
+{
+	"geoTags": { 
+		"trackId": "T0001",
+		"trackPhotos": [
+			{"picName": "pic1.jpg",  "picThumb": "thumb1.jpg",  "picLatLng": [-41.018047, 173.022206], "picCaption": "Split Apple"},
+			{"picName": "pic2.jpg",  "picThumb": "thumb2.jpg",  "picLatLng": [-40.960936, 173.054731], "picCaption": "Adele Island"},
+			{"picName": "pic3.jpg",  "picThumb": "thumb3.jpg",  "picLatLng": [-40.951306, 173.061397], "picCaption": "Anchorage Bay from Pitt Head"},
+			{"picName": "pic4.jpg",  "picThumb": "thumb4.jpg",  "picLatLng": [-40.956808, 173.057736], "picCaption": "Vegetation along the trail"},
+			{"picName": "pic5.jpg",  "picThumb": "thumb5.jpg",  "picLatLng": [-40.951664, 173.064722], "picCaption": "Te Pukatea Bay"},
+			{"picName": "pic6.jpg",  "picThumb": "thumb6.jpg",  "picLatLng": [-40.960778, 173.055661], "picCaption": "Anchorage Bay from the highest point of the trail"},
+			{"picName": "pic7.jpg",  "picThumb": "thumb7.jpg",  "picLatLng": [-40.972611, 173.04235], "picCaption": "One of the many beautiful beaches along the trail"},
+			{"picName": "pic8.jpg",  "picThumb": "thumb8.jpg",  "picLatLng": [-40.972647, 173.04235], "picCaption": "Stillwell Bay"},
+			{"picName": "pic9.jpg",  "picThumb": "thumb9.jpg",  "picLatLng": [-40.991278, 173.01525], "picCaption": "Low Tide at Sandy Bay"},
+			{"picName": "pic10.jpg", "picThumb": "thumb10.jpg", "picLatLng": [-41.005269, 173.009825], "picCaption": "Sandy Bay"}
+		]
+	}
+}
