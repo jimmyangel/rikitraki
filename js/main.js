@@ -16,51 +16,30 @@ $('#about-btn').click(function() {
 // The map is global
 var map;
 
-// Set up map after the dom is ready
+// Set up map only after the DOM is ready
 function setUpMap() {
 	// Get trackId from URL query string
 	var trackId = tmConfig.getTrackId();
 
 	map = new L.map('map');
 
-	// Set up layer control
+	// Set up common stuff and return layer control which we will need later on
 	var layerControl = tmMap.setUpCommon();
 
 	// Get track data and wait before populating info onto the map
 	tmData.getTrackInfo(function(data) {
-		console.log(data.tracks);
 
-		// Populate the map
-
+		// If we do not have a (valid) track in the query parameter, then go for all tracks
 		if (!(trackId in data.tracks)) {
 			// Since trackId not found then add all tracks markers to map and display all
 			console.log("show all tracks");
 			tmMap.setUpAllTracksView(data.tracks);
+		// Otherwise, go for a single track and its gory details
 		} else {
 
 			tmMap.setUpSingleTrackView(data.tracks[trackId], layerControl);
-			// Populate photo makers
-/*			var photoLayerGroup = L.layerGroup();
-			$.lightbox.options.wrapAround = true; // Tell lightbox to do a wraparound album (this depends on a small modification to Lightbox)
-
-			// Go get the geo tags and then put the pics on the map
-			tmData.getGeoTags(trackId, function(data) {
-				for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
-					var img ='<a href="data/' + trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
-							 '" data-lightbox="picture" data-title="' + data.geoTags.trackPhotos[k].picCaption +
-							 '" ><img src="data/' + trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
-					var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
-						clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
-						icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
-					});
-					photoLayerGroup.addLayer(photoMarker);
-				}
-				photoLayerGroup.addTo(map);
-
-				layerControl.addOverlay(photoLayerGroup, 'Show photos');
-			}); */
 		}
 	});	
 }
 
-window.onload = setUpMap;
+window.onload = setUpMap; // Ok, set up the map

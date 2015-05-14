@@ -81,35 +81,54 @@ var tmMap = {
 		}).addTo(map);
 
 		// Populate photo makers
-		var photoLayerGroup = L.layerGroup();
-		$.lightbox.options.wrapAround = true; // Tell lightbox to do a wraparound album (this depends on a small modification to Lightbox)
+		if (track.hasPhotos) {
+			var photoLayerGroup = L.layerGroup();
+			$.lightbox.options.wrapAround = true; // Tell lightbox to do a wraparound album (this depends on a small modification to Lightbox)
 
-		// Go get the geo tags and then put the pics on the map
-		tmData.getGeoTags(track.trackId, function(data) {
-			for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
-				var img ='<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
-						 '" data-lightbox="picture" data-title="' + data.geoTags.trackPhotos[k].picCaption +
-						 '" ><img src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
-				var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
-					clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
-					icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
-				});
-				photoLayerGroup.addLayer(photoMarker);
-			}
-			photoLayerGroup.addTo(map);
+			// Go get the geo tags and then put the pics on the map
+			tmData.getGeoTags(track.trackId, function(data) {
+				for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
+					var img ='<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
+							 '" data-lightbox="picture" data-title="' + data.geoTags.trackPhotos[k].picCaption +
+							 '" ><img src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
+					var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
+						clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
+						icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
+					});
+					photoLayerGroup.addLayer(photoMarker);
+				}
+				photoLayerGroup.addTo(map);
 
-			layerControl.addOverlay(photoLayerGroup, 'Show photos');
-		});
+				layerControl.addOverlay(photoLayerGroup, 'Show photos');
+			});
+		}
 
 		// Add popup to the track
 		tl.bindPopup(track.trackPopUp, {maxWidth: 200});
 
 		// Add legend (TODO: change to track info)
+
 		var legend = L.control({position: 'bottomright'});
 		legend.onAdd = function () {
-			document.getElementById('legend').style.display = 'inline';
-			return L.DomUtil.get('legend');
+			var container = L.DomUtil.create('div', 'legend-container');
+			container.innerHTML = '<p id="trailName" class="legend-title"><b>' + track.trackName + '</b></p>' +
+								'<p id="trailDescription" class="legend-text">' + track.trackDescription + '</p>';
+			return container;
 		};
 		legend.addTo(map); 
+
+		this.collapseLegend();
+
+		$('.legend-container')[0].setAttribute('onmouseenter', "tmMap.expandLegend()");
+		$('.legend-container')[0].setAttribute('onmouseleave', "tmMap.collapseLegend()");
+
+
+	},
+	expandLegend: function(trackDescription) {
+		$('#trailDescription')[0].style.display = 'block';
+	},
+	collapseLegend: function() {
+		$('#trailDescription')[0].style.display = 'none';
 	}
+
 };
