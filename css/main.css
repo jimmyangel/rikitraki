@@ -35,7 +35,8 @@ body {
   border: 2px solid #fff;
 } 
 
-.legend {
+.legend-container {
+    width: 40%;
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
     background: white;
@@ -44,15 +45,17 @@ body {
     border-radius: 5px;
     line-height: 18px;
     color: #555;
+    opacity: 0.8;
 }
 
-.legend i {
-    width: 30px;
-    height: 5px;
-    float: left;
-    margin-right: 8px;
-    margin-top: 8px;
+.legendtitle {
+  width: 100%;
 }
+
+.legendtext {
+  display: none;
+}
+
 
 .modal-dialog {
   width: 80%;
