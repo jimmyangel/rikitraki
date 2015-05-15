@@ -80,6 +80,35 @@ var tmMap = {
 	        marker.bindPopup(track.trackHeadPopUp, {maxWidth: 200});
 		}).addTo(map);
 
+
+
+		// Add popup to the track
+		tl.bindPopup(track.trackPopUp, {maxWidth: 200});
+
+		// Add track info control
+		var legend = L.control({position: 'bottomright'});
+		legend.onAdd = function () {
+			var container = L.DomUtil.create('div', 'legend-container');
+			container.innerHTML = '<a id="trackinfo-btn" href="#"><img src="images/trackinfo.png"/></a>';
+			return container;
+		};
+		legend.addTo(map); 
+
+		// Populate track info dialog and set up handler
+		$('#trackInfoTitle').append(track.trackName);
+		$('#trackInfoBody').append(track.trackDescription);
+
+		$('#trackinfo-btn').click(function() {
+		  $('#trackInfoModal').modal('show');
+		  // Stop propagating scroll events to the map
+		  $('#trackInfoModal').bind('mousedown wheel scrollstart touchstart', function(e) {L.DomEvent.stopPropagation(e);});
+		  return false;
+		});
+
+	// TODO: Animate info icon to encourage clicking
+	//	$('.legend-container')[0].setAttribute('onmouseenter', "tmMap.expandLegend()");
+	//	$('.legend-container')[0].setAttribute('onmouseleave', "tmMap.collapseLegend()"); */
+
 		// Populate photo makers
 		if (track.hasPhotos) {
 			var photoLayerGroup = L.layerGroup();
@@ -96,32 +125,31 @@ var tmMap = {
 						icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
 					});
 					photoLayerGroup.addLayer(photoMarker);
+
+					// Add it to slideshow too
+
+					if (k === 0) {
+						// Add slide show control
+						var slideshow = L.control({position: 'bottomright'});
+						slideshow.onAdd = function () {
+							console.log("hola");
+							var container = L.DomUtil.create('div', 'slideshow-container');
+							container.innerHTML = '<a id="trackinfo-btn" href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[0].picName +
+							'" data-lightbox="slideshow"><img src="images/photos.png"/></a>';
+							return container;
+						};
+						slideshow.addTo(map);
+					} else {
+						$('#slideShowContainer').append('<a id="trackinfo-btn" href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName +
+														'" data-lightbox="slideshow"><img src="images/photos.png"/></a>');
+					}
 				}
 				photoLayerGroup.addTo(map);
+				layerControl.addOverlay(photoLayerGroup, 'Show track photos');
 
-				layerControl.addOverlay(photoLayerGroup, 'Show photos');
+
 			});
 		}
-
-		// Add popup to the track
-		tl.bindPopup(track.trackPopUp, {maxWidth: 200});
-
-		// Add legend (TODO: change to track info)
-
-		var legend = L.control({position: 'bottomright'});
-		legend.onAdd = function () {
-			var container = L.DomUtil.create('div', 'legend-container');
-			container.innerHTML = '<p id="trailName" class="legend-title"><b>' + track.trackName + '</b></p>' +
-								'<p id="trailDescription" class="legend-text">' + track.trackDescription + '</p>';
-			return container;
-		};
-		legend.addTo(map); 
-
-		this.collapseLegend();
-
-		$('.legend-container')[0].setAttribute('onmouseenter', "tmMap.expandLegend()");
-		$('.legend-container')[0].setAttribute('onmouseleave', "tmMap.collapseLegend()");
-
 
 	},
 	expandLegend: function(trackDescription) {

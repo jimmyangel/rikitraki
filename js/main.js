@@ -3,10 +3,7 @@
 // The below is to stop jshint barking at undefined variables
 /* globals L, omnivore, tmConfig */
 
-// console.log('\'Allo \'Allo!');
-
-
-// Handle about box
+// Handle the about box
 $('#about-btn').click(function() {
   $('#aboutModal').modal('show');
   // $(".navbar-collapse.in").collapse("hide");
