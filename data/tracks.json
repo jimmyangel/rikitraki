@@ -7,9 +7,9 @@
 			"trackLatLng": [-40.956824216991663, 173.057729182764888],
 			"trackRegionTags": ["New Zealand"],
 			"trackLevel": "Moderate",
+			"trackFav": true,
 			"trackGPX": "AbelTasman.GPX",
 			"trackName": "Abel Tasman Coast Track, Anchorage Bay to Marahau, New Zealand",
-			"trackHeadPopUp": "<b>Hiking Trail</b><br>Start: Anchorage Bay<br>End: Marahau<br>Length: 17.5km<br>Max elevation gain: 127m",
 			"trackDescription": "This hike is the south segment of the Abel Tasman Coast Track, in the National Park of the same name. Take a water taxi from Marahau to Anchorage Bay and return by foot, visiting Pitt Head and Te Pukatea Bay first. This is a beautiful hike along the Abel Tasman coastline with wonderful vegetation, incredible views of the coast and truly amazing beaches.",
 			"hasPhotos": true
 		},
@@ -20,9 +20,9 @@
 			"trackLatLng": [-42.106889141723514, 171.33947373367846], 
 			"trackRegionTags": ["New Zealand"],
 			"trackLevel": "Easy",
+			"trackFav": true,
 			"trackGPX": "Pororari-Punakaiki River.GPX",
 			"trackName": "Pororari-Punakaiki Loop, Paparoa National Park, New Zealand",
-			"trackHeadPopUp": "<b>Hiking Trail</b><br>Start: Punakaiki<br>End: Punakaiki<br>Length: 11.49km<br>Max elevation gain: 173m",
 			"trackDescription": "Beautiful hike up the Pororari river connecting with the Punakaiki river and passing through the Pancake Rocks. The Pororari river is very beautiful, almost magical, with its tea-colored waters gently flowing through an extremely lush rainforest and wonderful limestone formations. A good chunk of the loop is waking on the road, which is not all that great. But it is compensated with the amazing sights of the Pancake Rocks.",
 			"hasPhotos": true
 		},
@@ -33,9 +33,9 @@
 			"trackLatLng": [44.89585418254137, -122.122481586411595], 
 			"trackRegionTags": ["Oregon"],
 			"trackLevel": "Moderate",
+			"trackFav": true,
 			"trackGPX": "Bull of the Woods.GPX",
 			"trackName": "Bull of the Woods, near Estacada, Oregon",
-			"trackHeadPopUp": "<b>Hiking Trail</b><br>Length: 12.72km<br>Max elevation gain: 605m",
 			"trackDescription": "This is a loop hike in the remote Bull of the Woods wilderness area. The main goal is the fire lookout on top of the Bull of the Woods mountain, from which on a clear day you can enjoy a fantastic 360 view of the cascades: Mt Hood to the Northeast, Mt Jefferson to the Southeast and Mt Washington and Three Finger Jack to the South. There are also two small pretty lakes along the way and a lot of huckleberries and rhododendrons, both of which require the appropriate season to be fully appreciated -- early fall and late spring respectively. Oh, lets not forget, the trail passes through an old growth forest.",
 			"hasPhotos": true
 		}
