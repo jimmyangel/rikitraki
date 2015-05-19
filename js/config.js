@@ -13,6 +13,6 @@ var tmConfig = {
 	},
 	getLayers: function (f) {
 		$.getJSON('config/layers.json', f).fail(function(jqxhr, textStatus, error) {throw error;});
-		return f;
+		return f; //f is the function that is invoked when the data is ready
 	}
 };

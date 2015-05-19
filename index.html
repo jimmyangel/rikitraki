@@ -48,58 +48,48 @@
     </div>
 
     <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                  <h3 class="modal-title" id="myModalLabel">A hike in Abel Tasman NP, NZ by Ricardo Morin</h3>v0.5
-                </div>
-                <div class="modal-body">
-                    <h4>About this project</h4>
-                    This map tells the story of a nice full-day hike my wife and I did in the Abel Tasman National Park, New Zealand,
-                    in February of 2015. The hike is the south segment of the <a href="http://doc.govt.nz/abeltasmantrack" target="_blank">Abel Tasman Coast Track</a>. To reach the trailhead in Anchorage Bay, we took a water taxi in Marahau and returned by foot, visiting Pitt Head and Te Pukatea Bay first. This is a beautiful coastal hike with wonderful vegetation, stunning views of the coast and truly amazing swimmable beaches.<br><br>
-                    Please feel free to explore the slippy map to recreate our experience and learn more about this beautiful location. Tracks, markers and photos
-                    are clickable. The controls in the top left part of the map provide for zooming, base map and layer display control, 
-                    and access to an interactive elevation profile widget.<br><br>
-                    I developed the application using open source web development tools, frameworks and freely available base map tile services. It should 
-                    work ok on tablets and phones, but it is best viewed from a PC using a modern browser.<br><br>
-                    This application is my final assignment deliverable ("Storytelling with maps") for the 
-                    <a href="https://class.coursera.org/maps-003" target="_blank">Maps and the Geospatial Revolution</a> 
-                    <a href="http://en.wikipedia.org/wiki/Massive_open_online_course" target="_blank">MOOC</a> course by Dr. Anthony C. Robinson, that I took between March and April of 2015.
-                </div>
-                <div class="modal-body">
-                    <h4>Building blocks</h4>
-                    <b>Core mapping framework:</b>
-                    <ul>
-                     <li>The powerful <a href="http://leafletjs.com/" target="_blank">Leaflet</a> Javascript library</li>
-                    </ul>
-                    <b>Components and plugins:</b>
-                      <ul>
-                        <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> for mobile friendly navigation bar and dialogs</li>
-                        <li><a href="https://jquery.com/" target="_blank">jQuery</a> mobile-friendly Javascript utility library</li>
-                        <li><a href="https://github.com/MrMufflon/Leaflet.Elevation" target="_blank">Leaflet.Elevation</a> to display trail elevation profile</li>
-                        <li><a href="https://github.com/jseppi/Leaflet.MakiMarkers" target="_blank">Leaflet.MakiMarkers</a> to display nice Maki icons in markers</li>
-                        <li><a href="http://lokeshdhakar.com/projects/lightbox2/" target="_blank">Lightbox2</a> to display pictures and slideshow</li>
-                        <li><a href="https://github.com/mapbox/leaflet-omnivore" target="_blank">Omnivore</a> plug-in to consume GPS tracks in .GPX format</li>
-                      </ul>
-                    <b>Base maps:</b>
-                      <ul>
-                        <li><a href="http://www.thunderforest.com/" target="_blank">Thunderforest</a> outdoors map that shows topographic features and information relevant to hiking</li>
-                        <li><a href="http://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9" target="_blank">ESRI World Imagery</a> to show satellite and aerial imagery</li>
-                      </ul>
-                    <b>GPS Tracks:</b>
-                      <ul>
-                        <li>Recorded on a <a href="http://wiki.openstreetmap.org/wiki/Garmin/Oregon_series" target="_blank">Garmin Oregon</a> 450 GPS unit</li>
-                      </ul>
-                    <b>Photos by:</b><a href="http://hildemorin.aminus3.com/" target="_blank"> Hilde Morin</a>
-                  <h4>Questions? Feedback?</h4>
-                  <a href="https://twitter.com/intent/tweet?screen_name=jimmieangel" class="twitter-mention-button" data-related="jimmieangel">Tweet to @jimmieangel</a>
-                  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-                  </script>
-                </div>
-            </div>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 class="modal-title" id="myModalLabel">RikiTraki</h3><b>v0.0.1 by Ricardo Morin</b>
+          </div>
+          <div class="modal-body">
+              <h4>About this site</h4>
+              Welcome to my personal hiking log.
+              Feel free to use the slippy map to explore my hiking experiences and learn more about their locations. Tracks, markers and photos
+              are clickable. The controls at the top left part of the map provide for zooming, base map and layer display control. The control at the bottom left
+              is an interactive elevation profile widget. The controls at the bottom right provide track information and a slide show (if pictures are available.)<br><br>
+              I will be adding tracks to the site and continue testing and enhancing it over time.
+              <h4>Building blocks</h4>
+              <b>Core mapping framework:</b>
+              <ul>
+               <li>The powerful <a href="http://leafletjs.com/" target="_blank">Leaflet</a> Javascript library</li>
+              </ul>
+              <b>Components and plugins:</b>
+                <ul>
+                  <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> for mobile friendly navigation bar and dialogs</li>
+                  <li><a href="https://jquery.com/" target="_blank">jQuery</a> mobile-friendly Javascript utility library</li>
+                  <li><a href="https://github.com/MrMufflon/Leaflet.Elevation" target="_blank">Leaflet.Elevation</a> to display trail elevation profile</li>
+                  <li><a href="https://github.com/jseppi/Leaflet.MakiMarkers" target="_blank">Leaflet.MakiMarkers</a> to display nice Maki icons in markers</li>
+                  <li><a href="http://lokeshdhakar.com/projects/lightbox2/" target="_blank">Lightbox2</a> to display pictures and slideshow</li>
+                  <li><a href="https://github.com/mapbox/leaflet-omnivore" target="_blank">Omnivore</a> plug-in to consume GPS tracks in .GPX format</li>
+                  <li><a href="http://publicdomainvectors.org/" target="_blank">publicdomainvectors.org</a> public domain icons</li>
+               </ul>
+              <b>Base maps:</b>
+                <ul>
+                  <li><a href="http://www.thunderforest.com/" target="_blank">Thunderforest</a> outdoors map that shows topographic features and information relevant to hiking</li>
+                  <li><a href="http://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9" target="_blank">ESRI World Imagery</a> to show satellite and aerial imagery</li>
+                </ul>
+              <b>Photos by:</b><a href="http://hildemorin.aminus3.com/" target="_blank"> Hilde Morin</a>
+            <h4>Feedback and questions are appreciated</h4>
+            <a href="https://twitter.com/intent/tweet?screen_name=jimmieangel" class="twitter-mention-button" data-related="jimmieangel">Tweet to @jimmieangel</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+            </script>
+          </div>
         </div>
       </div>
+    </div>
 
 
     <div id="map" />

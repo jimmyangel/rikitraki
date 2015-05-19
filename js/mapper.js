@@ -1,6 +1,9 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmConfig */
+var TRAIL_MARKER_COLOR = '#A52A2A';
+var WAYPOINT_COLOR = '#3887BE';
+var TRACK_COLOR = '#A52A2A';
 
 var tmMap = {
 	setUpCommon: function () {
@@ -32,17 +35,12 @@ var tmMap = {
 	setUpAllTracksView: function(tracks) {
 		map.setView([45.52, -122.6819], 3);
 
-		var trackMarkersLayerGroup = L.featureGroup();
+		var trackMarkersLayerGroup = new L.MarkerClusterGroup();
 
-		for (let tId in tracks) {
-			let m = L.marker(tracks[tId].trackLatLng);
+		for (var tId in tracks) {
+			var m = L.marker(tracks[tId].trackLatLng, {icon: L.MakiMarkers.icon({icon: 'pitch', color: TRAIL_MARKER_COLOR, size: 'm'})});
+			m.bindPopup('<a href="/?track=' + tId + '">' + tracks[tId].trackName) + '</a';
 			trackMarkersLayerGroup.addLayer(m);
-			m.on('click', function () {
-				window.open('/' + '?track=' + tId, '_self');
-			}
-
-			)
-			console.log(tId);
 		}
 		map.fitBounds(trackMarkersLayerGroup.getBounds());
 		trackMarkersLayerGroup.addTo(map);
@@ -58,12 +56,13 @@ var tmMap = {
 		});
 		el.addTo(map);	
 
-
-		// Use a custom layer to bind elevation control via onEachFeature
+		// We use a custom layer to have more control over track display
 		var customLayer = L.geoJson(null, {
+			// Set the track color
 		    style: function() {
-		        return { color: '#A52A2A' };
+		        return { color: TRACK_COLOR};
 		    },
+		    // Bind elevation control via onEachFeature
 		    onEachFeature: function (feature, layer) {
 		    	try {
 		 			el.addData.bind(el)(feature, layer);
@@ -71,19 +70,27 @@ var tmMap = {
 		    }
 		});
 
-		// Use omnivore to get gpx track data and put it on the map
-		var tl = omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null, customLayer).on('ready', function() {
+		// Get gpx track data and put it on the map
+		var tl = omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null, customLayer).on('ready', function(layer) {
+			// Change the default icon for waypoints
+	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: WAYPOINT_COLOR, size: 's'});
+	        // Now let's customize the popups
+			this.eachLayer(function (layer) {
+				layer.bindPopup(layer.feature.properties.name, {maxWidth: 200});
+				console.log(layer.feature);
+				// Set the icon for Point markers
+		    	if (layer.feature.geometry.type == 'Point'){
+		    		layer.setIcon(wpIcon);
+		    	}
+			});
+			// Fit th map to the trail boundaries
 	    	map.fitBounds(tl.getBounds());
-	    	let tLatLngs = tl.getLayers()[0].getLatLngs();
-	        var icon = L.MakiMarkers.icon({icon: 'pitch', color: '#A52A2A', size: 'm'});
-	        var marker = L.marker(tLatLngs[0], {icon: icon}).addTo(map);
+	    	// Set up trailhead marker assuming the very first point is the trailhead
+	    	var tLatLngs = tl.getLayers()[0].getLatLngs();
+	        var trailIcon = L.MakiMarkers.icon({icon: 'pitch', color: TRAIL_MARKER_COLOR, size: 'm'});
+	        var marker = L.marker(tLatLngs[0], {icon: trailIcon}).addTo(map);
 	        marker.bindPopup(track.trackHeadPopUp, {maxWidth: 200});
 		}).addTo(map);
-
-
-
-		// Add popup to the track
-		tl.bindPopup(track.trackPopUp, {maxWidth: 200});
 
 		// Add track info control
 		var legend = L.control({position: 'bottomright'});
@@ -96,7 +103,9 @@ var tmMap = {
 
 		// Populate track info dialog and set up handler
 		$('#trackInfoTitle').append(track.trackName);
-		$('#trackInfoBody').append(track.trackDescription);
+		$('#trackInfoBody').append(' <b>Length:</b> xyz km - <b>Elevation Gain:</b> zyx m <b>Region Tags:</b> ' + 
+									track.trackRegionTags + '<hr>' +
+									track.trackDescription);
 
 		$('#trackinfo-btn').click(function() {
 		  $('#trackInfoModal').modal('show');
@@ -111,52 +120,57 @@ var tmMap = {
 
 		// Populate photo makers
 		if (track.hasPhotos) {
-			var photoLayerGroup = L.layerGroup();
 			$.lightbox.options.wrapAround = true; // Tell lightbox to do a wraparound album (this depends on a small modification to Lightbox)
-
 			// Go get the geo tags and then put the pics on the map
 			tmData.getGeoTags(track.trackId, function(data) {
-				for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
-					var img ='<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
-							 '" data-lightbox="picture" data-title="' + data.geoTags.trackPhotos[k].picCaption +
-							 '" ><img src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
-					var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
-						clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
-						icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
-					});
-					photoLayerGroup.addLayer(photoMarker);
+				var slideshow = L.control({position: 'bottomright'});
+				// Add slideshow thinghy and also pics to the track if they are geotagged
+				slideshow.onAdd = function () {
+					var haveGeoTags = false;	 
+					var displayNone = '';
+					var photoLayerGroup = L.layerGroup();
 
-					// Add it to slideshow too
+					for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
+						// Only the first item is shown as a camera icon, the others are for lightbox to pick up
+						if (k === 1) {
+							displayNone = ' style="display: none;"'
+						}
+						var slideShowControlHTML = '<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName +
+											  '" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' + 
+											  displayNone + '><img src="images/photos.png"/></a>'
+						$('#slideShowContainer').append(slideShowControlHTML);
 
-					if (k === 0) {
-						// Add slide show control
-						var slideshow = L.control({position: 'bottomright'});
-						slideshow.onAdd = function () {
-							console.log("hola");
-							var container = L.DomUtil.create('div', 'slideshow-container');
-							container.innerHTML = '<a id="trackinfo-btn" href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[0].picName +
-							'" data-lightbox="slideshow"><img src="images/photos.png"/></a>';
-							return container;
-						};
-						slideshow.addTo(map);
-					} else {
-						$('#slideShowContainer').append('<a id="trackinfo-btn" href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName +
-														'" data-lightbox="slideshow"><img src="images/photos.png"/></a>');
+						// If we have geotags, go ahead and place them on thumbnail photo markers
+						if (data.geoTags.trackPhotos[k].picLatLng) {
+							haveGeoTags = true;
+							var img ='<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
+									 '" data-lightbox="picture" data-title="' + data.geoTags.trackPhotos[k].picCaption +
+									 '" ><img src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
+							var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
+								clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
+								icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
+							});
+							photoLayerGroup.addLayer(photoMarker);
+						}
+					};
+					// If we have geotagged pictures, add a layer control to show/hide them
+					if (haveGeoTags) {
+						photoLayerGroup.addTo(map);
+						layerControl.addOverlay(photoLayerGroup, 'Show track photos');
 					}
+					// return container;
+					return $('#slideShowContainer')[0];
 				}
-				photoLayerGroup.addTo(map);
-				layerControl.addOverlay(photoLayerGroup, 'Show track photos');
-
-
-			});
+				slideshow.addTo(map);
+			}, function(jqxhr, textStatus, error) {console.log(textStatus);}); // For now, ignore errors looking for the geotags files
 		}
 
-	},
+	}/*,
 	expandLegend: function(trackDescription) {
 		$('#trailDescription')[0].style.display = 'block';
 	},
 	collapseLegend: function() {
 		$('#trailDescription')[0].style.display = 'none';
 	}
-
+	*/
 };
