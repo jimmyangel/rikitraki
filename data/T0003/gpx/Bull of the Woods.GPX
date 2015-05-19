@@ -5,30 +5,9 @@
     <link href="http://www.garmin.com">
       <text>Garmin International</text>
     </link>
-    <time>2015-05-10T18:54:31Z</time>
-    <bounds maxlat="44.900162732228637" maxlon="-122.091335607692599" minlat="44.880661396309733" minlon="-122.122481586411595"/>
+    <time>2015-05-18T23:39:07Z</time>
+    <bounds maxlat="44.900162732228637" maxlon="-122.091335607692599" minlat="44.880661396309733" minlon="-122.116260286420584"/>
   </metadata>
-
-  <wpt lat="44.89585418254137" lon="-122.122481586411595">
-    <ele>1264.920000000000073</ele>
-    <time>2015-05-10T18:52:57Z</time>
-    <name>4150 ft height</name>
-    <cmt>4150 ft height</cmt>
-    <desc>4150 ft height</desc>
-    <sym>Flag, Blue</sym>
-    <type>user</type>
-    <extensions>
-      <gpxx:WaypointExtension>
-        <gpxx:DisplayMode>SymbolAndName</gpxx:DisplayMode>
-      </gpxx:WaypointExtension>
-      <wptx1:WaypointExtension>
-        <wptx1:DisplayMode>SymbolAndName</wptx1:DisplayMode>
-      </wptx1:WaypointExtension>
-      <ctx:CreationTimeExtension>
-        <ctx:CreationTime>2015-05-10T18:52:57Z</ctx:CreationTime>
-      </ctx:CreationTimeExtension>
-    </extensions>
-  </wpt>
 
   <wpt lat="44.884743969887495" lon="-122.095698975026608">
     <ele>1699.977538999999979</ele>

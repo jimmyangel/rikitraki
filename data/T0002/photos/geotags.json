@@ -1,0 +1,11 @@
+{
+	"geoTags": { 
+		"trackId": "T0002",
+		"trackPhotos": [
+			{"picName": "pic1.jpg",  "picThumb": "thumb1.jpg",  "picLatLng": [-42.109329, 171.343765], "picCaption": "Punakaiki River"},
+			{"picName": "pic2.jpg",  "picThumb": "thumb2.jpg",  "picLatLng": [-42.114894, 171.355223], "picCaption": "Vegetation along the trail"},
+			{"picName": "pic3.jpg",  "picThumb": "thumb3.jpg",  "picLatLng": [-42.114213, 171.327071], "picCaption": "Pancake Rocks"},
+			{"picName": "pic4.jpg",  "picThumb": "thumb4.jpg",  "picLatLng": [-42.114091, 171.326246], "picCaption": "Pancake Rocks"}
+		]
+	}
+}
