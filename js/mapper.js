@@ -4,6 +4,7 @@
 var TRAIL_MARKER_COLOR = '#A52A2A';
 var WAYPOINT_COLOR = '#3887BE';
 var TRACK_COLOR = '#A52A2A';
+var FAVORITE = '&#10025;';
 
 var tmMap = {
 	setUpCommon: function () {
@@ -46,6 +47,7 @@ var tmMap = {
 		trackMarkersLayerGroup.addTo(map);
 	},
 	setUpSingleTrackView: function(track, layerControl) {
+		var trackMetrics;
 		// Create the elevation control first
 		var el = L.control.elevation({
 			position: 'bottomleft',
@@ -60,13 +62,13 @@ var tmMap = {
 		var customLayer = L.geoJson(null, {
 			// Set the track color
 		    style: function() {
-		        return { color: TRACK_COLOR};
+		        return {color: TRACK_COLOR};
 		    },
 		    // Bind elevation control via onEachFeature
 		    onEachFeature: function (feature, layer) {
 		    	try {
 		 			el.addData.bind(el)(feature, layer);
-		    	} catch (err) {} // Control.Elevation does not seem to like waypoints so ignore the exception
+		    	} catch (err) {} // Control.Elevation does not seem to like waypoints so ignore the exception for now
 		    }
 		});
 
@@ -77,7 +79,10 @@ var tmMap = {
 	        // Now let's customize the popups
 			this.eachLayer(function (layer) {
 				layer.bindPopup(layer.feature.properties.name, {maxWidth: 200});
-				console.log(layer.feature);
+				// Hey since we are iterating through features, we may as well get the track distance and elevation gain
+				if (layer.feature.geometry.type === 'LineString') {
+					trackMetrics = tmUtils.calculateTrackMetrics(layer.feature);
+				}
 				// Set the icon for Point markers
 		    	if (layer.feature.geometry.type == 'Point'){
 		    		layer.setIcon(wpIcon);
@@ -85,38 +90,40 @@ var tmMap = {
 			});
 			// Fit th map to the trail boundaries
 	    	map.fitBounds(tl.getBounds());
-	    	// Set up trailhead marker assuming the very first point is the trailhead
+	    	// Set up trailhead marker assuming the very first point is at the trailhead
 	    	var tLatLngs = tl.getLayers()[0].getLatLngs();
 	        var trailIcon = L.MakiMarkers.icon({icon: 'pitch', color: TRAIL_MARKER_COLOR, size: 'm'});
 	        var marker = L.marker(tLatLngs[0], {icon: trailIcon}).addTo(map);
-	        marker.bindPopup(track.trackHeadPopUp, {maxWidth: 200});
+	        marker.bindPopup('Trailhead');
+			// Add track info control
+			var legend = L.control({position: 'bottomright'});
+			legend.onAdd = function () {
+				var container = L.DomUtil.create('div', 'legend-container');
+				container.innerHTML = '<a id="trackinfo-btn" href="#"><img src="images/trackinfo.png"/></a>';
+				return container;
+			};
+			legend.addTo(map); 
+
+			// Populate track info dialog and set up click handler
+			var fav = '';
+			if (track.trackFav) {
+				fav = FAVORITE;
+			}
+			$('#trackInfoTitle').append(track.trackName + ' ' + fav);
+			$('#trackInfoBody').append( '<b>' + track.trackLevel + '</b><br>' + 
+										' <b>Length:</b> ' + trackMetrics[0] + 'km - <b>Elevation Gain:</b> ' + trackMetrics[1] + 'm' + 
+										' <b>Max Elevation:</b> ' + trackMetrics[2] + 'm' + 
+										' <b>Min Elevation:</b> ' + trackMetrics[3] + 'm' +
+										'<br><b>Region:</b> ' + track.trackRegionTags + '<hr>' +
+										track.trackDescription);
+
+			$('#trackinfo-btn').click(function() {
+			  $('#trackInfoModal').modal('show');
+			  // Stop propagating scroll events to the map
+			  $('#trackInfoModal').bind('mousedown wheel scrollstart touchstart', function(e) {L.DomEvent.stopPropagation(e);});
+			  return false;
+			});      
 		}).addTo(map);
-
-		// Add track info control
-		var legend = L.control({position: 'bottomright'});
-		legend.onAdd = function () {
-			var container = L.DomUtil.create('div', 'legend-container');
-			container.innerHTML = '<a id="trackinfo-btn" href="#"><img src="images/trackinfo.png"/></a>';
-			return container;
-		};
-		legend.addTo(map); 
-
-		// Populate track info dialog and set up handler
-		$('#trackInfoTitle').append(track.trackName);
-		$('#trackInfoBody').append(' <b>Length:</b> xyz km - <b>Elevation Gain:</b> zyx m <b>Region Tags:</b> ' + 
-									track.trackRegionTags + '<hr>' +
-									track.trackDescription);
-
-		$('#trackinfo-btn').click(function() {
-		  $('#trackInfoModal').modal('show');
-		  // Stop propagating scroll events to the map
-		  $('#trackInfoModal').bind('mousedown wheel scrollstart touchstart', function(e) {L.DomEvent.stopPropagation(e);});
-		  return false;
-		});
-
-	// TODO: Animate info icon to encourage clicking
-	//	$('.legend-container')[0].setAttribute('onmouseenter', "tmMap.expandLegend()");
-	//	$('.legend-container')[0].setAttribute('onmouseleave', "tmMap.collapseLegend()"); */
 
 		// Populate photo makers
 		if (track.hasPhotos) {
@@ -164,13 +171,5 @@ var tmMap = {
 				slideshow.addTo(map);
 			}, function(jqxhr, textStatus, error) {console.log(textStatus);}); // For now, ignore errors looking for the geotags files
 		}
-
-	}/*,
-	expandLegend: function(trackDescription) {
-		$('#trailDescription')[0].style.display = 'block';
-	},
-	collapseLegend: function() {
-		$('#trailDescription')[0].style.display = 'none';
 	}
-	*/
 };
