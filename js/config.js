@@ -11,6 +11,14 @@ var tmConfig = {
 			return location.search.substr(pos+6);
 		}
 	},
+	getRegion: function () {
+		var pos = location.search.search('region=');
+		if (pos === -1) {
+			return "";
+		} else {
+			return decodeURIComponent(location.search.substr(pos+7));
+		}
+	},
 	getLayers: function (f) {
 		$.getJSON('config/layers.json', f).fail(function(jqxhr, textStatus, error) {throw error;});
 		return f; //f is the function that is invoked when the data is ready
