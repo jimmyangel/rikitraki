@@ -26,14 +26,17 @@ function setUpMap() {
 	// Get track data and wait before populating info onto the map
 	tmData.getTrackInfo(function(data) {
 
-		// If we do not have a (valid) track in the query parameter, then go for all tracks
+		// Set up goto menu and grab regions data structure
+		var regions = tmMap.setUpGotoMenu(data.tracks);
+
+		// If we do not have a (valid) track id in the query parameter, then go for all tracks
 		if (!(trackId in data.tracks)) {
 			// Since trackId not found then add all tracks markers to map and display all
-			console.log("show all tracks");
-			tmMap.setUpAllTracksView(data.tracks);
+			// But first lets see if we need to zoom into a region
+			var regionParm = tmConfig.getRegion();
+			tmMap.setUpAllTracksView(data.tracks, regions[regionParm]);
 		// Otherwise, go for a single track and its gory details
 		} else {
-
 			tmMap.setUpSingleTrackView(data.tracks[trackId], layerControl);
 		}
 	});	

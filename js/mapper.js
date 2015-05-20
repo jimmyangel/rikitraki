@@ -33,8 +33,9 @@ var tmMap = {
 
 		return layerControl; // We will need this later
 	},
-	setUpAllTracksView: function(tracks) {
-		map.setView([45.52, -122.6819], 3);
+	setUpAllTracksView: function(tracks, region) {
+
+		// map.setView([45.52, -122.6819], 3);
 
 		var trackMarkersLayerGroup = new L.MarkerClusterGroup();
 
@@ -43,8 +44,57 @@ var tmMap = {
 			m.bindPopup('<a href="/?track=' + tId + '">' + tracks[tId].trackName) + '</a';
 			trackMarkersLayerGroup.addLayer(m);
 		}
-		map.fitBounds(trackMarkersLayerGroup.getBounds());
+		if (region) {
+			map.fitBounds([region.sw, region.ne],{padding: [200, 200]});
+		} else {
+			map.fitWorld();
+			// map.fitBounds(trackMarkersLayerGroup.getBounds());
+		}
+
 		trackMarkersLayerGroup.addTo(map);
+	},
+	setUpGotoMenu: function(tracks) {
+		// Set up data structure to hold bounding boxes and number of tracks per region
+		var regions = [];
+		for (var tId in tracks) {
+			if (tracks[tId].trackRegionTags) {
+				for (var j=0; j<tracks[tId].trackRegionTags.length; j++) {
+					var r = tracks[tId].trackRegionTags[j];
+					if (!(r in regions)) {
+						// Need to slice the arrays cuz we need to change their values
+						regions[r] = {n: 1, sw: tracks[tId].trackLatLng.slice(), ne: tracks[tId].trackLatLng.slice()};
+					} else {
+						regions[r].n++;
+						// Extend SW and NE bounding box as needed
+						for (var k=0; k<2; k++) {
+							if (tracks[tId].trackLatLng[k] < regions[r].sw[k]) {
+								regions[r].sw[k] = tracks[tId].trackLatLng[k];
+							}
+							if (tracks[tId].trackLatLng[k] > regions[r].ne[k]) {
+								regions[r].ne[k] = tracks[tId].trackLatLng[k];
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// Now we need menu entries to be sorted
+		var sortedRegions = [];
+		var worldN = 0;
+		for (var region in regions) {
+			sortedRegions.push(region);
+			worldN++;
+		}
+		sortedRegions.sort();
+
+		$('#goto-menu').append('<li><a href="/">World (' + worldN + ')</a></li>');
+		$('#goto-menu').append('<li class="divider"></li>');
+		for (var i=0; i< sortedRegions.length; i++) {
+			$('#goto-menu').append('<li><a href="/?region=' + encodeURIComponent(sortedRegions[i]) + '">' +
+									 sortedRegions[i] + ' (' + regions[sortedRegions[i]].n +')</a></li>');
+		}
+		return regions;
 	},
 	setUpSingleTrackView: function(track, layerControl) {
 		var trackMetrics;
