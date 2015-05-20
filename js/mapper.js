@@ -29,7 +29,15 @@ var tmMap = {
 		});
 
 		// Add scale
-		L.control.scale({position: 'topright'}).addTo(map);
+		L.control.scale({position: 'bottomleft'}).addTo(map);
+
+		// Add info panel
+		var infoPanel = L.control({position: 'topright'});
+		infoPanel.onAdd = function () {
+			return $('#infoPanelContainer')[0];
+		}
+
+		infoPanel.addTo(map);
 
 		return layerControl; // We will need this later
 	},
@@ -45,13 +53,15 @@ var tmMap = {
 			trackMarkersLayerGroup.addLayer(m);
 		}
 		if (region) {
-			map.fitBounds([region.sw, region.ne],{padding: [200, 200]});
+			map.fitBounds([region.sw, region.ne], {maxZoom: 9});
 		} else {
-			map.fitWorld();
-			// map.fitBounds(trackMarkersLayerGroup.getBounds());
+			map.fitWorld({padding: [50, 50]});
+			//map.fitBounds(trackMarkersLayerGroup.getBounds());
 		}
 
 		trackMarkersLayerGroup.addTo(map);
+		$('#infoPanelContainer').append('<b>Welcome to RikiTraki, my personal hiking log.</b><br><br>Click on a marker to see track details or <b><i>Go to</i></b> a <br>region to explore tracks in the area');
+
 	},
 	setUpGotoMenu: function(tracks) {
 		// Set up data structure to hold bounding boxes and number of tracks per region
@@ -221,5 +231,6 @@ var tmMap = {
 				slideshow.addTo(map);
 			}, function(jqxhr, textStatus, error) {console.log(textStatus);}); // For now, ignore errors looking for the geotags files
 		}
+		$('#infoPanelContainer').append('<b>' + track.trackName + '</b>');
 	}
 };
