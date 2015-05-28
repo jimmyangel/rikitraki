@@ -1,0 +1,24 @@
+{
+	"geoTags": {
+		"trackId": "T0090",
+		"trackPhotos": [
+			{
+				"picName": "444516_full.jpg",
+				"picThumb": "thumb444516_full.jpg",
+				"picLatLng": [
+					41.781689,
+					-124.134742
+				],
+				"picCaption": "Boy Scout Tree"
+			},
+			{
+				"picName": "444518_full.jpg",
+				"picThumb": "thumb444518_full.jpg",
+				"picLatLng": [
+					41.78407, -124.13966
+				],
+				"picCaption": "Fern Falls"
+			}
+		]
+	}
+}

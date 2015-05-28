@@ -1,0 +1,25 @@
+{
+	"geoTags": {
+		"trackId": "T0051",
+		"trackPhotos": [
+			{
+				"picName": "1976898_full.jpg",
+				"picThumb": "thumb1976898_full.jpg",
+				"picLatLng": [
+					44.390618,
+					-122.242096
+				],
+				"picCaption": "Waterfall at the end of the trail"
+			},
+			{
+				"picName": "1976899_full.jpg",
+				"picThumb": "thumb1976899_full.jpg",
+				"picLatLng": [
+					44.395947,
+					-122.25737
+				],
+				"picCaption": "Santiam Wagon Road"
+			}
+		]
+	}
+}

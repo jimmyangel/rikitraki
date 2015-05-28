@@ -1,0 +1,25 @@
+{
+	"geoTags": {
+		"trackId": "T0054",
+		"trackPhotos": [
+			{
+				"picName": "1954116_full.jpg",
+				"picThumb": "thumb1954116_full.jpg",
+				"picLatLng": [
+					45.679194,
+					-121.844676
+				],
+				"picCaption": "Moss covered everything"
+			},
+			{
+				"picName": "1954117_full.jpg",
+				"picThumb": "thumb1954117_full.jpg",
+				"picLatLng": [
+					45.669091,
+					-121.845498
+				],
+				"picCaption": "Pacific Crest Falls"
+			}
+		]
+	}
+}

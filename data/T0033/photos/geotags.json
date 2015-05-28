@@ -1,0 +1,43 @@
+{
+	"geoTags": {
+		"trackId": "T0033",
+		"trackPhotos": [
+			{
+				"picName": "2895665_full.jpg",
+				"picThumb": "thumb2895665_full.jpg",
+				"picLatLng": [41.902409, 12.466413],
+				"picCaption": "Castel Sant Angelo"
+			},
+			{
+				"picName": "2895666_full.jpg",
+				"picThumb": "thumb2895666_full.jpg",
+				"picLatLng": [41.895585, 12.472138],
+				"picCaption": "Mercato Di Campo Di Fiore"
+			},
+			{
+				"picName": "2895667_full.jpg",
+				"picThumb": "thumb2895667_full.jpg",
+				"picLatLng": [41.898906, 12.473130],
+				"picCaption": "Piazza Navona"
+			},
+			{
+				"picName": "2895668_full.jpg",
+				"picThumb": "thumb2895668_full.jpg",
+				"picLatLng": [41.898707, 12.476991],
+				"picCaption": "Pantheon"
+			},
+			{
+				"picName": "2895669_full.jpg",
+				"picThumb": "thumb2895669_full.jpg",
+				"picLatLng": [41.901001, 12.483400],
+				"picCaption": "Fontana Di Trevi"
+			},
+			{
+				"picName": "2895670_full.jpg",
+				"picThumb": "thumb2895670_full.jpg",
+				"picLatLng": [41.910215, 12.476550],
+				"picCaption": "Piazza Del Popolo"
+			}
+		]
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"geoTags": { 
+		"trackId": "T0006",
+		"trackPhotos": [
+			{"picName": "SAM_2272.jpg",  "picThumb": "thumbSAM_2272.jpg", "picLatLng": [-43.698190, 170.096793], "picCaption": "Mt Sefton"},
+			{"picName": "SAM_2280.jpg",  "picThumb": "thumbSAM_2280.jpg", "picLatLng": [-43.692719, 170.101827], "picCaption": "Mt Sefton"},
+			{"picName": "SAM_2290.jpg",  "picThumb": "thumbSAM_2290.jpg", "picLatLng": [-43.688622, 170.103940], "picCaption": "Across Hooker Lake"},
+			{"picName": "SAM_2317.jpg",  "picThumb": "thumbSAM_2317.jpg", "picLatLng": [-43.694100, 170.097620], "picCaption": "Mt Cook"}
+		]
+	}
+}

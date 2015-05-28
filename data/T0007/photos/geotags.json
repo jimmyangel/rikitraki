@@ -1,0 +1,11 @@
+{
+	"geoTags": { 
+		"trackId": "T0007",
+		"trackPhotos": [
+			{"picName": "SAM_1949.jpg",  "picThumb": "thumbSAM_1949.jpg", "picLatLng": [-43.449222017079592, 169.970080638304353], "picCaption": "Around Lake Matheson"},
+			{"picName": "SAM_1957.jpg",  "picThumb": "thumbSAM_1957.jpg", "picLatLng": [-43.444822, 169.969617], "picCaption": "Around Lake Matheson"},
+			{"picName": "SAM_1970.jpg",  "picThumb": "thumbSAM_1970.jpg", "picLatLng": [-43.436544, 169.960740], "picCaption": "Around Lake Matheson"},
+			{"picName": "SAM_1977.jpg",  "picThumb": "thumbSAM_1977.jpg", "picLatLng": [-43.438063, 169.964629], "picCaption": "Around Lake Matheson"}
+		]
+	}
+}

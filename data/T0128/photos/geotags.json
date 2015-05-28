@@ -1,0 +1,37 @@
+{
+	"geoTags": {
+		"trackId": "T0128",
+		"trackPhotos": [
+			{
+				"picName": "53308_full.jpg",
+				"picThumb": "thumb53308_full.jpg",
+				"picLatLng": [-30.79364, -64.46848],
+				"picCaption": "Los Terrones"
+			},
+			{
+				"picName": "53309_full.jpg",
+				"picThumb": "thumb53309_full.jpg",
+				"picLatLng": [-30.79524, -64.46636],
+				"picCaption": "Los Terrones"
+			},
+			{
+				"picName": "53310_full.jpg",
+				"picThumb": "thumb53310_full.jpg",
+				"picLatLng": [-30.79572, -64.46393],
+				"picCaption": "Los Terrones"
+			},
+			{
+				"picName": "53311_full.jpg",
+				"picThumb": "thumb53311_full.jpg",
+				"picLatLng": [-30.79765, -64.46695],
+				"picCaption": "Los Terrones"
+			},
+			{
+				"picName": "53312_full.jpg",
+				"picThumb": "thumb53312_full.jpg",
+				"picLatLng": [-30.79144, -64.46876],
+				"picCaption": "Los Terrones"
+			}
+		]
+	}
+}

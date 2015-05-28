@@ -1,0 +1,11 @@
+{
+	"geoTags": { 
+		"trackId": "T0013",
+		"trackPhotos": [
+			{"picName": "4676599_full.jpg", "picThumb": "thumb4676599_full.jpg", "picLatLng": [43.81959, 5.37594], "picCaption": "A big rock"},
+			{"picName": "4676600_full.jpg", "picThumb": "thumb4676600_full.jpg", "picLatLng": [43.81979, 5.37676], "picCaption": "Auiguebrun valley"},
+			{"picName": "4676601_full.jpg", "picThumb": "thumb4676601_full.jpg", "picLatLng": [43.81810, 5.37953], "picCaption": "Fort ruins"},
+			{"picName": "4676602_full.jpg", "picThumb": "thumb4676602_full.jpg", "picLatLng": [43.81713, 5.37995], "picCaption": "Secret stairs"}
+		]
+	}
+}

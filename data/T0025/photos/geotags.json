@@ -1,0 +1,31 @@
+{
+	"geoTags": {
+		"trackId": "T0025",
+		"trackPhotos": [
+			{
+				"picName": "3186048_full.jpg",
+				"picThumb": "thumb3186048_full.jpg",
+				"picLatLng": [
+					45.747301,
+					-123.960676
+				],
+				"picCaption": "Up the trail"
+			},
+			{
+				"picName": "3186076_full.jpg",
+				"picThumb": "thumb3186076_full.jpg",
+				"picLatLng": [
+					45.745781,
+					-123.953553
+				],
+				"picCaption": "Coastal forest"
+			},
+			{
+				"picName": "3186079_full.jpg",
+				"picThumb": "thumb3186079_full.jpg",
+				"picLatLng": [45.74358, -123.94593],
+				"picCaption": "Neahkahnie Beach and Manzanita"
+			}
+		]
+	}
+}

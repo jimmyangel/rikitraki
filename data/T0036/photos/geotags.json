@@ -1,0 +1,60 @@
+{
+	"geoTags": {
+		"trackId": "T0036",
+		"trackPhotos": [
+			{
+				"picName": "2877223_full.jpg",
+				"picThumb": "thumb2877223_full.jpg",
+				"picLatLng": [
+					40.62871,
+					14.50332
+				],
+				"picCaption": "Sentiero Degli Dei"
+			},			{
+				"picName": "2877228_full.jpg",
+				"picThumb": "thumb2877228_full.jpg",
+				"picLatLng": [
+					40.629686,
+					14.507608
+				],
+				"picCaption": "Sentiero Degli Dei"
+			},
+			{
+				"picName": "2877230_full.jpg",
+				"picThumb": "thumb2877230_full.jpg",
+				"picLatLng": [
+					40.629253,
+					14.511214
+				],
+				"picCaption": "Sentiero Degli Dei"
+			},
+			{
+				"picName": "2877232_full.jpg",
+				"picThumb": "thumb2877232_full.jpg",
+				"picLatLng": [
+					40.621414,
+					14.528147
+				],
+				"picCaption": "Sentiero Degli Dei"
+			},
+			{
+				"picName": "2877233_full.jpg",
+				"picThumb": "thumb2877233_full.jpg",
+				"picLatLng": [
+					40.622414,
+					14.519578
+				],
+				"picCaption": "Sentiero Degli Dei"
+			},
+			{
+				"picName": "2877235_full.jpg",
+				"picThumb": "thumb2877235_full.jpg",
+				"picLatLng": [
+					40.622206,
+					14.517697
+				],
+				"picCaption": "Sentiero Degli Dei"
+			}
+		]
+	}
+}

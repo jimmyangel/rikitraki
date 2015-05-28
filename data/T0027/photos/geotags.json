@@ -1,0 +1,25 @@
+{
+	"geoTags": {
+		"trackId": "T0027",
+		"trackPhotos": [
+			{
+				"picName": "3179993_full.jpg",
+				"picThumb": "thumb3179993_full.jpg",
+				"picLatLng": [
+					34.811974,
+					-111.828505
+				],
+				"picCaption": "Red Rock State Park"
+			},
+			{
+				"picName": "3180039_full.jpg",
+				"picThumb": "thumb3180039_full.jpg",
+				"picLatLng": [
+					34.807136,
+					-111.829985
+				],
+				"picCaption": "View towards Sedona"
+			}
+		]
+	}
+}

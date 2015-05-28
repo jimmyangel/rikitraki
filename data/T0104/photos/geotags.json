@@ -1,0 +1,25 @@
+{
+	"geoTags": {
+		"trackId": "T0104",
+		"trackPhotos": [
+			{
+				"picName": "295858_full.jpg",
+				"picThumb": "thumb295858_full.jpg",
+				"picLatLng": [36.94057, -3.36103],
+				"picCaption": "Pampaneira"
+			},
+			{
+				"picName": "295859_full.jpg",
+				"picThumb": "thumb295859_full.jpg",
+				"picLatLng": [36.94062, -3.35142],
+				"picCaption": "Las Alpujarras"
+			},
+			{
+				"picName": "295860_full.jpg",
+				"picThumb": "thumb295860_full.jpg",
+				"picLatLng": [36.94032, -3.33000],
+				"picCaption": "A little town in Las Alpujarras"
+			}
+		]
+	}
+}

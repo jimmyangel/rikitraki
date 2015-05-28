@@ -1,0 +1,19 @@
+{
+	"geoTags": {
+		"trackId": "T0057",
+		"trackPhotos": [
+			{
+				"picName": "1872411_full.jpg",
+				"picThumb": "thumb1872411_full.jpg",
+				"picLatLng": [45.63691, -121.92804],
+				"picCaption": "View from Wauna Point"
+			},
+			{
+				"picName": "1872419_full.jpg",
+				"picThumb": "thumb1872419_full.jpg",
+				"picLatLng": [45.64035, -121.92911],
+				"picCaption": "Along the old highway"
+			}
+		]
+	}
+}

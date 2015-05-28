@@ -1,0 +1,25 @@
+{
+	"geoTags": {
+		"trackId": "T0040",
+		"trackPhotos": [
+			{
+				"picName": "2679130_full.jpg",
+				"picThumb": "thumb2679130_full.jpg",
+				"picLatLng": [
+					46.001184,
+					-121.782444
+				],
+				"picCaption": "Junction Lake Trail"
+			},
+			{
+				"picName": "2679131_full.jpg",
+				"picThumb": "thumb2679131_full.jpg",
+				"picLatLng": [
+					46.001592,
+					-121.783381
+				],
+				"picCaption": "Junction Lake Trail"
+			}
+		]
+	}
+}

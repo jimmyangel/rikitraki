@@ -1,0 +1,400 @@
+{
+	"tracks": {
+		"T0001": {
+			"trackId": "T0001",
+			"wikiLocId": "9057510",
+			"trackLatLng": [
+				-40.95682421699166,
+				173.0577291827649
+			],
+			"trackRegionTags": [
+				"New Zealand"
+			],
+			"trackLevel": "Moderate",
+			"trackFav": true,
+			"trackGPX": "AbelTasman.GPX",
+			"trackName": "Abel Tasman Coast Track, Anchorage Bay to Marahau, New Zealand",
+			"trackDescription": "This hike is the south segment of the Abel Tasman Coast Track, in the National Park of the same name. Take a water taxi from Marahau to Anchorage Bay and return by foot, visiting Pitt Head and Te Pukatea Bay first. This is a beautiful hike along the Abel Tasman coastline with wonderful vegetation, incredible views of the coast and truly amazing beaches.",
+			"hasPhotos": true
+		},
+		"T0002": {
+			"trackId": "T0002",
+			"wikiLocId": "9057953",
+			"trackLatLng": [
+				-42.106889141723514,
+				171.33947373367846
+			],
+			"trackRegionTags": [
+				"New Zealand"
+			],
+			"trackLevel": "Easy",
+			"trackFav": true,
+			"trackGPX": "Pororari-Punakaiki River.GPX",
+			"trackName": "Pororari-Punakaiki Loop, Paparoa National Park, New Zealand",
+			"trackDescription": "Beautiful hike up the Pororari river connecting with the Punakaiki river and passing through the Pancake Rocks. The Pororari river is very beautiful, almost magical, with its tea-colored waters gently flowing through an extremely lush rainforest and wonderful limestone formations. A good chunk of the loop is waking on the road, which is not all that great. But it is compensated with the amazing sights of the Pancake Rocks.",
+			"hasPhotos": true
+		},
+		"T0003": {
+			"trackId": "T0003",
+			"wikiLocId": "9640454",
+			"trackLatLng": [
+				44.89585418254137,
+				-122.1224815864116
+			],
+			"trackRegionTags": [
+				"Oregon",
+				"US"
+			],
+			"trackLevel": "Moderate",
+			"trackFav": true,
+			"trackGPX": "Bull of the Woods.GPX",
+			"trackName": "Bull of the Woods, near Estacada, Oregon",
+			"trackDescription": "This is a loop hike in the remote Bull of the Woods wilderness area. The main goal is the fire lookout on top of the Bull of the Woods mountain, from which on a clear day you can enjoy a fantastic 360 view of the cascades: Mt Hood to the Northeast, Mt Jefferson to the Southeast and Mt Washington and Three Finger Jack to the South. There are also two small pretty lakes along the way and a lot of huckleberries and rhododendrons, both of which require the appropriate season to be fully appreciated -- early fall and late spring respectively. Oh, lets not forget, the trail passes through an old growth forest.",
+			"hasPhotos": true
+		},
+		"T0004": {
+			"trackId": "T0004",
+			"wikiLocId": "9058639",
+			"trackLatLng": [
+				-42.51491063274443,
+				172.8283144813031
+			],
+			"trackRegionTags": [
+				"New Zealand"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Conical Hill.GPX",
+			"trackName": "Conical Hill, Hanmer Springs, New Zealand",
+			"trackDescription": "Easy walk up to Conicall Hill (aka Majuba) which offers commanding views of the Hanmer Springs valley below. Hike up at the end of the day and be rewarded by a beautiful sunset.",
+			"hasPhotos": true
+		},
+		"T0005": {
+			"trackId": "T0005",
+			"wikiLocId": "9058406",
+			"trackLatLng": [
+				-43.54722708463669,
+				170.90752065181732
+			],
+			"trackRegionTags": [
+				"New Zealand"
+			],
+			"trackLevel": "Easy",
+			"trackFav": true,
+			"trackGPX": "Mount Sunday.GPX",
+			"trackName": "Mount Sunday, Canterbury, New Zealand",
+			"trackDescription": "Mount Sunday is the location of the city of Edoras in the Lord of the Ring movies. It is a rocky hill in the middle of the Rangitata river valley with expansive views of the surrounding mountains, most prominently the Southern Alps to the west. It is not wonder the site was chosen for the movies, as it is a truly beautiful.",
+			"hasPhotos": true
+		},
+		"T0006": {
+			"trackId": "T0006",
+			"wikiLocId": "9058241",
+			"trackLatLng": [
+				-43.718823501840234,
+				170.09268935769796
+			],
+			"trackRegionTags": [
+				"New Zealand"
+			],
+			"trackLevel": "Easy",
+			"trackFav": true,
+			"trackGPX": "Hooker Lake.GPX",
+			"trackName": "Hooker Lake, Mount Cook National Park, New Zealand",
+			"trackDescription": "This is a stunningly beautiful hike up the Hooker river valley and glacier lake with incredible views of the highest mountains of New Zealand's Southern Alps, including Mount Cook and Mount Sefton. The trail crosses over three suspension bridges, which makes the easy trail more interesting and fun. This hike is definitely a must-do if you are visiting New Zealand's South Island.",
+			"hasPhotos": true
+		},
+		"T0007": {
+			"trackId": "T0007",
+			"wikiLocId": "9058125",
+			"trackLatLng": [
+				-43.44922201707959,
+				169.97008063830435
+			],
+			"trackRegionTags": [
+				"New Zealand"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Lake Matheson.GPX",
+			"trackName": "Lake Matheson, Westland Tai Poutini National Park, New Zealand",
+			"trackDescription": "This is an easy loop around Lake Matheson with numerous stunning views of Mount Cook and the Southern Alps.",
+			"hasPhotos": true
+		},
+		"T0008": {
+			"trackId": "T0008",
+			"wikiLocId": "9058091",
+			"trackLatLng": [
+				-43.42238014563918,
+				170.1694328058511
+			],
+			"trackRegionTags": [
+				"New Zealand"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Franz Josef Glacier.GPX",
+			"trackName": "Franz Josef Glacier, New Zealand",
+			"trackDescription": "This walks takes you to the end of the Franz Josef Glacier (terminal face). It follows the riverbed until reaching the viewpoint of the glacier with some interesting waterfalls along the way.  A short detour to the Sentinel Rock offers excellent views of the valley and the glacier at a distance.",
+			"hasPhotos": true
+		},
+		"T0009": {
+			"trackId": "T0009",
+			"wikiLocId": "9057573",
+			"trackLatLng": [
+				-41.005011359229684,
+				173.00901942886412
+			],
+			"trackRegionTags": [
+				"New Zealand"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Abel Tasman Water Taxi.GPX",
+			"trackName": "Abel Tasman Water Taxi, Marahau to Anchorage Bay, New Zealand",
+			"trackDescription": "This is the water taxi ride from Marahau to Anchorage bay in order to start the south segment of the Abel Tasman Coast Track posted <a href=\"/?track=T0001\">here</a>. The water taxi makes a stop at the famous Split Apple, before heading towards Anchorage Bay.",
+			"hasPhotos": true
+		},
+		"T0010": {
+			"trackId": "T0010",
+			"wikiLocId": "8082963",
+			"trackLatLng": [
+				43.21250382810831,
+				5.522219426929951
+			],
+			"trackRegionTags": [
+				"France"
+			],
+			"trackLevel": "Moderate",
+			"trackFav": true,
+			"trackGPX": "Les Calanques.GPX",
+			"trackName": "Calanque D'en Vau, near Cassis, France",
+			"trackDescription": "This is a classic hike that loops around the Calanques of Port Miou, Port Pin and d'en Vau. It is an extremely beautiful location with fantastic views of the narrow inlets and great swimming spots. Quite spectacular hike not to be missed!",
+			"hasPhotos": true
+		},
+		"T0011": {
+			"trackId": "T0011",
+			"wikiLocId": "8082958",
+			"trackLatLng": [
+				46.192415496334434,
+				4.697002116590738
+			],
+			"trackRegionTags": [
+				"France"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Fleurie.GPX",
+			"trackName": "Chapelle de la Madone, Fleurie, France",
+			"trackDescription": "A walk through the vineyards of the village of Fleurie, in Beaujolais. The trail winds through vineyards, up the hill to the Chapelle de la Madone, and around Mont Genas with wonderful views all around. If you are lucky enough to walk this trail during harvest time, you will encounter friendly grape pickers along the way. [Note: I drew the trail by hand because I did not bring a GPS to this walk]",
+			"hasPhotos": true
+		},
+		"T0012": {
+			"trackId": "T0012",
+			"wikiLocId": "8082932",
+			"trackLatLng": [
+				46.20970065705478,
+				4.643794214352965
+			],
+			"trackRegionTags": [
+				"France"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Le Chemin De Vigne.GPX",
+			"trackName": "Le Chemin De Vigne, Vauxrenard, France",
+			"trackDescription": "A nice stroll through the vineyards around the small village of Vauxrenard in the Beaujolais area of France. It is an interpretive trail that winds through the vineyards and explains the history and facts of winemaking in ten explanatory panels along the way. [Note: I drew the trail by hand because I did not bring a GPS to this walk]",
+			"hasPhotos": true
+		},
+		"T0013": {
+			"trackId": "T0013",
+			"wikiLocId": "8082915",
+			"trackLatLng": [
+				43.82106453180313,
+				5.37568548694253
+			],
+			"trackRegionTags": [
+				"France"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Fort de Buoux.GPX",
+			"trackName": "Fort de Buoux, France",
+			"trackDescription": "This is a short hike to and around the Fort de Buoux medieval fortress., which was built on top of a huge rock outcropping in the Aiguebrun valley, in the Grand Luberon mountains of Provence. In addition to the fortress, there are ruins of an old church as well as remnant dwellings of ancient inhabitants. The views from the fortress are spectacular. And there is a great surprise on the way down, if the path of the hidden stairs is taken.",
+			"hasPhotos": true
+		},
+		"T0014": {
+			"trackId": "T0014",
+			"wikiLocId": "7744691",
+			"trackLatLng": [
+				45.32994758337736,
+				-121.70799429528415
+			],
+			"trackRegionTags": [
+				"Oregon",
+				"US"
+			],
+			"trackLevel": "Difficult",
+			"trackFav": true,
+			"trackGPX": "Paradise Park.GPX",
+			"trackName": "Paradise Park, near Government Camp, Oregon",
+			"trackDescription": "This is a classic Portland, Oregon hike. It is quite strenuous due to distance and elevation gain, but it is so worth it. It is called Paradise Park for a reason. Alpine meadows, expansive views of Mt Hood and the surrounding cascades, wildflower filled meadows, glacier carved canyons, waterfalls and several clear water springs and creeks. This hike is one of those must-do when you are near Portland, Oregon.",
+			"hasPhotos": true
+		},
+		"T0015": {
+			"trackId": "T0015",
+			"wikiLocId": "7565784",
+			"trackLatLng": [
+				44.81046278961003,
+				-121.7945007327944
+			],
+			"trackRegionTags": [
+				"Oregon",
+				"US"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Top Lake.GPX",
+			"trackName": "Top Lake and Cigar Lake Loop, near Detroit, Oregon",
+			"trackDescription": "Easy hike to a couple of alpine lakes near Ollalie Lake.  In addition to really nice lakes and ponds plus excellent views of Mt Jefferson and Ollallie Lake, there are untold amounts of huckleberry bushes which when in season (mid to end August) will guarantee delicious entertainment all along the trail (nom nom nom!!).",
+			"hasPhotos": true
+		},
+		"T0016": {
+			"trackId": "T0016",
+			"wikiLocId": "7492017",
+			"trackLatLng": [
+				45.40900225751102,
+				-121.78733428940177
+			],
+			"trackRegionTags": [
+				"Oregon",
+				"US"
+			],
+			"trackLevel": "Difficult",
+			"trackFav": true,
+			"trackGPX": "McNealPointViaScramble.GPX",
+			"trackName": "McNeil Point Via Scramble, near Welches, Oregon",
+			"trackDescription": "Without a doubt, this is the most spectacular trail of all of Mt Hood. The views of majestic Mt Hood begin at just under a mile, when you turn around Bald Mountain. Then the trail gets woodsy for a while to emerge at the McNeil Lower Viewpoint, with glorious views of Mt Hood, the Sandy Glacier and the Sandy River Valley. Instead of taking the usual route through the ponds, this hike takes the more adventurous \"<a href=\"http://www.portlandhikersfieldguide.org/wiki/Timberline-McNeil_Point_Scramble_Trail_Junction\" target=\"_blank\">scramble trail</a>\", which climbs to McNeil Point in just 0.4 miles  (thanks to <a href=\"http://www.portlandhikers.org/forum/viewtopic.php?t=16305\" target=\"_blank\">aircooled of PortlandHikers for the tip</a>). The views along the scramble are really amazing: Mt Hood and the glaciers and waterfalls, the Sandy Valley, and then Mt St Helens, Mt Rainier and Mt Adams to the north. Upon reaching the McNeal shelter, the views are even more expansive and spectacular. The return loop goes through flower-filled meadows and brooks galore down to a nice shallow pond with a view of Mt Hood and its reflection in the water. Oh, and huckleberries near the trailhead. What more could you ask for. If you could only do a single hike in Mt Hood, this is definitely it!",
+			"hasPhotos": true
+		},
+		"T0017": {
+			"trackId": "T0017",
+			"wikiLocId": "7450797",
+			"trackLatLng": [
+				45.44317075051367,
+				-121.72948901541531
+			],
+			"trackRegionTags": [
+				"Oregon",
+				"US"
+			],
+			"trackLevel": "Moderate",
+			"trackFav": true,
+			"trackGPX": "Wy'East Basin.GPX",
+			"trackName": "Wy'East Basin, near Welches, Oregon",
+			"trackDescription": "This a shorter version of the <a href=\"http://www.wikiloc.com/wikiloc/view.do?id=4968068\" target=\"_blank\">Cairn Basin</a> trail, just to reach the beautiful meadow called Wy'East basin. Plenty of wildflowers to enjoy and clear cold water coming from snow melting nearby. Ah, and some delicious huckleberries along the way too (at the right time of the year).",
+			"hasPhotos": true
+		},
+		"T0018": {
+			"trackId": "T0018",
+			"wikiLocId": "7450788",
+			"trackLatLng": [
+				37.501208279281855,
+				-119.6111224964261
+			],
+			"trackRegionTags": [
+				"California",
+				"US"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Mariposa Grove.GPX",
+			"trackName": "Mariposa Grove, Yosemite NP, California",
+			"trackDescription": "Loop around Mariposa Grove to see the largest trees in Yosemite -- several enormous Sequoias along the way. Being one of the most popular national parks, the trail is somewhat crowded, but still worth it. Described <a href=\"http://www.hikespeak.com/trails/mariposa-grove-of-giant-sequoias-yosemite/\" target=\"_blank\">here</a> in more detail. [I had to draw the first part by hand because the GPS took a while to find the satellites]",
+			"hasPhotos": true
+		},
+		"T0019": {
+			"trackId": "T0019",
+			"wikiLocId": "7417879",
+			"trackLatLng": [
+				37.67029909417033,
+				-119.62688097730279
+			],
+			"trackRegionTags": [
+				"California",
+				"US"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "McGurk Meadow.GPX",
+			"trackName": "McGurk Meadow, Yosemite NP, California",
+			"trackDescription": "This place is just pretty. Easy walk to a wonderful meadow full of wild flowers. No crowds.",
+			"hasPhotos": true
+		},
+		"T0020": {
+			"trackId": "T0020",
+			"wikiLocId": "7417878",
+			"trackLatLng": [
+				37.71219679154456,
+				-119.58667231723666
+			],
+			"trackRegionTags": [
+				"California",
+				"US"
+			],
+			"trackLevel": "Easy",
+			"trackFav": true,
+			"trackGPX": "Sentinel Dome.GPX",
+			"trackName": "Sentinel Dome, Yosemite NP, California",
+			"trackDescription": "Ok, you go to the Glacier Point and the view is glorious, agree. BUT, getting up to the Sentinel Dome give an unparalleled 360 degree view of Yosemite like none other. It is a really easy stroll that is not very crowded and 100% worth it. Just do it!",
+			"hasPhotos": true
+		},
+		"T0021": {
+			"trackId": "T0021",
+			"wikiLocId": "7327568",
+			"trackLatLng": [
+				45.94961749389768,
+				-122.03987189568579
+			],
+			"trackRegionTags": [
+				"Washington",
+				"US"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Sister Rocks.GPX",
+			"trackName": "Sister Rocks, near Carson, Washington",
+			"trackDescription": "Hike up to a nice rock outcrop where beautiful views of Mt Hood and Mt St Helens can be enjoyed. On the way up, there is a really cool viewpoint of Mt Adams. This is the same trail that goes to Observation Peak, but at the Mt Adams viewpoint you make a right onto a less traveled trail. You can even see Observation Peak from the Sister Rocks viewpoint. Nice and easy hike.",
+			"hasPhotos": true
+		},
+		"T0022": {
+			"trackId": "T0022",
+			"wikiLocId": "6976489",
+			"trackLatLng": [
+				45.699038319289684,
+				-121.71918614767492
+			],
+			"trackRegionTags": [
+				"Washington",
+				"US"
+			],
+			"trackLevel": "Easy",
+			"trackFav": true,
+			"trackGPX": "Dog Mountain.GPX",
+			"trackName": "Dog Mountain, near Carson, Washington",
+			"trackDescription": "A Portland classic. This hike on a clear and cool late spring day with wildflowers in full bloom is nothing short of spectacular -- may be even sublime. Nuf said. This track starts at the overflow parking area.",
+			"hasPhotos": true
+		},
+		"T0023": {
+			"trackId": "T0023",
+			"wikiLocId": "6825971",
+			"trackLatLng": [45.676937671378255, -121.464732689782977],
+			"trackRegionTags": ["Oregon", "US"],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Hood River Mountain.GPX",
+			"trackName": "Hood River Mountain, Hood River, Oregon",
+			"trackDescription": "This is a nice and easy trail up to Hood River Mountain with great views of the Hood River Valley, Mount Adams and Mount Hood. In the spring, the meadows at the top of the hike are covered with beautiful wildflowers.",
+			"hasPhotos": false
+		}
+	}
+}

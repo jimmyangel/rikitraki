@@ -1,0 +1,9 @@
+{
+	"geoTags": { 
+		"trackId": "T0020",
+		"trackPhotos": [
+			{"picName": "4223533_full.jpg", "picThumb": "thumb4223533_full.jpg", "picLatLng": [37.720558, -119.583392], "picCaption": "Sentinel Dome"},
+			{"picName": "SAM_1241.jpg", "picThumb": "thumbSAM_1241.jpg", "picLatLng": [37.723410, -119.584472], "picCaption": "Half Dome"}
+		]
+	}
+}

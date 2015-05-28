@@ -1,0 +1,52 @@
+{
+	"geoTags": {
+		"trackId": "T0041",
+		"trackPhotos": [
+			{
+				"picName": "2541726_full.jpg",
+				"picThumb": "thumb2541726_full.jpg",
+				"picLatLng": [
+					45.433432,
+					-121.721686
+				],
+				"picCaption": "Remnants of the Dollar lake fire"
+			},
+			{
+				"picName": "2541727_full.jpg",
+				"picThumb": "thumb2541727_full.jpg",
+				"picLatLng": [
+					45.422069,
+					-121.721774
+				],
+				"picCaption": "Mt Hood"
+			},
+			{
+				"picName": "2541735_full.jpg",
+				"picThumb": "thumb2541735_full.jpg",
+				"picLatLng": [
+					45.415023,
+					-121.718993
+				],
+				"picCaption": "Wildflowers"
+			},
+			{
+				"picName": "2541738_full.jpg",
+				"picThumb": "thumb2541738_full.jpg",
+				"picLatLng": [
+					45.414474,
+					-121.718633
+				],
+				"picCaption": "Wildflowers"
+			},
+			{
+				"picName": "2541742_full.jpg",
+				"picThumb": "thumb2541742_full.jpg",
+				"picLatLng": [
+					45.403809,
+					-121.720828
+				],
+				"picCaption": "Eden Park"
+			}
+		]
+	}
+}

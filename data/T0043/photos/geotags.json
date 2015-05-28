@@ -1,0 +1,34 @@
+{
+	"geoTags": {
+		"trackId": "T0043",
+		"trackPhotos": [
+			{
+				"picName": "_DSC0431.jpg",
+				"picThumb": "thumb_DSC0431.jpg",
+				"picLatLng": [
+					46.156656,
+					-121.441823
+				],
+				"picCaption": "Mt Adams"
+			},
+			{
+				"picName": "_DSC0467.jpg",
+				"picThumb": "thumb_DSC0467.jpg",
+				"picLatLng": [
+					46.140624,
+					-121.440662
+				],
+				"picCaption": "Bird Lake"
+			},
+			{
+				"picName": "_DSC0484.jpg",
+				"picThumb": "thumb_DSC0484.jpg",
+				"picLatLng": [
+					46.146941,
+					-121.434893
+				],
+				"picCaption": "A little waterfall along the way"
+			}
+		]
+	}
+}

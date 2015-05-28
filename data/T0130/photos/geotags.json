@@ -1,0 +1,25 @@
+{
+	"geoTags": {
+		"trackId": "T0130",
+		"trackPhotos": [
+			{
+				"picName": "53302_full.jpg",
+				"picThumb": "thumb53302_full.jpg",
+				"picLatLng": [-30.84523, -64.47655],
+				"picCaption": "Cerro Uritorco"
+			},
+			{
+				"picName": "53303_full.jpg",
+				"picThumb": "thumb53303_full.jpg",
+				"picLatLng": [-30.86243, -64.49588],
+				"picCaption": "Cerro Uritorco"
+			},
+			{
+				"picName": "53304_full.jpg",
+				"picThumb": "thumb53304_full.jpg",
+				"picLatLng": [-30.85371, -64.48021],
+				"picCaption": "Cerro Uritorco"
+			}
+		]
+	}
+}

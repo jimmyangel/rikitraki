@@ -1,0 +1,10 @@
+{
+	"geoTags": { 
+		"trackId": "T0017",
+		"trackPhotos": [
+			{"picName": "4246013_full.jpg", "picThumb": "thumb4246013_full.jpg", "picLatLng": [45.410390, -121.713640], "picCaption": "Wy'East Basin"},
+			{"picName": "4246014_full.jpg", "picThumb": "thumb4246014_full.jpg", "picLatLng": [45.413139, -121.717936], "picCaption": "Wy'East Basin"},
+			{"picName": "4246015_full.jpg", "picThumb": "thumb4246015_full.jpg", "picLatLng": [45.410097, -121.713428], "picCaption": "Wy'East Basin"}
+		]
+	}
+}

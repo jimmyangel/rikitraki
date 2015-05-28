@@ -1,0 +1,19 @@
+{
+	"geoTags": {
+		"trackId": "T0126",
+		"trackPhotos": [
+			{
+				"picName": "125392_full.jpg",
+				"picThumb": "thumb125392_full.jpg",
+				"picLatLng": [39.01701, -79.35355],
+				"picCaption": "Red Creek"
+			},
+			{
+				"picName": "125393_full.jpg",
+				"picThumb": "thumb125393_full.jpg",
+				"picLatLng": [39.01860, -79.35271],
+				"picCaption": "The slide"
+			}
+		]
+	}
+}

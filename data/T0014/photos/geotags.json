@@ -1,0 +1,11 @@
+{
+	"geoTags": { 
+		"trackId": "T0014",
+		"trackPhotos": [
+			{"picName": "4449102_full.jpg", "picThumb": "thumb4449102_full.jpg", "picLatLng": [45.342275, -121.741169], "picCaption": "Zig Zag Canyon"},
+			{"picName": "4449103_full.jpg", "picThumb": "thumb4449103_full.jpg", "picLatLng": [45.346383, -121.745917], "picCaption": "Paradise Park meadows"},
+			{"picName": "4449104_full.jpg", "picThumb": "thumb4449104_full.jpg", "picLatLng": [45.348844, -121.744685], "picCaption": "Paradise Park meadows"},
+			{"picName": "4449107_full.jpg", "picThumb": "thumb4449107_full.jpg", "picLatLng": [45.351740, -121.746480], "picCaption": "Mt Hood"}
+		]
+	}
+}

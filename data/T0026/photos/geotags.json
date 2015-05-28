@@ -1,0 +1,34 @@
+{
+	"geoTags": {
+		"trackId": "T0026",
+		"trackPhotos": [
+			{
+				"picName": "3180072_full.jpg",
+				"picThumb": "thumb3180072_full.jpg",
+				"picLatLng": [
+					34.911834,
+					-111.84783
+				],
+				"picCaption": "The Vortex"
+			},
+			{
+				"picName": "3180075_full.jpg",
+				"picThumb": "thumb3180075_full.jpg",
+				"picLatLng": [
+					34.923805,
+					-111.878037
+				],
+				"picCaption": "Deep into de canyon"
+			},
+			{
+				"picName": "3180078_full.jpg",
+				"picThumb": "thumb3180078_full.jpg",
+				"picLatLng": [
+					34.926562,
+					-111.858902
+				],
+				"picCaption": "Canyon view"
+			}
+		]
+	}
+}

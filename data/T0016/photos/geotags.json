@@ -1,0 +1,13 @@
+{
+	"geoTags": { 
+		"trackId": "T0016",
+		"trackPhotos": [
+			{"picName": "4271966_full.jpg", "picThumb": "thumb4271966_full.jpg", "picLatLng": [45.401747, -121.777489], "picCaption": "Mt Hood from Bald Mountain"},
+			{"picName": "4271968_full.jpg", "picThumb": "thumb4271968_full.jpg", "picLatLng": [45.401669, -121.774850], "picCaption": "Mt Hood and the Muddy Fork Valley"},
+			{"picName": "4271970_full.jpg", "picThumb": "thumb4271970_full.jpg", "picLatLng": [45.395572, -121.733261], "picCaption": "Looking north from the scramble with Mt Adams and Mt Rainier views"},
+			{"picName": "4271972_full.jpg", "picThumb": "thumb4271972_full.jpg", "picLatLng": [45.395606, -121.733031], "picCaption": "Sandy River Valley"},
+			{"picName": "4271975_full.jpg", "picThumb": "thumb4271975_full.jpg", "picLatLng": [45.394822, -121.730931], "picCaption": "Glisan Glacier"},
+			{"picName": "4271976_full.jpg", "picThumb": "thumb4271976_full.jpg", "picLatLng": [45.395378, -121.732142], "picCaption": "Mc Neil Shelter"}
+		]
+	}
+}

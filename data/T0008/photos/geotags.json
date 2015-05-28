@@ -1,0 +1,11 @@
+{
+	"geoTags": { 
+		"trackId": "T0008",
+		"trackPhotos": [
+			{"picName": "SAM_1852.jpg",  "picThumb": "thumbSAM_1852.jpg", "picLatLng": [-43.442832, 170.172551], "picCaption": "Around Franz Joseph Glacier"},
+			{"picName": "SAM_1864.jpg",  "picThumb": "thumbSAM_1864.jpg", "picLatLng": [-43.444512, 170.172625], "picCaption": "Around Franz Joseph Glacier"},
+			{"picName": "SAM_1900.jpg",  "picThumb": "thumbSAM_1900.jpg", "picLatLng": [-43.424712, 170.167837], "picCaption": "Around Franz Joseph Glacier"},
+			{"picName": "SAM_1908.jpg",  "picThumb": "thumbSAM_1908.jpg", "picLatLng": [-43.422380, 170.169433], "picCaption": "Around Franz Joseph Glacier"}
+		]
+	}
+}

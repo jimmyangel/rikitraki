@@ -1,0 +1,52 @@
+{
+	"geoTags": {
+		"trackId": "T0038",
+		"trackPhotos": [
+			{
+				"picName": "2728128_full.jpg",
+				"picThumb": "thumb2728128_full.jpg",
+				"picLatLng": [
+					47.904291,
+					-123.371997
+				],
+				"picCaption": "Lilian Ridge"
+			},
+			{
+				"picName": "2728129_full.jpg",
+				"picThumb": "thumb2728129_full.jpg",
+				"picLatLng": [
+					47.90264,
+					-123.370261
+				],
+				"picCaption": "Lilian Ridge"
+			},
+			{
+				"picName": "2728130_full.jpg",
+				"picThumb": "thumb2728130_full.jpg",
+				"picLatLng": [
+					47.890785,
+					-123.349691
+				],
+				"picCaption": "Grand Lake"
+			},
+			{
+				"picName": "2728131_full.jpg",
+				"picThumb": "thumb2728131_full.jpg",
+				"picLatLng": [
+					47.883978,
+					-123.351395
+				],
+				"picCaption": "Moose Lake"
+			},
+			{
+				"picName": "2728132_full.jpg",
+				"picThumb": "thumb2728132_full.jpg",
+				"picLatLng": [
+					47.900357,
+					-123.357532
+				],
+				"picCaption": "Grand Valley View"
+			}
+		]
+	}
+}

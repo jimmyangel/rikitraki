@@ -1,0 +1,25 @@
+{
+	"geoTags": {
+		"trackId": "T0106",
+		"trackPhotos": [
+			{
+				"picName": "295834_full.jpg",
+				"picThumb": "thumb295834_full.jpg",
+				"picLatLng": [37.87705, -6.66815],
+				"picCaption": "Alájar"
+			},
+			{
+				"picName": "295835_full.jpg",
+				"picThumb": "thumb295835_full.jpg",
+				"picLatLng": [37.88209, -6.68635],
+				"picCaption": "Along the trail"
+			},
+			{
+				"picName": "295836_full.jpg",
+				"picThumb": "thumb295836_full.jpg",
+				"picLatLng": [37.89515, -6.70383],
+				"picCaption": "Castaño del Robledo"
+			}
+		]
+	}
+}

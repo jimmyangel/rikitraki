@@ -1,0 +1,12 @@
+{
+	"geoTags": { 
+		"trackId": "T0010",
+		"trackPhotos": [
+			{"picName": "4676638_full.jpg", "picThumb": "thumb4676638_full.jpg", "picLatLng": [43.21090, 5.52076], "picCaption": "Calanque de Port-Miou"},
+			{"picName": "4676640_full.jpg", "picThumb": "thumb4676640_full.jpg", "picLatLng": [43.20633, 5.49961], "picCaption": "On the trail"},
+			{"picName": "4676641_full.jpg", "picThumb": "thumb4676641_full.jpg", "picLatLng": [43.20390, 5.51076], "picCaption": "Calanque D'en Vau"},
+			{"picName": "4676642_full.jpg", "picThumb": "thumb4676642_full.jpg", "picLatLng": [43.20212, 5.50154], "picCaption": "Calanque D'en Vau"},
+			{"picName": "4676643_full.jpg", "picThumb": "thumb4676643_full.jpg", "picLatLng": [43.20045, 5.50714], "picCaption": "Calanque de Port Pin"}
+		]
+	}
+}

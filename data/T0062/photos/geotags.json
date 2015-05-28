@@ -1,0 +1,25 @@
+{
+	"geoTags": {
+		"trackId": "T0062",
+		"trackPhotos": [
+			{
+				"picName": "1351019_full.jpg",
+				"picThumb": "thumb1351019_full.jpg",
+				"picLatLng": [
+					45.650465,
+					-121.734595
+				],
+				"picCaption": "Bear Lake"
+			},
+			{
+				"picName": "1351020_full.jpg",
+				"picThumb": "thumb1351020_full.jpg",
+				"picLatLng": [
+					45.650022,
+					-121.735697
+				],
+				"picCaption": "Hmmmm, huckleberries!"
+			}
+		]
+	}
+}
