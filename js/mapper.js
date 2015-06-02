@@ -1,10 +1,12 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
-/* exported tmConfig */
+/* exported tmMap */
+/* globals L, omnivore, tmConfig, tmData, tmUtils, map */
+
 var TRAIL_MARKER_COLOR = '#A52A2A';
 var WAYPOINT_COLOR = '#3887BE';
 var TRACK_COLOR = '#A52A2A';
-var FAVORITE = '&#10025;';
+var FAVORITE = '&#10029;';
 
 var tmMap = {
 	setUpCommon: function () {
@@ -19,7 +21,7 @@ var tmMap = {
 
 			// Iterate through list of base layers and add to layer control
 			for (var k=0; k<layerArray.length; k++) {
-				var bl = new L.TileLayer(layerArray[k].layerUrl, {minZoom: 1, maxZoom: 17, attribution: layerArray[k].attribution, ext: 'png'});
+				var bl = new L.TileLayer(layerArray[k].layerUrl, {minZoom: 1, maxZoom: layerArray[k].maxZoom, attribution: layerArray[k].attribution, ext: 'png'});
 				layerControl.addBaseLayer(bl, layerArray[k].layerName);
 				// First layer is the one displayed by default
 				if (k === 0) {
@@ -28,45 +30,38 @@ var tmMap = {
 			}
 		});
 
+
 		// Add scale
 		L.control.scale({position: 'bottomleft'}).addTo(map);
-
-		// Add info panel
-		var infoPanel = L.control({position: 'topright'});
-		infoPanel.onAdd = function () {
-			return $('#infoPanelContainer')[0];
-		}
-
-		infoPanel.addTo(map);
-
 		return layerControl; // We will need this later
 	},
 	setUpAllTracksView: function(tracks, region) {
 
 		// map.setView([45.52, -122.6819], 3);
+		$('#infoPanelContainer').hide();
 
 		var trackMarkersLayerGroup = new L.MarkerClusterGroup();
 
 		for (var tId in tracks) {
 			var m = L.marker(tracks[tId].trackLatLng, {icon: L.MakiMarkers.icon({icon: 'pitch', color: TRAIL_MARKER_COLOR, size: 'm'})});
-			m.bindPopup('<a href="/?track=' + tId + '">' + tracks[tId].trackName) + '</a';
+			m.bindPopup('<a href="/?track=' + tId + '">' + tracks[tId].trackName + '</a>');
 			trackMarkersLayerGroup.addLayer(m);
 		}
 		if (region) {
 			map.fitBounds([region.sw, region.ne], {maxZoom: 9});
 		} else {
-			map.fitWorld({padding: [50, 50]});
-			//map.fitBounds(trackMarkersLayerGroup.getBounds());
+			// map.fitWorld();
+			map.fitBounds(trackMarkersLayerGroup.getBounds());
 		}
 
 		trackMarkersLayerGroup.addTo(map);
-		$('#infoPanelContainer').append('<b>Welcome to RikiTraki, my personal hiking log.</b><br><br>Click on a marker to see track details or <b><i>Go to</i></b> a <br>region to explore tracks in the area');
-
 	},
 	setUpGotoMenu: function(tracks) {
 		// Set up data structure to hold bounding boxes and number of tracks per region
 		var regions = [];
+		var nWorld = 0;
 		for (var tId in tracks) {
+			nWorld++;
 			if (tracks[tId].trackRegionTags) {
 				for (var j=0; j<tracks[tId].trackRegionTags.length; j++) {
 					var r = tracks[tId].trackRegionTags[j];
@@ -91,14 +86,12 @@ var tmMap = {
 
 		// Now we need menu entries to be sorted
 		var sortedRegions = [];
-		var worldN = 0;
 		for (var region in regions) {
 			sortedRegions.push(region);
-			worldN++;
 		}
 		sortedRegions.sort();
 
-		$('#goto-menu').append('<li><a href="/">World (' + worldN + ')</a></li>');
+		$('#goto-menu').append('<li><a href="/">World (' + nWorld + ' tracks)</a></li>');
 		$('#goto-menu').append('<li class="divider"></li>');
 		for (var i=0; i< sortedRegions.length; i++) {
 			$('#goto-menu').append('<li><a href="/?region=' + encodeURIComponent(sortedRegions[i]) + '">' +
@@ -111,7 +104,7 @@ var tmMap = {
 		// Create the elevation control first
 		var el = L.control.elevation({
 			position: 'bottomleft',
-			theme: 'steelblue-theme',
+			theme: 'blackwhite-theme',
 			width: 400,
 			height: 125,
 			collapsed: true
@@ -133,7 +126,7 @@ var tmMap = {
 		});
 
 		// Get gpx track data and put it on the map
-		var tl = omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null, customLayer).on('ready', function(layer) {
+		var tl = omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null, customLayer).on('ready', function() {
 			// Change the default icon for waypoints
 	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: WAYPOINT_COLOR, size: 's'});
 	        // Now let's customize the popups
@@ -144,93 +137,131 @@ var tmMap = {
 					trackMetrics = tmUtils.calculateTrackMetrics(layer.feature);
 				}
 				// Set the icon for Point markers
-		    	if (layer.feature.geometry.type == 'Point'){
+		    	if (layer.feature.geometry.type === 'Point'){
 		    		layer.setIcon(wpIcon);
 		    	}
 			});
 			// Fit th map to the trail boundaries
-	    	map.fitBounds(tl.getBounds());
+	    	map.fitBounds(tl.getBounds()); 
+	    	// map.setZoom(map.getBoundsZoom(tl.getBounds())-1); // For some reason this has a glitch on iPad
+
 	    	// Set up trailhead marker assuming the very first point is at the trailhead
 	    	var tLatLngs = tl.getLayers()[0].getLatLngs();
 	        var trailIcon = L.MakiMarkers.icon({icon: 'pitch', color: TRAIL_MARKER_COLOR, size: 'm'});
 	        var marker = L.marker(tLatLngs[0], {icon: trailIcon}).addTo(map);
 	        marker.bindPopup('Trailhead');
-			// Add track info control
-			var legend = L.control({position: 'bottomright'});
-			legend.onAdd = function () {
-				var container = L.DomUtil.create('div', 'legend-container');
-				container.innerHTML = '<a id="trackinfo-btn" href="#"><img src="images/trackinfo.png"/></a>';
-				return container;
+
+			// Set up info panel control 
+			var infoPanelContainer = L.DomUtil.create('div', 'info infoPanelContainer');
+			var infoPanelTitle = L.DomUtil.create('div', 'infoPanelTitle', infoPanelContainer);
+			var infoPanelBody = L.DomUtil.create('div', 'infoPanelBody', infoPanelContainer);
+			var infoPanelDescription = L.DomUtil.create('div', 'infoPanelDescription', infoPanelBody);
+			var slideShowContainer = L.DomUtil.create('div', 'slideShowContainer', infoPanelBody);
+
+			var infoPanel = L.control({position: 'topright'});
+			infoPanel.onAdd = function () {
+				var fav = '';
+				if (track.trackFav) {
+					fav = FAVORITE;
+				}
+				infoPanelTitle.innerHTML = '<b>' + track.trackName + ' ' + fav + '</b>';
+				infoPanelDescription.innerHTML = '<hr><b>' + track.trackLevel + '</b><br>' + 
+									' <b>Length:</b> ' + trackMetrics[0] + 'km - <b>Elevation Gain:</b> ' + trackMetrics[1] + 'm' + 
+									' <b>Max Elevation:</b> ' + trackMetrics[2] + 'm' + 
+									' <b>Min Elevation:</b> ' + trackMetrics[3] + 'm' +
+									'<br><b>Region:</b> ' + track.trackRegionTags + '<hr>' + track.trackDescription + '<hr>' +
+									'<a href="data/' + track.trackId + '/gpx/' + track.trackGPX + '" download>Download GPS track</a>'; 
+				
+				// Populate photos
+				if (track.hasPhotos) {
+					$.lightbox.options.wrapAround = true; // Tell lightbox to do a wraparound album (this depends on a small modification I made to Lightbox)
+					// Go get the geo tags and then put the pics on the map
+					tmData.getGeoTags(track.trackId, function(data) {
+						var haveGeoTags = false;	 
+						var photoLayerGroup = L.layerGroup();
+						slideShowContainer.innerHTML = '<hr>';
+
+						for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
+							slideShowContainer.innerHTML += '<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName +
+												  '" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
+												  '><img class="infoThumbs" src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" /></a>';
+
+							// If we have geotags, go ahead and place them on thumbnail photo markers
+							if (data.geoTags.trackPhotos[k].picLatLng) {
+								haveGeoTags = true;
+								var img ='<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
+										 '" data-lightbox="picture" data-title="' + data.geoTags.trackPhotos[k].picCaption +
+										 '" ><img src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
+								var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
+									clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
+									icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
+								});
+								photoLayerGroup.addLayer(photoMarker);
+							}
+						}
+						// If we have geotagged pictures, add a layer control to show/hide them
+						if (haveGeoTags) {
+							photoLayerGroup.addTo(map);
+							layerControl.addOverlay(photoLayerGroup, 'Show track photos');
+						}
+
+					}, function(jqxhr, textStatus) {console.log(textStatus);}); // For now, ignore errors looking for the geotags files
+				}
+				return infoPanelContainer;
 			};
-			legend.addTo(map); 
 
-			// Populate track info dialog and set up click handler
-			var fav = '';
-			if (track.trackFav) {
-				fav = FAVORITE;
+			infoPanel.addTo(map);
+
+			// Enable proper info panel scrolling by adjusting max-height dynamically
+			// The 80 is to cover the bootstrap banner and the attribution at the bottom
+			// TODO: fix hardcoded 80 by querying the actual sizes of elements
+			$('.info').css('max-height', $(window).height()-80);
+			$(window).bind('resize',function() {
+    			$('.info').css('max-height', $(window).height()-80);
+			});
+
+			// Stop propagation of some event that the info box needs to handle
+			$('.infoPanelContainer').bind('mousedown wheel scrollstart touchstart', function(e) {e.stopPropagation();}); 
+    		L.DomEvent.disableClickPropagation(infoPanelContainer);
+
+			var showToggle = false;
+			// Toggle for expand/collapse is different on mouse versus touch
+			if (!L.Browser.touch) {
+				$('.infoPanelContainer').hover(
+					function() {
+						if (!showToggle) {
+							$('.infoPanelBody').show();
+							showToggle = true;
+						}
+					},
+					function() {
+						if (showToggle) {
+							$('.infoPanelBody').hide();
+							showToggle = false;
+						}
+					}
+				);
+			} else {
+				$('.infoPanelContainer').on('click', function() {
+					if (showToggle) {
+						$('.infoPanelBody').hide();
+						showToggle = false;
+					} else {
+						$('.infoPanelBody').show();
+						showToggle = true;
+					}
+				});		
+				$('#map').on('touchstart',
+					function () {
+						if (showToggle) {
+							$('.infoPanelBody').hide();
+							showToggle = false;
+						}
+					}
+				); 						
 			}
-			$('#trackInfoTitle').append(track.trackName + ' ' + fav);
-			$('#trackInfoBody').append( '<b>' + track.trackLevel + '</b><br>' + 
-										' <b>Length:</b> ' + trackMetrics[0] + 'km - <b>Elevation Gain:</b> ' + trackMetrics[1] + 'm' + 
-										' <b>Max Elevation:</b> ' + trackMetrics[2] + 'm' + 
-										' <b>Min Elevation:</b> ' + trackMetrics[3] + 'm' +
-										'<br><b>Region:</b> ' + track.trackRegionTags + '<hr>' +
-										track.trackDescription);
-
-			$('#trackinfo-btn').click(function() {
-			  $('#trackInfoModal').modal('show');
-			  // Stop propagating scroll events to the map
-			  $('#trackInfoModal').bind('mousedown wheel scrollstart touchstart', function(e) {L.DomEvent.stopPropagation(e);});
-			  return false;
-			});      
 		}).addTo(map);
 
-		// Populate photo makers
-		if (track.hasPhotos) {
-			$.lightbox.options.wrapAround = true; // Tell lightbox to do a wraparound album (this depends on a small modification to Lightbox)
-			// Go get the geo tags and then put the pics on the map
-			tmData.getGeoTags(track.trackId, function(data) {
-				var slideshow = L.control({position: 'bottomright'});
-				// Add slideshow thinghy and also pics to the track if they are geotagged
-				slideshow.onAdd = function () {
-					var haveGeoTags = false;	 
-					var displayNone = '';
-					var photoLayerGroup = L.layerGroup();
 
-					for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
-						// Only the first item is shown as a camera icon, the others are for lightbox to pick up
-						if (k === 1) {
-							displayNone = ' style="display: none;"'
-						}
-						var slideShowControlHTML = '<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName +
-											  '" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' + 
-											  displayNone + '><img src="images/photos.png"/></a>'
-						$('#slideShowContainer').append(slideShowControlHTML);
-
-						// If we have geotags, go ahead and place them on thumbnail photo markers
-						if (data.geoTags.trackPhotos[k].picLatLng) {
-							haveGeoTags = true;
-							var img ='<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
-									 '" data-lightbox="picture" data-title="' + data.geoTags.trackPhotos[k].picCaption +
-									 '" ><img src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
-							var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
-								clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
-								icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
-							});
-							photoLayerGroup.addLayer(photoMarker);
-						}
-					};
-					// If we have geotagged pictures, add a layer control to show/hide them
-					if (haveGeoTags) {
-						photoLayerGroup.addTo(map);
-						layerControl.addOverlay(photoLayerGroup, 'Show track photos');
-					}
-					// return container;
-					return $('#slideShowContainer')[0];
-				}
-				slideshow.addTo(map);
-			}, function(jqxhr, textStatus, error) {console.log(textStatus);}); // For now, ignore errors looking for the geotags files
-		}
-		$('#infoPanelContainer').append('<b>' + track.trackName + '</b>');
 	}
 };

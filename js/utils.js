@@ -1,6 +1,8 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmUtils */
+/* globals L */
+
 
 var tmUtils = {
 	calculateTrackMetrics: function(feature) {
@@ -16,19 +18,19 @@ var tmUtils = {
 				elevation += feature.geometry.coordinates[i+1][2] - feature.geometry.coordinates[i][2];
 			}
 			if (feature.geometry.coordinates[i][2] > maxElevation) {
-				maxElevation = feature.geometry.coordinates[i][2]
+				maxElevation = feature.geometry.coordinates[i][2];
 			}
 			if (feature.geometry.coordinates[i][2] < minElevation) {
-				minElevation = feature.geometry.coordinates[i][2]
+				minElevation = feature.geometry.coordinates[i][2];
 			}
 		}
 		// One more to go for elevation
 		if (feature.geometry.coordinates[i][2] > maxElevation) {
-			maxElevation = feature.geometry.coordinates[i][2]
+			maxElevation = feature.geometry.coordinates[i][2];
 		}
 		if (feature.geometry.coordinates[i][2] < minElevation) {
-			minElevation = feature.geometry.coordinates[i][2]
+			minElevation = feature.geometry.coordinates[i][2];
 		}	
 		return [(distance/1000).toFixed(2), elevation.toFixed(2), maxElevation.toFixed(2), minElevation.toFixed(2)];
 	}
-}
+};

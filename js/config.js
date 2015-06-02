@@ -6,7 +6,7 @@ var tmConfig = {
 	getTrackId: function () {
 		var pos = location.search.search('track=');
 		if (pos === -1) {
-			return "";
+			return '';
 		} else {
 			return location.search.substr(pos+6);
 		}
@@ -14,7 +14,7 @@ var tmConfig = {
 	getRegion: function () {
 		var pos = location.search.search('region=');
 		if (pos === -1) {
-			return "";
+			return '';
 		} else {
 			return decodeURIComponent(location.search.substr(pos+7));
 		}

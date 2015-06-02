@@ -59,16 +59,15 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 class="modal-title" id="myModalLabel">RikiTraki</h3><b>v0.1.0 by Ricardo Morin</b>
+            <h3 class="modal-title" id="myModalLabel">RikiTraki</h3><b>v0.0.1 by Ricardo Morin</b>
           </div>
           <div class="modal-body">
             <h4>About this site</h4>
             Welcome to my personal hiking log.
-            Feel free to use the slippy map to explore our hiking experiences and learn more about their locations. Tracks, markers and photos
+            Feel free to use the slippy map to explore my hiking experiences and learn more about their locations. Tracks, markers and photos
             are clickable. The controls at the top left part of the map provide for zooming, base map and layer display control. The control at the bottom left
-            is an interactive elevation profile widget. The track label at the top right provides track information and a slide show (if pictures are available.)<br><br>
-            I will be adding tracks to the site and continue testing and enhancing it over time.<br><br>
-            Photos by:<a href="http://hildemorin.aminus3.com/" target="_blank"> Hilde Morin</a>
+            is an interactive elevation profile widget. The controls at the bottom right provide track information and a slide show (if pictures are available.)<br><br>
+            I will be adding tracks to the site and continue testing and enhancing it over time.
             <div>
               <h4>Feedback and questions are appreciated</h4>
               <a href="https://twitter.com/intent/tweet?screen_name=jimmieangel" class="twitter-mention-button" data-related="jimmieangel">Tweet to @jimmieangel</a>
@@ -95,17 +94,25 @@
               <b>Base maps:</b>
                 <ul>
                   <li><a href="http://www.thunderforest.com/" target="_blank">Thunderforest</a> outdoors map that shows topographic features and information relevant to hiking</li>
-                  <li><a href="http://openstreetmap.org" target="_blank">Open Street Map</a> that shows roads, labels and geographic features</a> to show satellite and aerial imagery</li>
                   <li><a href="http://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9" target="_blank">ESRI World Imagery</a> to show satellite and aerial imagery</li>
-                  <li><a href="http://www.usgs.gov/" target="_blank">US Geological Service</a> official US topographic map that shows satellite and aerial imagery (US only)</li>
                 </ul>
+              <b>Photos by:</b><a href="http://hildemorin.aminus3.com/" target="_blank"> Hilde Morin</a>
             </div>
           </div> <!-- modal body -->
         </div> <!-- modal content -->
       </div> <!-- modal dialog -->
     </div> <!-- modal -->
 
+
     <div id="map" />
+
+    <div id="infoPanelContainer" class="info" aria-hidden="true">
+      <div id="infoPanelTitle"></div>
+      <div id="infoPanelBody">
+        <div id="infoPanelDescription"></div>
+        <div id="slideShowContainer"></div>
+      </div>
+    </div>
 
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
