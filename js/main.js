@@ -1,7 +1,7 @@
 'use strict';
 
 // The below is to stop jshint barking at undefined variables
-/* globals L, omnivore, tmConfig */
+/* globals L, tmConfig, tmMap, tmData */
 
 // Handle the about box
 $('#about-btn').click(function() {

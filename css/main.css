@@ -38,10 +38,15 @@ body {
   width: 70%;
   overflow-y: auto;
   cursor: default;
+  opacity: 0.8;
 }
 
 .modal-body {
   font-size: 14px;
+}
+
+.modal-backdrop.in {
+  opacity: 0.5;
 }
 
 .scrollable-menu {
@@ -50,15 +55,30 @@ body {
     overflow-x: hidden;
 }
 
-.info {
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,0.8);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
+.leaflet-control-layers-expanded {
+  opacity: 0.9;
 }
-.info h4 {
-    margin: 0 0 5px;
-    color: #777;
+
+.info {
+  max-width: 50%;
+  max-height: 2000px;
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  opacity: 1;
+  overflow: auto;
+}
+
+.infoPanelBody {
+  display: none;
+}
+
+.infoThumbs {
+  border: 2px solid #fff;
+  width: 150px;
+  height: 100px;
+  object-fit: cover;
 }
