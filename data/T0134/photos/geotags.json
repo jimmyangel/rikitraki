@@ -1,0 +1,34 @@
+{
+	"geoTags": {
+		"trackId": "T0134",
+		"trackPhotos": [
+			{
+				"picName": "SAM_3598.jpg",
+				"picThumb": "thumbSAM_3598.jpg",
+				"picLatLng": [
+					45.831593,
+					-123.963364
+				],
+				"picCaption": "SAM_3598.jpg"
+			},
+			{
+				"picName": "SAM_3607.jpg",
+				"picThumb": "thumbSAM_3607.jpg",
+				"picLatLng": [
+					45.83808,
+					-123.961765
+				],
+				"picCaption": "SAM_3607.jpg"
+			},
+			{
+				"picName": "SAM_3623.jpg",
+				"picThumb": "thumbSAM_3623.jpg",
+				"picLatLng": [
+					45.85758,
+					-123.965335
+				],
+				"picCaption": "SAM_3623.jpg"
+			}
+		]
+	}
+}

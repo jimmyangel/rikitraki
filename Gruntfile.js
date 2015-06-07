@@ -43,10 +43,31 @@ module.exports = function(grunt) {
 					keepalive: true
 				}
 			}
+		},
+		clean: {
+			build: 'dist'
+		},
+		copy: {
+			main: {
+				files: [
+					{src: 'index.html', dest: 'dist/'},
+					{src: 'favicon.ico', dest: 'dist/'},
+					{expand: true, src: ['config/**', 'css/**', 'data/**', 'js/**', '!data/*.js', '!data/*.j', '!data/*.backup*'], dest: 'dist/'},
+				]
+			}
+		},
+		bower: {
+			dev: {
+				dest: 'dist/bower_components',
+				options: {
+					expand: true
+				}
+			}
 		}
 	});
 
 	grunt.registerTask('default', ['jshint', 'wiredep']);
 	grunt.registerTask('serve', ['connect']);
+	grunt.registerTask('build', ['clean','bower','copy']);
 
 };

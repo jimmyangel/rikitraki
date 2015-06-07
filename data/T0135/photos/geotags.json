@@ -1,0 +1,79 @@
+{
+	"geoTags": {
+		"trackId": "T0135",
+		"trackPhotos": [
+			{
+				"picName": "SAM_3666.jpg",
+				"picThumb": "thumbSAM_3666.jpg",
+				"picLatLng": [
+					44.821846,
+					-122.143514
+				],
+				"picCaption": "SAM_3666.jpg"
+			},
+			{
+				"picName": "SAM_3680.jpg",
+				"picThumb": "thumbSAM_3680.jpg",
+				"picLatLng": [
+					44.825114,
+					-122.139365
+				],
+				"picCaption": "SAM_3680.jpg"
+			},
+			{
+				"picName": "SAM_3689.jpg",
+				"picThumb": "thumbSAM_3689.jpg",
+				"picLatLng": [
+					44.826104,
+					-122.14026
+				],
+				"picCaption": "SAM_3689.jpg"
+			},
+			{
+				"picName": "SAM_3700.jpg",
+				"picThumb": "thumbSAM_3700.jpg",
+				"picLatLng": [
+					44.826845,
+					-122.139856
+				],
+				"picCaption": "SAM_3700.jpg"
+			},
+			{
+				"picName": "SAM_3721.jpg",
+				"picThumb": "thumbSAM_3721.jpg",
+				"picLatLng": [
+					44.828773,
+					-122.140637
+				],
+				"picCaption": "SAM_3721.jpg"
+			},
+			{
+				"picName": "SAM_3736.jpg",
+				"picThumb": "thumbSAM_3736.jpg",
+				"picLatLng": [
+					44.835608,
+					-122.140701
+				],
+				"picCaption": "SAM_3736.jpg"
+			},
+			{
+				"picName": "SAM_3748.jpg",
+				"picThumb": "thumbSAM_3748.jpg",
+				"picLatLng": [
+					44.833958,
+					-122.139804
+				],
+				"picCaption": "SAM_3748.jpg"
+			},
+			{
+				"picName": "SAM_3756.jpg",
+				"picThumb": "thumbSAM_3756.jpg",
+				"picLatLng": [
+					44.828705,
+					-122.134819
+				],
+				"picCaption": "SAM_3756.jpg"
+			}
+		]
+	}
+}

@@ -1,9 +1,12 @@
 {
-  "name": "trackmapper",
-  "version": "0.0.1",
+  "name": "rikitraki",
+  "version": "0.1.1",
   "devDependencies": {
     "grunt": "^0.4.5",
+    "grunt-bower": "^0.19.0",
+    "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-connect": "^0.10.1",
+    "grunt-contrib-copy": "^0.8.0",
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-processhtml": "^0.3.7",

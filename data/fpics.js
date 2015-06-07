@@ -25,8 +25,8 @@ exec('sips --resampleWidth 200 thumb*.jpg', {silent:true})
 
 var gpxfiles = ls('../gpx/*.GPX');
 
-exec('exiftool -geotag="' + gpxfiles[0] + '" -geosync=+660:00 ./*.jpg', {silent:true});
-// exec('exiftool -geotag="' + gpxfiles[0] + '" ./*.jpg', {silent:true});
+// exec('exiftool -geotag="' + gpxfiles[0] + '" -geosync=+660:00 ./*.jpg', {silent:true});
+exec('exiftool -geotag="' + gpxfiles[0] + '" ./*.jpg', {silent:true});
 
 rm('*original');
 

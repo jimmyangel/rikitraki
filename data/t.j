@@ -768,7 +768,7 @@
 				"US"
 			],
 			"trackLevel": "Very Difficult",
-			"trackFav": false,
+			"trackFav": true,
 			"trackGPX": "Rogue River Trail.GPX",
 			"trackName": "Rogue River Trail, near Galice, Oregon",
 			"trackDescription": "This is a spectacular 40 mile long hike along the Rogue River in Oregon, known as the \"Wild and Scenic Rogue River Trail.\" It  can be done in four days and three nights spent at lovely river side lodges: Black Bar, Marial and Paradise. The trail starts at Graves Creek bridge, a popular put in location for boaters and ends at Foster Bar. This is a long and quite strenuous hike. <li><a href=\"/?track=T0045\">Day 1</a> - Graves Creek Bridge to Black Bar Lodge</li><li><a href=\"/?track=T0046\">Day 2</a> - Black Bar Lodge to Marial Lodge</li><li><a href=\"/?track=T0047\">Day 3</a> - Marial Lodge to Paradise Lodge</li><li><a href=\"/?track=T0048\">Day 4</a> - Paradise Lodge to Foster Bar\"</li>",
@@ -2130,7 +2130,7 @@
 				"US"
 			],
 			"trackLevel": "Difficult",
-			"trackFav": false,
+			"trackFav": true,
 			"trackGPX": "Jefferson Park.GPX",
 			"trackName": "Jefferson Park, Oregon",
 			"trackDescription": "A classic Oregon hike to the most beautiful meadows next to Mount Jefferson. It is a long and strenuous day hike. It would also make a fantastic backpacking trek.",
@@ -2348,6 +2348,35 @@
 		},
 		"T0133": {
 			"trackId": "T0133",
+			"wikiLocId": "249904",
+			"trackLatLng": [
+				-31.3520295,
+				-64.5987621
+			],
+			"trackRegionTags": [
+				"Argentina"
+			],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Poza Del Indio.GPX",
+			"trackName": "Poza Del Indio, Cordoba, Argentina",
+			"trackDescription": "Easy hike to a delicious swimming hole in the Tanti river in Cordoba, Argentina.",
+			"hasPhotos": false
+		},
+		"T0134": {
+			"trackId": "T0134",
+			"wikiLocId": "",
+			"trackLatLng": [],
+			"trackRegionTags": [],
+			"trackLevel": "",
+			"trackFav": false,
+			"trackGPX": "",
+			"trackName": "",
+			"trackDescription": "",
+			"hasPhotos": false
+		},
+		"T0135": {
+			"trackId": "T0135",
 			"wikiLocId": "",
 			"trackLatLng": [],
 			"trackRegionTags": [],

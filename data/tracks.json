@@ -1646,7 +1646,8 @@
 				-121.73619797453284
 			],
 			"trackRegionTags": [
-				"Oregon"
+				"Oregon",
+				"US"
 			],
 			"trackLevel": "Moderate",
 			"trackFav": true,
@@ -2349,14 +2350,43 @@
 		"T0133": {
 			"trackId": "T0133",
 			"wikiLocId": "249904",
-			"trackLatLng": [-31.3520295, -64.5987621],
-			"trackRegionTags": ["Argentina"],
+			"trackLatLng": [
+				-31.3520295,
+				-64.5987621
+			],
+			"trackRegionTags": [
+				"Argentina"
+			],
 			"trackLevel": "Easy",
 			"trackFav": false,
 			"trackGPX": "Poza Del Indio.GPX",
 			"trackName": "Poza Del Indio, Cordoba, Argentina",
 			"trackDescription": "Easy hike to a delicious swimming hole in the Tanti river in Cordoba, Argentina.",
 			"hasPhotos": false
+		},
+		"T0134": {
+			"trackId": "T0134",
+			"wikiLocId": "",
+			"trackLatLng": [45.828537968918681, -123.961054813116789],
+			"trackRegionTags": ["Oregon", "US"],
+			"trackLevel": "Easy",
+			"trackFav": false,
+			"trackGPX": "Low Tide Hug Point to Cannon Beach.GPX",
+			"trackName": "Low Tide Around Hug Point and Cannon Beach, Oregon",
+			"trackDescription": "This is a nice and easy walk in the Oregon coast, starting at Hug Point State Park and ending at the town of Cannon Beach. It should be done at low tide to be able to go around some tight spots that are impassable in high tide. This walk offers waterfalls, tide pools, haystack rocks and wide open sandy beaches. Definitely worthwhile doing. You need to arrange a car shuttle between the start and end point of the walk.",
+			"hasPhotos": true
+		},
+		"T0135": {
+			"trackId": "T0135",
+			"wikiLocId": "",
+			"trackLatLng": [44.821527153253555, -122.134780269116163],
+			"trackRegionTags": ["Oregon", "US"],
+			"trackLevel": "Moderate",
+			"trackFav": true,
+			"trackGPX": "Battle Ax Mt.GPX",
+			"trackName": "Battle Ax Mountain Loop, near Detroit, Oregon",
+			"trackDescription": "This is a spectacular loop hike in the remote Bull of the Woods Wilderness area. The trail climbs up to the top of Battle Ax Mountain, from which incredible 360 views of the Oregon Cascades can be enjoyed, the most prominent being Mount Jefferson to the east. There are also excellent views of Elk Lake below The way down starts by walking north on top of the Battle Ax Mountin ridge which feels almost like a catwalk with views on both sides, east and west, then it descends to the east valley below to join the Bagby Hot Springs trail and passing through a beautiful old forest,  interesting rockpiles (talus slopes), and a couple of nice ponds.",
+			"hasPhotos": true
 		}
 	}
 }
