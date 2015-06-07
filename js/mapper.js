@@ -13,23 +13,50 @@ var tmMap = {
 		// Add layer control
 		var layerControl = L.control.layers(null, null, {position: 'topleft', collapsed: true}).addTo(map);
 
+		// Set up spinner control
+		var spinnerControl = L.control({position: 'bottomright'});
+		spinnerControl.onAdd = function () {
+			var spinnerControlContainer = L.DomUtil.create('div', 'spinnerControlContainer');
+			return spinnerControlContainer;
+		};
+		spinnerControl.addTo(map);
+
+		// Set up spinner handler
+		var spinHandler = function (e) {
+			if (e.type === 'loading') {
+				$('.spinnerControlContainer').spin();
+			} else {
+				$('.spinnerControlContainer').spin(false);
+			}	
+		}; 
+
+		// Set up zoom check handler (so that we do not end up with more zoom than what is available)
+		var baseLayerChangeHandler = function () {
+			var maxZoom = map.getMaxZoom();
+			if (map.getZoom() > maxZoom) {
+				map.setZoom(maxZoom);
+			}
+		};
+		map.on('baselayerchange', baseLayerChangeHandler);
+
 		// Populate basemap layers from JSON config file
 		tmConfig.getLayers(function(data) {
-			console.log(status);
-
 			var layerArray = data.layers;
 
 			// Iterate through list of base layers and add to layer control
 			for (var k=0; k<layerArray.length; k++) {
-				var bl = new L.TileLayer(layerArray[k].layerUrl, {minZoom: 1, maxZoom: layerArray[k].maxZoom, attribution: layerArray[k].attribution, ext: 'png'});
+				var bl = L.tileLayer(layerArray[k].layerUrl, {minZoom: 1, maxZoom: layerArray[k].maxZoom, attribution: layerArray[k].attribution, ext: 'png'});
 				layerControl.addBaseLayer(bl, layerArray[k].layerName);
+				// Wire the spinner handlers
+				bl.on('loading', spinHandler);
+				bl.on('load', spinHandler);
+
 				// First layer is the one displayed by default
 				if (k === 0) {
 					map.addLayer(bl);
 				}
 			}
 		});
-
 
 		// Add scale
 		L.control.scale({position: 'bottomleft'}).addTo(map);
@@ -40,11 +67,11 @@ var tmMap = {
 		// map.setView([45.52, -122.6819], 3);
 		$('#infoPanelContainer').hide();
 
-		var trackMarkersLayerGroup = new L.MarkerClusterGroup();
+		var trackMarkersLayerGroup = L.markerClusterGroup();
 
 		for (var tId in tracks) {
 			var m = L.marker(tracks[tId].trackLatLng, {icon: L.MakiMarkers.icon({icon: 'pitch', color: TRAIL_MARKER_COLOR, size: 'm'})});
-			m.bindPopup('<a href="/?track=' + tId + '">' + tracks[tId].trackName + '</a>');
+			m.bindPopup('<a href="?track=' + tId + '">' + tracks[tId].trackName + '</a>');
 			trackMarkersLayerGroup.addLayer(m);
 		}
 		if (region) {
@@ -91,11 +118,11 @@ var tmMap = {
 		}
 		sortedRegions.sort();
 
-		$('#goto-menu').append('<li><a href="/">World (' + nWorld + ' tracks)</a></li>');
+		$('#goto-menu').append('<li><a href=".">World <span class="badge pull-right">' + nWorld + '</span></a></li>');
 		$('#goto-menu').append('<li class="divider"></li>');
 		for (var i=0; i< sortedRegions.length; i++) {
-			$('#goto-menu').append('<li><a href="/?region=' + encodeURIComponent(sortedRegions[i]) + '">' +
-									 sortedRegions[i] + ' (' + regions[sortedRegions[i]].n +')</a></li>');
+			$('#goto-menu').append('<li><a href="?region=' + encodeURIComponent(sortedRegions[i]) + '">' +
+									 sortedRegions[i] + '<span class="badge pull-right">' + regions[sortedRegions[i]].n +'</span></a></li>');
 		}
 		return regions;
 	},
