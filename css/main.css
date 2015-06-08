@@ -35,9 +35,6 @@ body {
 } 
 
 .modal-dialog {
-  width: 70%;
-  overflow-y: auto;
-  cursor: default;
   opacity: 0.8;
 }
 

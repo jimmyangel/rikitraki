@@ -14,7 +14,7 @@
 			"trackFav": true,
 			"trackGPX": "AbelTasman.GPX",
 			"trackName": "Abel Tasman Coast Track, Anchorage Bay to Marahau, New Zealand",
-			"trackDescription": "This hike is the south segment of the Abel Tasman Coast Track, in the National Park of the same name. Take a water taxi from Marahau to Anchorage Bay and return by foot, visiting Pitt Head and Te Pukatea Bay first. This is a beautiful hike along the Abel Tasman coastline with wonderful vegetation, incredible views of the coast and truly amazing beaches.",
+			"trackDescription": "This hike is the south segment of the Abel Tasman Coast Track, in the National Park of the same name. Take a <a href=\"?track=T0009\">water taxi</a> from Marahau to Anchorage Bay and return by foot, visiting Pitt Head and Te Pukatea Bay first. This is a beautiful hike along the Abel Tasman coastline with wonderful vegetation, incredible views of the coast and truly amazing beaches.",
 			"hasPhotos": true
 		},
 		"T0002": {
@@ -152,7 +152,7 @@
 			"trackFav": false,
 			"trackGPX": "Abel Tasman Water Taxi.GPX",
 			"trackName": "Abel Tasman Water Taxi, Marahau to Anchorage Bay, New Zealand",
-			"trackDescription": "This is the water taxi ride from Marahau to Anchorage bay in order to start the south segment of the Abel Tasman Coast Track posted <a href=\"/?track=T0001\">here</a>. The water taxi makes a stop at the famous Split Apple, before heading towards Anchorage Bay.",
+			"trackDescription": "This is the water taxi ride from Marahau to Anchorage bay in order to start the south segment of the Abel Tasman Coast Track posted <a href=\"?track=T0001\">here</a>. The water taxi makes a stop at the famous Split Apple, before heading towards Anchorage Bay.",
 			"hasPhotos": true
 		},
 		"T0010": {
@@ -292,7 +292,7 @@
 			"trackFav": true,
 			"trackGPX": "Wy'East Basin.GPX",
 			"trackName": "Wy'East Basin, near Welches, Oregon",
-			"trackDescription": "This a shorter version of the <a href=\"/?track=T0041\">Cairn Basin</a> trail, just to reach the beautiful meadow called Wy'East basin. Plenty of wildflowers to enjoy and clear cold water coming from snow melting nearby. Ah, and some delicious huckleberries along the way too (at the right time of the year).",
+			"trackDescription": "This a shorter version of the <a href=\"?track=T0041\">Cairn Basin</a> trail, just to reach the beautiful meadow called Wy'East basin. Plenty of wildflowers to enjoy and clear cold water coming from snow melting nearby. Ah, and some delicious huckleberries along the way too (at the right time of the year).",
 			"hasPhotos": true
 		},
 		"T0018": {
@@ -771,7 +771,7 @@
 			"trackFav": true,
 			"trackGPX": "Rogue River Trail.GPX",
 			"trackName": "Rogue River Trail, near Galice, Oregon",
-			"trackDescription": "This is a spectacular 40 mile long hike along the Rogue River in Oregon, known as the \"Wild and Scenic Rogue River Trail.\" It  can be done in four days and three nights spent at lovely river side lodges: Black Bar, Marial and Paradise. The trail starts at Graves Creek bridge, a popular put in location for boaters and ends at Foster Bar. This is a long and quite strenuous hike. <li><a href=\"/?track=T0045\">Day 1</a> - Graves Creek Bridge to Black Bar Lodge</li><li><a href=\"/?track=T0046\">Day 2</a> - Black Bar Lodge to Marial Lodge</li><li><a href=\"/?track=T0047\">Day 3</a> - Marial Lodge to Paradise Lodge</li><li><a href=\"/?track=T0048\">Day 4</a> - Paradise Lodge to Foster Bar\"</li>",
+			"trackDescription": "This is a spectacular 40 mile long hike along the Rogue River in Oregon, known as the \"Wild and Scenic Rogue River Trail.\" It  can be done in four days and three nights spent at lovely river side lodges: Black Bar, Marial and Paradise. The trail starts at Graves Creek bridge, a popular put in location for boaters and ends at Foster Bar. This is a long and quite strenuous hike. <li><a href=\"?track=T0045\">Day 1</a> - Graves Creek Bridge to Black Bar Lodge</li><li><a href=\"?track=T0046\">Day 2</a> - Black Bar Lodge to Marial Lodge</li><li><a href=\"?track=T0047\">Day 3</a> - Marial Lodge to Paradise Lodge</li><li><a href=\"?track=T0048\">Day 4</a> - Paradise Lodge to Foster Bar\"</li>",
 			"hasPhotos": true
 		},
 		"T0045": {
@@ -789,7 +789,7 @@
 			"trackFav": true,
 			"trackGPX": "Rogue River Day 1.GPX",
 			"trackName": "Rogue River Trail - Day 1, near Galice, Oregon",
-			"trackDescription": "This is day one of the <a href=\"/?track=T0044\">Wild and Scenic Rogue River</a> trail. Starts at Graves Creek Bridge and ends at the Black Bar Lodge. River crossing is necessary and it is provided by the lodge operator as part of accommodations. The first day (10 miles) of the 40 mile hike is long and strenuous.",
+			"trackDescription": "This is day one of the <a href=\"?track=T0044\">Wild and Scenic Rogue River</a> trail. Starts at Graves Creek Bridge and ends at the Black Bar Lodge. River crossing is necessary and it is provided by the lodge operator as part of accommodations. The first day (10 miles) of the 40 mile hike is long and strenuous.",
 			"hasPhotos": true
 		},
 		"T0046": {
@@ -807,7 +807,7 @@
 			"trackFav": true,
 			"trackGPX": "Rogue River Day 2.GPX",
 			"trackName": "Rogue River Trail - Day 2, near Galice, Oregon",
-			"trackDescription": "This is day two of the <a href=\"/?track=T0044\">Wild and Scenic Rogue River</a> trail. Starts at Black Bar Lodge and ends at the Marial Lodge. River crossing is necessary and it is provided by the lodge operator as part of accommodations. The second day (16 miles) of the 40 mile hike is quite long and very strenuous.",
+			"trackDescription": "This is day two of the <a href=\"?track=T0044\">Wild and Scenic Rogue River</a> trail. Starts at Black Bar Lodge and ends at the Marial Lodge. River crossing is necessary and it is provided by the lodge operator as part of accommodations. The second day (16 miles) of the 40 mile hike is quite long and very strenuous.",
 			"hasPhotos": true
 		},
 		"T0047": {
@@ -825,7 +825,7 @@
 			"trackFav": true,
 			"trackGPX": "Rogue River Day 3.GPX",
 			"trackName": "Rogue River Trail - Day 3, near Galice, Oregon",
-			"trackDescription": "This is day three of the <a href=\"/?track=T0044\">Wild and Scenic Rogue River</a> trail. Starts at Marial Lodge and ends at Paradise Lodge. This is the most beautiful stretch of the trail with Mule Creek Canyon and the Blossom Bar being the best parts. The third day (4 miles) of the 40 mile hike is a pleasant and relatively leisurely walk. There are a couple of frigid swimming holes along the way.",
+			"trackDescription": "This is day three of the <a href=\"?track=T0044\">Wild and Scenic Rogue River</a> trail. Starts at Marial Lodge and ends at Paradise Lodge. This is the most beautiful stretch of the trail with Mule Creek Canyon and the Blossom Bar being the best parts. The third day (4 miles) of the 40 mile hike is a pleasant and relatively leisurely walk. There are a couple of frigid swimming holes along the way.",
 			"hasPhotos": true
 		},
 		"T0048": {
@@ -840,10 +840,10 @@
 				"US"
 			],
 			"trackLevel": "Difficult",
-			"trackFav": false,
+			"trackFav": true,
 			"trackGPX": "Rogue River Day 4.GPX",
 			"trackName": "Rogue River Trail - Day 4, near Galice, Oregon",
-			"trackDescription": "This is day four of the <a href=\"/?track=T0044\">Wild and Scenic Rogue River</a> trail. Starts at Paradise Lodge and ends at the Foster Bar boat ramp and parking area. The fourth day (12 miles) of the 40 mile hike is relatively strenuous. At about 2/3rds of the way there is an excellent swimming hole at a cold creek with a waterfall called Flora Dell -- not to be missed for a cool refreshing dip before the end of this long hike.",
+			"trackDescription": "This is day four of the <a href=\"?track=T0044\">Wild and Scenic Rogue River</a> trail. Starts at Paradise Lodge and ends at the Foster Bar boat ramp and parking area. The fourth day (12 miles) of the 40 mile hike is relatively strenuous. At about 2/3rds of the way there is an excellent swimming hole at a cold creek with a waterfall called Flora Dell -- not to be missed for a cool refreshing dip before the end of this long hike.",
 			"hasPhotos": true
 		},
 		"T0049": {
@@ -1635,7 +1635,7 @@
 			"trackFav": false,
 			"trackGPX": "cooper-spur-trail-unfinished-mt-hood-oregon.gpx",
 			"trackName": "Cooper Spur Trail (unfinished), Mt Hood, Oregon",
-			"trackDescription": "This is the highest trail on Mt. Hood that doesn't require climbing. Incredible views of Elliot glacier from above. Didn't make it all the way due to snowed-in trail and extremely windy conditions. <a href=\"/?track=T0059\">Here</a> is the full trail.",
+			"trackDescription": "This is the highest trail on Mt. Hood that doesn't require climbing. Incredible views of Elliot glacier from above. Didn't make it all the way due to snowed-in trail and extremely windy conditions. <a href=\"?track=T0059\">Here</a> is the full trail.",
 			"hasPhotos": true
 		},
 		"T0093": {
@@ -1814,7 +1814,7 @@
 			"trackFav": false,
 			"trackGPX": "Crabtree Lake.GPX",
 			"trackName": "Crabtree Lake Trail, Sweet Home, Oregon",
-			"trackDescription": "In this easy hike you can visit the oldest trees in Oregon -- some are supposed to be over 1,000 years old. It is an old growth oasis surrounded by logging patches. Beautiful. I found this trail <a href=\"http://www.portlandhikersfieldguide.org/wiki/Crabtree_Valley_Hike\" target=\"_blank\"> here</a> looking for an old growth forest walk: . To get to the trailhead, follow <a href=\"/?track=T0103\"> this</a> track from Sweet Home.",
+			"trackDescription": "In this easy hike you can visit the oldest trees in Oregon -- some are supposed to be over 1,000 years old. It is an old growth oasis surrounded by logging patches. Beautiful. I found this trail <a href=\"http://www.portlandhikersfieldguide.org/wiki/Crabtree_Valley_Hike\" target=\"_blank\"> here</a> looking for an old growth forest walk: . To get to the trailhead, follow <a href=\"?track=T0103\"> this</a> track from Sweet Home.",
 			"hasPhotos": true
 		},
 		"T0103": {
@@ -1833,7 +1833,7 @@
 			"trackFav": false,
 			"trackGPX": "Road to Crabtree Lake Trailhead.GPX",
 			"trackName": "Road to Crabtree Lake, Sweet Home, Oregon",
-			"trackDescription": "Since it may be a bit tricky to get to <a href=\"/?track=T0102\"> this</a> trailhead, I am posting the track to get there starting from Sweet Home. ",
+			"trackDescription": "Since it may be a bit tricky to get to <a href=\"?track=T0102\"> this</a> trailhead, I am posting the track to get there starting from Sweet Home. ",
 			"hasPhotos": false
 		},
 		"T0104": {
@@ -1975,7 +1975,7 @@
 			"trackFav": false,
 			"trackGPX": "Road to Valley of the Giants.GPX",
 			"trackName": "Road to Valley of the Giants, Falls City, Oregon",
-			"trackDescription": "Tricky road to the trailhead of the <a href=\"/?track=T0110\">Valley of the Giants</a>. It is easy to get lost in the maze of logging roads in this area, so I posted this track for reference.",
+			"trackDescription": "Tricky road to the trailhead of the <a href=\"?track=T0110\">Valley of the Giants</a>. It is easy to get lost in the maze of logging roads in this area, so I posted this track for reference.",
 			"hasPhotos": false
 		},
 		"T0112": {

@@ -11,7 +11,8 @@
     "Leaflet.MakiMarkers": "~1.0.1",
     "leaflet.markercluster": "git://github.com/Leaflet/Leaflet.markercluster#master",
     "lightbox": "git://github.com/jimmyangel/lightbox2#master",
-    "spin.js": "~2.3.0"
+    "spin.js": "~2.3.0",
+    "jquery-stupid-table": "~1.0.1"
   },
   "resolutions": {
     "leaflet": "0.7.x"

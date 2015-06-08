@@ -58,8 +58,35 @@
       </div>
     </div>
 
+    <div class="modal fade" id="tracksModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 class="modal-title">Track List</h3>
+            <input type="text" class="form-control" id="tracksSearch" placeholder="Search..." />
+          </div>
+          <div>
+            <table id="tracksTable" class="table table-condensed table-hover">
+              <thead>
+                 <tr>
+                  <th data-sort="string" data-sort-default="desc">&#10029;</th>
+                  <th data-sort="string">Track</th>
+                  <th data-sort="string">Difficulty</th>
+                  <th data-sort="string">Region</th>
+                  <th style="display:none">TrackId</th>
+                </tr>
+             </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -97,6 +124,7 @@
                   <li><a href="http://lokeshdhakar.com/projects/lightbox2/" target="_blank">Lightbox2</a> to display pictures and slideshow</li>
                   <li><a href="https://github.com/mapbox/leaflet-omnivore" target="_blank">Omnivore</a> plug-in to consume GPS tracks in .GPX format</li>
                   <li><a href="http://spin.js.org/" target="_blank">spin.js</a> spinning activity indicator</li>
+                  <li><a href="http://joequery.github.io/Stupid-Table-Plugin/" target="_blank">Stupid-table-plugin</a> super simple table sort plug-in</li>
                   <li><a href="http://publicdomainvectors.org/" target="_blank">publicdomainvectors.org</a> public domain icons</li>
                </ul>
               <b>Base maps:</b>
@@ -127,6 +155,7 @@
     <script src="bower_components/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
     <script src="bower_components/lightbox/js/lightbox.js"></script>
     <script src="bower_components/spin.js/spin.js"></script>
+    <script src="bower_components/jquery-stupid-table/stupidtable.min.js"></script>
     <!-- endbower -->
     <!-- build: use this block later with processhtml to prepare dist -->
     <script src="bower_components/spin.js/jquery.spin.js"></script>    
