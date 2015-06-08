@@ -10,6 +10,12 @@ var FAVORITE = '&#10029;';
 
 var tmMap = {
 	setUpCommon: function () {
+		// Handle the about box
+		$('#about-btn').click(function() {
+		  $('#aboutModal').modal('show');
+		  return false;
+		});
+
 		// Add layer control
 		var layerControl = L.control.layers(null, null, {position: 'topleft', collapsed: true}).addTo(map);
 
@@ -61,6 +67,54 @@ var tmMap = {
 		// Add scale
 		L.control.scale({position: 'bottomleft'}).addTo(map);
 		return layerControl; // We will need this later
+	},
+	setUpTracksMenu: function (tracks) {
+		// Populate tracks dialog box
+		for (var tId in tracks) {
+			$('#tracksTable').append('<tr><td>' + (tracks[tId].trackFav ? FAVORITE : '') + 
+									'</td><td>' + tracks[tId].trackName + 
+									'</td><td>' + tracks[tId].trackLevel + 
+									'</td><td>' + tracks[tId].trackRegionTags + 
+									'</td><td style="display:none">' + tId +
+									'</td></tr>');
+		}
+
+		// Handle the search box
+		// Trap the key up event
+		$('#tracksSearch').keyup(function() {
+			var _this = this;
+			// Show only matching TR, hide rest of them
+			$.each($('#tracksTable tbody').find('tr'), function() {
+				if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1) {
+					$(this).hide();
+				} else {
+					$(this).show();                
+				}
+			});
+		});	
+
+		// Stupid table sort
+		var $table = $('#tracksTable').stupidtable();
+		// Default sort is by track name
+		var thToSort = $table.find('thead th').eq(1);
+		thToSort.stupidsort();
+
+		// Handle row click
+		$('#tracksTable tr').click(function() {
+			var t = $(this).find('td').eq(4).html();
+			if (t) { //Ignore header, which should be undefined
+				window.location.href='?track=' + t;
+			}
+		});
+
+		// Handle the tracks box
+		$('#tracks-btn').click(function() {
+		  $('#tracksModal').modal('show');
+		  return false;
+		});
+
+	
+
 	},
 	setUpAllTracksView: function(tracks, region) {
 
@@ -176,7 +230,7 @@ var tmMap = {
 	    	var tLatLngs = tl.getLayers()[0].getLatLngs();
 	        var trailIcon = L.MakiMarkers.icon({icon: 'pitch', color: TRAIL_MARKER_COLOR, size: 'm'});
 	        var marker = L.marker(tLatLngs[0], {icon: trailIcon}).addTo(map);
-	        marker.bindPopup('Trailhead');
+	        marker.bindPopup('<a href="https://www.google.com/maps/dir//' + tLatLngs[0].lat + ',' + tLatLngs[0].lng + '/" target="_blank">' + 'Trailhead' + '</a>');
 
 			// Set up info panel control 
 			var infoPanelContainer = L.DomUtil.create('div', 'info infoPanelContainer');

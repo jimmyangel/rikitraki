@@ -3,12 +3,6 @@
 // The below is to stop jshint barking at undefined variables
 /* globals L, tmConfig, tmMap, tmData */
 
-// Handle the about box
-$('#about-btn').click(function() {
-  $('#aboutModal').modal('show');
-  return false;
-});
-
 // The map is global
 var map;
 
@@ -27,6 +21,9 @@ function setUpMap() {
 
 		// Set up goto menu and grab regions data structure
 		var regions = tmMap.setUpGotoMenu(data.tracks);
+
+		// Set up tracks menu
+		tmMap.setUpTracksMenu(data.tracks);
 
 		// If we do not have a (valid) track id in the query parameter, then go for all tracks
 		if (!(trackId in data.tracks)) {
