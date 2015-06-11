@@ -19,6 +19,18 @@
 				"picThumb": "thumb295860_full.jpg",
 				"picLatLng": [36.94032, -3.33000],
 				"picCaption": "A little town in Las Alpujarras"
+			},
+			{
+				"picName": "IMG_4870.JPG",
+				"picThumb": "thumbIMG_4870.JPG",
+				"picLatLng": [36.93138, -3.32223],
+				"picCaption": "Near Mecina"
+			},
+			{
+				"picName": "IMG_4881.JPG",
+				"picThumb": "thumbIMG_4881.JPG",
+				"picLatLng": [36.92560, -3.32180],
+				"picCaption": "Fuente de Fondales"
 			}
 		]
 	}
