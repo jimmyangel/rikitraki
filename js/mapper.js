@@ -182,13 +182,18 @@ var tmMap = {
 	},
 	setUpSingleTrackView: function(track, layerControl) {
 		var trackMetrics;
-		// Create the elevation control first
+
+		// If region is US, we use imperial units
+		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
+
+		// Create the elevation control first	
 		var el = L.control.elevation({
 			position: 'bottomleft',
 			theme: 'blackwhite-theme',
 			width: 400,
 			height: 125,
-			collapsed: true
+			collapsed: true,
+			imperial: imperial
 		});
 		el.addTo(map);	
 
@@ -210,16 +215,27 @@ var tmMap = {
 		var tl = omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null, customLayer).on('ready', function() {
 			// Change the default icon for waypoints
 	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: WAYPOINT_COLOR, size: 's'});
-	        // Now let's customize the popups
+	        var trackDate = 'Not Available'; // By default
+	        // Now let's iterate over the features to customize the popups and get some data (e.g., track date)
 			this.eachLayer(function (layer) {
 				layer.bindPopup(layer.feature.properties.name, {maxWidth: 200});
 				// Hey since we are iterating through features, we may as well get the track distance and elevation gain
 				if (layer.feature.geometry.type === 'LineString') {
 					trackMetrics = tmUtils.calculateTrackMetrics(layer.feature);
+					// Grab the date for later, if available
+					if (layer.feature.properties.time) {
+						trackDate = new Date(layer.feature.properties.time).toString();
+					}
 				}
 				// Set the icon for Point markers
 		    	if (layer.feature.geometry.type === 'Point'){
 		    		layer.setIcon(wpIcon);
+		    		// If date not available from the LineString, try from one of the waypoints
+		    		if (trackDate === 'Not Available') {
+		    			if (layer.feature.properties.time) {
+		    				trackDate = new Date(layer.feature.properties.time).toString();
+		    			}
+		    		}
 		    	}
 			});
 			// Fit th map to the trail boundaries
@@ -241,16 +257,14 @@ var tmMap = {
 
 			var infoPanel = L.control({position: 'topright'});
 			infoPanel.onAdd = function () {
-				var fav = '';
-				if (track.trackFav) {
-					fav = FAVORITE;
-				}
-				infoPanelTitle.innerHTML = '<b>' + track.trackName + ' ' + fav + '</b>';
+				infoPanelTitle.innerHTML = '<b>' + track.trackName + ' ' + (track.trackFav ? FAVORITE : '') + '</b>';
 				infoPanelDescription.innerHTML = '<hr><b>' + track.trackLevel + '</b><br>' + 
-									' <b>Length:</b> ' + trackMetrics[0] + 'km - <b>Elevation Gain:</b> ' + trackMetrics[1] + 'm' + 
-									' <b>Max Elevation:</b> ' + trackMetrics[2] + 'm' + 
-									' <b>Min Elevation:</b> ' + trackMetrics[3] + 'm' +
-									'<br><b>Region:</b> ' + track.trackRegionTags + '<hr>' + track.trackDescription + '<hr>' +
+									' <b>Length:</b> ' + (imperial ? ((Math.round(trackMetrics[0] * 62.1371) / 100) + 'mi') : (trackMetrics[0] + 'km')) +
+									' - <b>Elevation Gain:</b> ' + (imperial ? ((Math.round(trackMetrics[1] * 3.28084)) + 'ft') : (trackMetrics[1] + 'm')) + 
+									' <b>Max Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[2] * 3.28084)) + 'ft') : (trackMetrics[2] + 'm')) + 
+									' <b>Min Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[3] * 3.28084)) + 'ft') : (trackMetrics[3] + 'm')) +
+									'<br><b>Region:</b> ' + track.trackRegionTags + '<br><b>Date Recorded:</b> ' + trackDate +  
+									'<hr>' + track.trackDescription + '<hr>' +
 									'<a href="data/' + track.trackId + '/gpx/' + track.trackGPX + '" download>Download GPS track</a>'; 
 				
 				// Populate photos
@@ -265,14 +279,16 @@ var tmMap = {
 						for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
 							slideShowContainer.innerHTML += '<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName +
 												  '" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
-												  '><img class="infoThumbs" src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" /></a>';
+												  '><img class="infoThumbs" geoTagXRef="' + k + 
+												  '" src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" /></a>';
 
 							// If we have geotags, go ahead and place them on thumbnail photo markers
 							if (data.geoTags.trackPhotos[k].picLatLng) {
 								haveGeoTags = true;
 								var img ='<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
 										 '" data-lightbox="picture" data-title="' + data.geoTags.trackPhotos[k].picCaption +
-										 '" ><img src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
+										 '" ><img geoTagRef="' + k + '" src="data/' + track.trackId + 
+										 '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
 								var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
 									clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
 									icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
@@ -284,7 +300,17 @@ var tmMap = {
 						if (haveGeoTags) {
 							photoLayerGroup.addTo(map);
 							layerControl.addOverlay(photoLayerGroup, 'Show track photos');
-						}
+						}						
+
+						// Highlight geolocated thumbnail associated with hovered picture in info panel
+						$('.slideShowContainer img').hover(
+							function() {
+								$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', '#f00');
+							},
+							function() {
+								$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', '#fff');
+							}
+						);
 
 					}, function(jqxhr, textStatus) {console.log(textStatus);}); // For now, ignore errors looking for the geotags files
 				}
@@ -292,6 +318,7 @@ var tmMap = {
 			};
 
 			infoPanel.addTo(map);
+
 
 			// Enable proper info panel scrolling by adjusting max-height dynamically
 			// The 80 is to cover the bootstrap banner and the attribution at the bottom
@@ -342,7 +369,5 @@ var tmMap = {
 				); 						
 			}
 		}).addTo(map);
-
-
 	}
 };
