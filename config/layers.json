@@ -24,6 +24,12 @@
 			"layerUrl": "http://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
 			"attribution": "<a href=\"http://www.doi.gov\">U.S. Department of the Interior</a> | <a href=\"http://www.usgs.gov\">U.S. Geological Survey</a> | <a href=\"http://www.usgs.gov/laws/policies_notices.html\">Policies</a>",
 			"maxZoom": 15
+		},
+		{
+			"layerName": "ArcGIS USA Topo Maps",
+			"layerUrl": "http://services.arcgisonline.com/arcgis/rest/services/USA_Topo_Maps/MapServer/tile/{z}/{y}/{x}",
+			"attribution": "Esri, DeLorme, FAO, USGS, NOAA, EPA | Copyright:© 2013 National Geographic Society, i-cubed",
+			"maxZoom": 15
 		}
 	]
 }

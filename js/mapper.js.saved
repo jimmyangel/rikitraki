@@ -1,12 +1,12 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmMap */
-/* globals L, omnivore, tmConfig, tmData, tmUtils, map, FB */
+/* globals L, omnivore, tmConfig, tmData, tmUtils, map */
 
 var TRAIL_MARKER_COLOR = '7A5C1E';
 var WAYPOINT_COLOR = '#3887BE';
 var TRACK_COLOR = '#8D6E27';
-var INSIDE_TRACK_COLOR = '#EBEB00';
+var INSIDE_TRACK_COLOR = '#EBEB00'
 var SELECTED_THUMBNAIL_COLOR = '#00FF00';
 var FAVORITE = '&#10029;';
 
@@ -140,12 +140,20 @@ var tmMap = {
 		}
 
 		// Set up twitter and facebook links
-		tmMap.setUpSocialButtons('Check out hiking trails on RikiTraki');
+		$('.btn-twitter').attr('href', 'https://twitter.com/intent/tweet?text=Check out RikiTraki&url=' + window.location.href + '&via=jimmieangel' + '&hashtags=rikitraki');
+		$('#fb-btn').click(function() {
+			FB.ui({
+				method: 'feed',
+				link: 'http://rikitraki.com',
+				caption: 'Check out RikiTraki',
+			}, function(response){});
+		  return false;
+		});
 	},
 	setUpMarkersForAllTracks: function(tracks, trackId) {
 		var trackMarkersLayerGroup = L.markerClusterGroup();
 		for (var tId in tracks) {
-			if (tId !== trackId) {
+			if (tId != trackId) {
 				var m = L.marker(tracks[tId].trackLatLng, {icon: L.MakiMarkers.icon({icon: 'marker-stroked', color: TRAIL_MARKER_COLOR, size: 'm'})});
 				m.bindPopup('<a href="?track=' + tId + '">' + tracks[tId].trackName + '</a>');
 				trackMarkersLayerGroup.addLayer(m);
@@ -241,14 +249,16 @@ var tmMap = {
 			// Change the default icon for waypoints
 	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: WAYPOINT_COLOR, size: 's'});
 	        var trackDate = 'Not Available'; // By default
-	        // var trackCoordinates;
+	        var trackCoordinates;
 	        // Now let's iterate over the features to customize the popups and get some data (e.g., track date)
 			this.eachLayer(function (layer) {
 				layer.bindPopup(layer.feature.properties.name, {maxWidth: 200});
 				// Hey since we are iterating through features, we may as well get the track distance, elevation gain and other track useful info
 				if (layer.feature.geometry.type === 'LineString') {
+					// Save the track coordinates for later to check if any of them are obscured by the info box
+					trackCoordinates = layer.feature.geometry.coordinates; 
 					trackMetrics = tmUtils.calculateTrackMetrics(layer.feature);
-					// Grab the recorded date, if available
+					// Grab the date for later, if available
 					if (layer.feature.properties.time) {
 						trackDate = new Date(layer.feature.properties.time).toString();
 					}
@@ -264,9 +274,8 @@ var tmMap = {
 		    		}
 		    	}
 			});
-			// Fit th map to the trail boundaries leaving 50% room for the info panel
-	    	// map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]}); 
-	    	// map.fitBounds(tl.getBounds(), {maxZoom: map.getBoundsZoom(tl.getBounds())-1, paddingBottomRight: [($('#map').width())*.5, 0]}); 
+			// Fit th map to the trail boundaries
+	    	map.fitBounds(tl.getBounds()); 
 	    	// map.setZoom(map.getBoundsZoom(tl.getBounds())-1); // For some reason this has a glitch on iPad
 
 	    	// Go ahead and draw the inside line (thinner and bright color like white)
@@ -282,6 +291,9 @@ var tmMap = {
 	        var marker = L.marker(tLatLngs[0], {zIndexOffset: 1000, icon: L.divIcon({html: '<img src="images/' + thIconName + '.png">'})}).addTo(map);
 	        // Google directions hyperlink
 	        marker.bindPopup('<a href="https://www.google.com/maps/dir//' + tLatLngs[0].lat + ',' + tLatLngs[0].lng + '/" target="_blank">' + 'Google Maps<br>Directions to Trailhead' + '</a>');
+			marker.on('mouseover', function (e) {
+				this.openPopup();
+			});
 
 			// Set up info panel control 
 			var infoPanelContainer = L.DomUtil.create('div', 'info infoPanelContainer');
@@ -292,8 +304,7 @@ var tmMap = {
 
 			var infoPanel = L.control({position: 'topright'});
 			infoPanel.onAdd = function () {
-				infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button>' + 
-											'<b>' + track.trackName + ' ' + (track.trackFav ? FAVORITE : '' + '</b>');
+				infoPanelTitle.innerHTML = '<b>' + track.trackName + ' ' + (track.trackFav ? FAVORITE : '') + '</b>';
 				infoPanelDescription.innerHTML = '<hr><b>' + track.trackLevel + '</b><br>' + 
 									' <b>Length:</b> ' + (imperial ? ((Math.round(trackMetrics[0] * 62.1371) / 100) + 'mi') : (trackMetrics[0] + 'km')) +
 									' - <b>Elevation Gain:</b> ' + (imperial ? ((Math.round(trackMetrics[1] * 3.28084)) + 'ft') : (trackMetrics[1] + 'm')) + 
@@ -323,7 +334,7 @@ var tmMap = {
 							if (data.geoTags.trackPhotos[k].picLatLng) {
 								haveGeoTags = true;
 								var img ='<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
-										 '" data-lightbox="picture' + '" data-title="' + data.geoTags.trackPhotos[k].picCaption +
+										 '" data-lightbox="picture' + k + '" data-title="' + data.geoTags.trackPhotos[k].picCaption +
 										 '" ><img geoTagRef="' + k + '"picLatLng="' + data.geoTags.trackPhotos[k].picLatLng.toString() + '" src="data/' + track.trackId + 
 										 '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
 								var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
@@ -341,14 +352,49 @@ var tmMap = {
 							// Highlight geolocated thumbnail associated with hovered picture in info panel
 							$('.slideShowContainer img').hover(
 								function() {
+									// console.log(map.getPixelBounds());
+									// console.log($('#map').width() - $('.infoPanelContainer').width());
+									// console.log($('#map').height() - $('.infoPanelContainer').height());
+									var panelBounds = L.bounds([[$('#map').width() - $('.infoPanelContainer').width(), 0], 
+									 							[$('#map').width(), $('#map').height() - $('.infoPanelContainer').height()]]);
+									// var panelNW = map.containerPointToLatLng([$('#map').width() - $('.infoPanelContainer').width(), 0]);
+									// var panelSE = map.containerPointToLatLng([$('#map').width(), $('#map').height() - $('.infoPanelContainer').height()]);
+
+									var panelSW = map.containerPointToLatLng([$('#map').width() - $('.infoPanelContainer').width(), $('.infoPanelContainer').height()]);
+									var panelNE = map.containerPointToLatLng([$('#map').width(), 0]);
+									var panelLatLngBounds = L.latLngBounds(panelSW, panelNE);
+									console.log($('.leaflet-marker-photo')[0]);
+									/* for (var coord in trackCoordinates) {
+										console.log (coord[0] + ' ' + coord[1]);
+									} */
+									// console.log(panelLatLngBounds);
+									// console.log(tl.getBounds().intersects(L.latLngBounds(panelSW, panelNE)));
+									// console.log(tl.getBounds().intersects([[500, 500], [510, 510]]));
+									// console.log(tl.getBounds().intersects([[$('#map').width() - $('.infoPanelContainer').width(), 0], 
+									// 										[$('#map').width(), $('#map').height() - $('.infoPanelContainer').height()]]));
 									$(this).css('border-color', SELECTED_THUMBNAIL_COLOR);
 									$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', SELECTED_THUMBNAIL_COLOR);
+									// map.panTo($('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').attr('picLatLng').split(',').map(Number));
 								},
 								function() {
 									$(this).css('border-color', '#fff');
 									$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', '#fff');
 								}
-							);				
+							);
+
+							// If user hovers over geotagged pictures then move the map to the left of the info panel (on non-touch devices)
+							if (!L.Browser.touch) {
+								$('.slideShowContainer').hover(function () {
+									savedMapBounds = map.getBounds();
+									map.fitBounds(tl.getBounds(), {paddingBottomRight: [$('.infoPanelContainer').width(), 0]}); 
+									// map.panBy([$('.infoPanelContainer').width(), 0]); 
+								},
+								function () {
+									map.fitBounds(savedMapBounds); 
+								}
+								);
+							}
+				
 						}
 
 
@@ -359,9 +405,6 @@ var tmMap = {
 
 			infoPanel.addTo(map);
 
-			// Fit th map to the trail boundaries leaving 50% room for the info panel
-	    	map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]}); 
-
 
 			// Enable proper info panel scrolling by adjusting max-height dynamically
 			// The 80 is to cover the bootstrap banner and the attribution at the bottom
@@ -371,66 +414,59 @@ var tmMap = {
     			$('.info').css('max-height', $(window).height()-80);
 			});
 
-			// Stop propagation of some events that the info box needs to handle
+			// Stop propagation of some event that the info box needs to handle
 			$('.infoPanelContainer').bind('mousedown wheel scrollstart touchstart', function(e) {e.stopPropagation();}); 
-    		// L.DomEvent.disableClickPropagation(infoPanelContainer);
+    		L.DomEvent.disableClickPropagation(infoPanelContainer);
 
-    		// By default, info panel is collapsed so close button should be hidden
-    		// $('.infoPanelTitle button').hide();
-
-			// Event handling for expand/collapse on click
-			var showToggle = true;
-			$('.infoPanelTitle').on('click', function(e) {
-				showToggle = tmMap.expandInfoPanel(showToggle, e);
-			});
-			$('.infoPanelTitle button').on('click', function(e) {
-				showToggle = tmMap.collapseInfoPanel(showToggle, e);
-			});
-			$('.infoPanelDescription').on('click', function(e) {
-				e.stopPropagation();
-			});
-			// Close the info panel if clicked (or key pressed) on the map (cannot stop propagation because it breaks lightbox)
-			$('#map').on('click keyup', function(e) {
-				showToggle = tmMap.collapseInfoPanel(showToggle, e, true);
-			});		
-	
+			var showToggle = false;
+			var savedMapBounds;
+			// Toggle for expand/collapse is different on mouse versus touch
+			if (!L.Browser.touch) {
+				// Expand info panel if hovering over title
+				$('.infoPanelContainer').hover(
+					function() {
+						if (!showToggle) {
+							$('.infoPanelBody').show();
+							showToggle = true;
+						}
+					},
+					function() {
+						if (showToggle) {
+							$('.infoPanelBody').hide();
+							showToggle = false;
+						}
+					}
+				);
+			} else {
+				// Also expand on click/touch for touch devices
+				$('.infoPanelContainer').on('click', function() {
+					if (showToggle) {
+						$('.infoPanelBody').hide();
+						showToggle = false;
+					} else {
+						$('.infoPanelBody').show();
+						showToggle = true;
+					}
+				});		
+				$('#map').on('touchstart',
+					function () {
+						if (showToggle) {
+							$('.infoPanelBody').hide();
+							showToggle = false;
+						}
+					}
+				); 						
+			}
 		}).addTo(map);
 
 		// Set up twitter and facebook links and such
-		tmMap.setUpSocialButtons(track.trackName);
-	},
-	expandInfoPanel: function (toggle, e) {
-		e.stopPropagation();
-		if (!toggle) {
-			$('.infoPanelBody').show();
-			$('.infoPanelTitle button').show();
-			$('.infoPanelTitle b').css('cursor', 'text');
-			toggle = true;
-		}
-		return toggle;
-	},
-	collapseInfoPanel: function (toggle, e, propagate) {
-		if (!propagate) {
-			e.stopPropagation();
-		}
-		if (toggle) {
-			$('.infoPanelTitle button').hide();				
-			$('.infoPanelBody').hide();
-			$('.infoPanelTitle b').css('cursor', 'pointer');
-			toggle = false;
-		}
-		return toggle;
-	},
-	setUpSocialButtons: function (text) {
-		// Twitter
-		$('.btn-twitter').attr('href', 'https://twitter.com/intent/tweet?text=' + text + '&url=' + window.location.href + '&via=jimmieangel' + '&hashtags=rikitraki');
-		// Facebook
+		$('.btn-twitter').attr('href', 'https://twitter.com/intent/tweet?text=' + track.trackName + '&url=' + window.location.href + '&via=jimmieangel' + '&hashtags=rikitraki');
 		$('#fb-btn').click(function() {
 			FB.ui({
 				method: 'feed',
-				link: window.location.href,
-				caption: text,
-			}, function(){});
+				link: window.location.href + track.trackId,
+				caption: track.trackName,
+			}, function(response){});
 		  return false;
 		});
 	}
