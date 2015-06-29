@@ -30,12 +30,20 @@ body {
   color: #FFFFFF;
 }
 
+.leaflet-control {
+  opacity: 0.9;
+}
+
 .leaflet-marker-photo { 
   border: 2px solid #fff;
 } 
 
+.leaflet-popup-content-wrapper { 
+  text-align: center;
+} 
+
 .modal-dialog {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .modal-body {
@@ -47,6 +55,7 @@ body {
 }
 
 .dropdown-menu {
+  opacity: 0.9;
   min-width: 300px;
 }
 
@@ -57,7 +66,7 @@ body {
 }
 
 .leaflet-control-layers-expanded {
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 .info {
@@ -68,12 +77,15 @@ body {
   background: rgba(255,255,255,0.8);
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
   border-radius: 5px;
-  opacity: 1;
   overflow: auto;
 }
 
-.infoPanelBody {
+.XXXinfoPanelBody {
   display: none;
+}
+
+.infoPanelTitle {
+  cursor: pointer;
 }
 
 .infoThumbs {

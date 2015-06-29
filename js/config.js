@@ -4,23 +4,22 @@
 
 var tmConfig = {
 	getTrackId: function () {
-		var pos = location.search.search('track=');
-		if (pos === -1) {
-			return '';
-		} else {
-			return location.search.substr(pos+6);
-		}
+		return tmConfig.getUrlVars().track;
 	},
 	getRegion: function () {
-		var pos = location.search.search('region=');
-		if (pos === -1) {
-			return '';
-		} else {
-			return decodeURIComponent(location.search.substr(pos+7));
-		}
+		return decodeURIComponent((tmConfig.getUrlVars().region));
 	},
 	getLayers: function (f) {
 		$.getJSON('config/layers.json', f).fail(function(jqxhr, textStatus, error) {throw error;});
 		return f; //f is the function that is invoked when the data is ready
+	},
+	getUrlVars: function () {
+		var urlVars = [];
+		var varArray = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		for (var i = 0; i < varArray.length; i++) {
+			var urlVar = varArray[i].split('=');
+			urlVars[urlVar[0]] = urlVar[1];
+		}
+		return urlVars;
 	}
 };

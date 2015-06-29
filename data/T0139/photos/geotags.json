@@ -1,0 +1,52 @@
+{
+	"geoTags": {
+		"trackId": "T0139",
+		"trackPhotos": [
+			{
+				"picName": "SAM_4511.jpg",
+				"picThumb": "thumbSAM_4511.jpg",
+				"picLatLng": [
+					44.079107,
+					-118.573658
+				],
+				"picCaption": "Malheur River"
+			},
+			{
+				"picName": "SAM_4514.jpg",
+				"picThumb": "thumbSAM_4514.jpg",
+				"picLatLng": [
+					44.076975,
+					-118.570587
+				],
+				"picCaption": "Some big old firs along the Malheur River"
+			},
+			{
+				"picName": "SAM_4515.jpg",
+				"picThumb": "thumbSAM_4515.jpg",
+				"picLatLng": [
+					44.0768,
+					-118.570275
+				],
+				"picCaption": "Big trees along the Malheur River"
+			},
+			{
+				"picName": "2015-06-24a.jpg",
+				"picThumb": "thumb2015-06-24a.jpg",
+				"picLatLng": [
+					44.068375,
+					-118.5609
+				],
+				"picCaption": "Malheur River"
+			},
+			{
+				"picName": "2015-06-24b.jpg",
+				"picThumb": "thumb2015-06-24b.jpg",
+				"picLatLng": [
+					44.016868,
+					-118.531567
+				],
+				"picCaption": "Climbing out of the canyon"
+			}
+		]
+	}
+}

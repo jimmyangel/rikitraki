@@ -1,0 +1,61 @@
+{
+	"geoTags": {
+		"trackId": "T0138",
+		"trackPhotos": [
+			{
+				"picName": "SAM_4431.jpg",
+				"picThumb": "thumbSAM_4431.jpg",
+				"picLatLng": [
+					44.309811,
+					-118.682166
+				],
+				"picCaption": "Strawberry Lake"
+			},
+			{
+				"picName": "SAM_4444.jpg",
+				"picThumb": "thumbSAM_4444.jpg",
+				"picLatLng": [
+					44.310066,
+					-118.683666
+				],
+				"picCaption": "Strawberry Lake"
+			},
+			{
+				"picName": "SAM_4462.jpg",
+				"picThumb": "thumbSAM_4462.jpg",
+				"picLatLng": [
+					44.294203,
+					-118.687223
+				],
+				"picCaption": "High Rocks near Little Strawberry Lake"
+			},
+			{
+				"picName": "SAM_4467.jpg",
+				"picThumb": "thumbSAM_4467.jpg",
+				"picLatLng": [
+					44.293537,
+					-118.685876
+				],
+				"picCaption": "Little Strawberry Lake"
+			},
+			{
+				"picName": "SAM_4481.jpg",
+				"picThumb": "thumbSAM_4481.jpg",
+				"picLatLng": [
+					44.293342,
+					-118.686848
+				],
+				"picCaption": "Little Strawberry Lake"
+			},
+			{
+				"picName": "SAM_4486.jpg",
+				"picThumb": "thumbSAM_4486.jpg",
+				"picLatLng": [
+					44.296478,
+					-118.693016
+				],
+				"picCaption": "Strawberry Creek Falls"
+			}
+		]
+	}
+}

@@ -753,7 +753,7 @@
 			"trackFav": true,
 			"trackGPX": "Bird Creek Meadows (alt).GPX",
 			"trackName": "Bird Creek Meadows (alt), near Trout Lake, Washington",
-			"trackDescription": "Incredibly beautiful hike through the Bird Creek Meadows, on the south side of Mount Adams. In mid to late July, this trail offers a multicolor show of wildflowers. There are also two alpine lakes, three really nice waterfalls and many clear cold creeks crisscrossing the meadows. Ah, and a fantastic view of Mt Adams hanging glaciers, melting snow waterfalls and a deep glacier valley -- the Hellroaring Canyon. This is a slight variation of the <a href=\"?track=T0125\">Bird Creek Meadows hike</a> which is a bit longer but much more beautiful as you can see two additional waterfalls and more flowery meadows. Bring mosquito repellant.",
+			"trackDescription": "Incredibly beautiful hike through the Bird Creek Meadows, on the south side of Mount Adams. In mid to late July, this trail offers a multicolor show of wildflowers. There are also two alpine lakes, three really nice waterfalls and many clear cold creeks crisscrossing the meadows. Ah, and a fantastic view of Mt Adams hanging glaciers, melting snow waterfalls and a deep glacier valley -- the Hellroaring Canyon. This is a slight variation of the <a href=\"?track=T0125\">Bird Creek Meadows hike</a> which is a bit longer but much more beautiful as you can see two additional waterfalls and more flowery meadows. Bring mosquito repellent.",
 			"hasPhotos": true
 		},
 		"T0044": {
@@ -1617,7 +1617,7 @@
 			"trackFav": false,
 			"trackGPX": "Harts Cove.GPX",
 			"trackName": "Harts Cove Trail, Cascade Head, Oregon",
-			"trackDescription": "Descend through an old growth spruce and helmlock coastal forest down to a meadow with a view of a waterfall plunging to the ocean and continue walking all the way to volcanic rocks where the waves of the Pacific Ocean crash relentlessly.",
+			"trackDescription": "Descend through an old growth spruce and hemlock coastal forest down to a meadow with a view of a waterfall plunging to the ocean and continue walking all the way to volcanic rocks where the waves of the Pacific Ocean crash relentlessly.",
 			"hasPhotos": true
 		},
 		"T0092": {
@@ -2134,7 +2134,7 @@
 			"trackFav": true,
 			"trackGPX": "Jefferson Park.GPX",
 			"trackName": "Jefferson Park, Oregon",
-			"trackDescription": "A classic Oregon hike to the most beautiful meadows next to Mount Jefferson. It is a long and strenuous day hike. It would also make a fantastic backpacking trek.",
+			"trackDescription": "A classic Oregon hike to the most beautiful meadows at the base of Mount Jefferson. The trail ascends up to a ridge next to Park Butte, where magnificent views of Jefferson Park below can be enjoyed. The trail then goes down to Russell Lake in Jefferson Park proper, which also offers excellent views of the mountain, as well as flowery meadows and places to relax under the sun. At the end of the summer, the mosquitoes are gone and you may be lucky enough to find delicious huckleberries along the way This is a long and strenuous day hike. It would also make a fantastic backpacking trek.",
 			"hasPhotos": true
 		},
 		"T0121": {
@@ -2397,20 +2397,74 @@
 			"trackFav": true,
 			"trackGPX": "Battle Ax Mt.GPX",
 			"trackName": "Battle Ax Mountain Loop, near Detroit, Oregon",
-			"trackDescription": "This is a spectacular loop hike in the remote Bull of the Woods Wilderness area. The trail climbs up to the top of Battle Ax Mountain, from which incredible 360 views of the Oregon Cascades can be enjoyed, the most prominent being Mount Jefferson to the east. There are also excellent views of Elk Lake below The way down starts by walking north on top of the Battle Ax Mountin ridge which feels almost like a catwalk with views on both sides, east and west, then it descends to the east valley below to join the Bagby Hot Springs trail and passing through a beautiful old forest,  interesting rockpiles (talus slopes), and a couple of nice ponds.",
+			"trackDescription": "This is a spectacular loop hike in the remote Bull of the Woods Wilderness area. The trail climbs up to the top of Battle Ax Mountain, from which incredible 360 views of the Oregon Cascades can be enjoyed, the most prominent being Mount Jefferson to the east. There are also excellent views of Elk Lake below The way down starts by walking north on top of the Battle Ax Mountain ridge which feels almost like a catwalk with views on both sides, east and west, then it descends to the east valley below to join the Bagby Hot Springs trail and passing through a beautiful old forest,  interesting rockpiles (talus slopes), and a couple of nice ponds.",
 			"hasPhotos": true
 		},
 		"T0136": {
 			"trackId": "T0136",
 			"wikiLocId": "",
-			"trackLatLng": [44.659575372934341, -121.891356222331524],
-			"trackRegionTags": ["US", "Oregon"],
+			"trackLatLng": [
+				44.65957537293434,
+				-121.89135622233152
+			],
+			"trackRegionTags": [
+				"US",
+				"Oregon"
+			],
 			"trackLevel": "Difficult",
 			"trackFav": false,
 			"trackGPX": "Pamelia Lk and Grizzly Pk.GPX",
 			"trackName": "Pamelia Lake and Grizzly Peak, near Detroit, Oregon",
-			"trackDescription": "This another Oregon classic hike. Hike up a nice and easy trail under the cover of a magical old growth forest with enormous fir and cedar trees, a moss carpeted ground with tons of bunchberries and rhododendrons and a pretty white water creek tumbling down the rocks and logjams. After visiting the lake, the hike climbs steadily up to Grizzly Peak, where an amazing, in-your-face, view of Mount Jefferson awaits. Pamelia Lake can also be seen from the top and a couple of en-route viewpoints. Three Fingered Jack (SE), The Three Sisters (SE), and a little bit of Mt Hood (N) can also be seen from the top. The Pamelia Lake area has been so popular that the Forest Service declared it a limited entry area, so you need to request an entry permit ahead of your hike from <a href=\"http://www.recreation.gov/permits/Pamelia_Limited_Entry_Area/r/wildernessAreaDetails.do?page=details&contractCode=NRSO&parkId=111433\" target=\"_blank\">this</a> site. Only 20 people are allowed in the area each day.",
-			"hasPhotos": false
+			"trackDescription": "This is an Oregon classic hike. Walk up to Pamelia Lake in a nice and easy trail under the cover of a magical old growth forest with enormous fir and cedar trees, a moss carpeted ground with tons of bunchberries and rhododendrons and a pretty white water creek tumbling down the rocks and logjams. After visiting the lake, the hike climbs steadily up to Grizzly Peak, where an amazing, in-your-face, view of Mount Jefferson awaits. Pamelia Lake can also be seen from the top and a couple of en-route viewpoints. Three Fingered Jack (SE), The Three Sisters (SE), and a little bit of Mt Hood (N) can also be seen from the top. The Pamelia Lake area has been so popular that the Forest Service declared it a limited entry area, so you need to request an entry permit ahead of your hike from <a href=\"http://www.recreation.gov/permits/Pamelia_Limited_Entry_Area/r/wildernessAreaDetails.do?page=details&contractCode=NRSO&parkId=111433\" target=\"_blank\">this</a> site. Only 20 people are allowed in the area each day.",
+			"hasPhotos": true
+		},
+		"T0137": {
+			"trackId": "T0137",
+			"wikiLocId": "",
+			"trackLatLng": [
+				44.706771690398455,
+				-121.87471143901348
+			],
+			"trackRegionTags": [
+				"Oregon",
+				"US"
+			],
+			"trackLevel": "Difficult",
+			"trackFav": true,
+			"trackGPX": "Jefferson Park via Sentinel Hills.GPX",
+			"trackName": "Jefferson Park via Sentinel Hills, near Detroit, Oregon",
+			"trackDescription": "It can be said without hesitation that Jefferson Park is the most beautiful alpine hiking destination in Oregon. It is a very large flat area sitting between Mount Jefferson and Park Ridge in the north side of the mountain. Jefferson Park contains several beautiful lakes, numerous ponds, tarns and flower-filled meadows. This approach to Jefferson Park comes from the west, starting at the Whitewater trailhead. It gently climbs up to Sentinel Hills through an old growth forest with gigantic firs. Upon reaching Sentinel Hills,  there are magnificent views of the Whitewater Creek and Russell Creek valley to the south and Mount Jefferson to the East. The trail joins the Pacific Crest Trail (PCT) at approximately 4 miles from the trailhead and then ascends to the southeast end of Jefferson Park, near Scout Lake. The hike continues to Russell Lake and then returns wandering around the meadows and around Scout Lake. In early summer, the wildflowers are an extraordinarily beautiful sight, but the mosquitoes can be brutal, so be sure to pack a good insect repellent. Another approach to Jefferson Park across Park Ridge with even more incredible views is documented <a href=\"?track=T0120\">here</a>.",
+			"hasPhotos": true
+		},
+		"T0138": {
+			"trackId": "T0138",
+			"wikiLocId": "",
+			"trackLatLng": [
+				44.319197768345475,
+				-118.67479308508337
+			],
+			"trackRegionTags": [
+				"Oregon",
+				"US"
+			],
+			"trackLevel": "Moderate",
+			"trackFav": true,
+			"trackGPX": "Little Strawberry Lake.GPX",
+			"trackName": "Little Strawberry Lake, near Prairie City, Oregon",
+			"trackDescription": "What a great surprise to find such a beautiful alpine landscape in this otherwise dry and dessert-like part of Oregon. This hike is so delightful. First you arrive at Strawberry Lake, a good size alpine lake with a superb mountainous backdrop, adorned by a fir forest, several clear water creeks and beautiful meadows. Then continue on to Strawberry Creek Falls, a nice mossy waterfall in the middle of the forest. And finally, reach Little Strawberry Lake, a small clear water snow melt lake at the bottom of an amphitheater-like basin surrounded by the impressive high rocks of the Strawberry Range.",
+			"hasPhotos": true
+		},
+		"T0139": {
+			"trackId": "T0139",
+			"wikiLocId": "",
+			"trackLatLng": [44.086563242599368, -118.579415660351515],
+			"trackRegionTags": ["Oregon", "US"],
+			"trackLevel": "Moderate",
+			"trackFav": false,
+			"trackGPX": "Malheur River Trail.GPX",
+			"trackName": "Malheur River Trail, near John Day, Oregon",
+			"trackDescription": "This is a nice hike along the right bank of the Malheur River near its headwaters at the Strawberry Range, in a beautiful old-growth ponderosa pine and fir forest. The trail is a bit overgrown with very few opportunities to relax at the river shore, even though the trail is over 8 miles long. We had to bushwhack in some places where the trail had completely disappeared. The climb out of the canyon at the end of a long walk along the river was a bit of a nasty surprise. This is a one way hike that needs a shuttle to be arranged.",
+			"hasPhotos": true
 		}
 	}
 }

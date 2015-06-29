@@ -11,6 +11,8 @@ function setUpMap() {
 	// Get trackId from URL query string
 	var trackId = tmConfig.getTrackId();
 
+	// console.log(tmConfig.getUrlVars()["track"]);
+
 	map = new L.map('map');
 
 	// Set up common stuff and return layer control which we will need later on
@@ -33,7 +35,7 @@ function setUpMap() {
 			tmMap.setUpAllTracksView(data.tracks, regions[regionParm]);
 		// Otherwise, go for a single track and its gory details
 		} else {
-			tmMap.setUpSingleTrackView(data.tracks[trackId], layerControl);
+			tmMap.setUpSingleTrackView(data.tracks[trackId], layerControl, data.tracks);
 		}
 	});	
 }

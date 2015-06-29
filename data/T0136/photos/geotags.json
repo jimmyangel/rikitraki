@@ -1,0 +1,97 @@
+{
+	"geoTags": {
+		"trackId": "T0136",
+		"trackPhotos": [
+			{
+				"picName": "SAM_3840.jpg",
+				"picThumb": "thumbSAM_3840.jpg",
+				"picLatLng": [
+					44.659158,
+					-121.887831
+				],
+				"picCaption": "Forest trail to Pamelia Lake"
+			},
+			{
+				"picName": "SAM_3853.jpg",
+				"picThumb": "thumbSAM_3853.jpg",
+				"picLatLng": [
+					44.659207,
+					-121.874457
+				],
+				"picCaption": "A mossy carpet under big old trees"
+			},
+			{
+				"picName": "SAM_3867.jpg",
+				"picThumb": "thumbSAM_3867.jpg",
+				"picLatLng": [
+					44.656621,
+					-121.85341
+				],
+				"picCaption": "Truly an enchanted forest"
+			},
+			{
+				"picName": "SAM_3879.jpg",
+				"picThumb": "thumbSAM_3879.jpg",
+				"picLatLng": [
+					44.655508,
+					-121.850049
+				],
+				"picCaption": "Pamelia Lake"
+			},
+			{
+				"picName": "SAM_3920.jpg",
+				"picThumb": "thumbSAM_3920.jpg",
+				"picLatLng": [
+					44.655767,
+					-121.851022
+				],
+				"picCaption": "Pamelia Lake behind Rhododendrons"
+			},
+			{
+				"picName": "SAM_3931.jpg",
+				"picThumb": "thumbSAM_3931.jpg",
+				"picLatLng": [
+					44.655777,
+					-121.855386
+				],
+				"picCaption": "Mount Jefferson"
+			},
+			{
+				"picName": "SAM_3938.jpg",
+				"picThumb": "thumbSAM_3938.jpg",
+				"picLatLng": [
+					44.655161,
+					-121.866512
+				],
+				"picCaption": "A mossy spring along the trail up to Grizzly Peak"
+			},
+			{
+				"picName": "SAM_3958.jpg",
+				"picThumb": "thumbSAM_3958.jpg",
+				"picLatLng": [
+					44.650525,
+					-121.855565
+				],
+				"picCaption": "Mount Jefferson in your face"
+			},
+			{
+				"picName": "SAM_3960.jpg",
+				"picThumb": "thumbSAM_3960.jpg",
+				"picLatLng": [
+					44.647228,
+					-121.853986
+				],
+				"picCaption": "Pamelia Lake from above"
+			},
+			{
+				"picName": "SAM_3963.jpg",
+				"picThumb": "thumbSAM_3963.jpg",
+				"picLatLng": [
+					44.643735,
+					-121.853331
+				],
+				"picCaption": "The Three Sisters and Three Fingered Jack"
+			}
+		]
+	}
+}
