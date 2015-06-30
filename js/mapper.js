@@ -305,7 +305,8 @@ var tmMap = {
 				
 				// Populate photos
 				if (track.hasPhotos) {
-					$.lightbox.options.wrapAround = true; // Tell lightbox to do a wraparound album (this depends on a small modification I made to Lightbox)
+					// Tell lightbox to do a wraparound album and to show nav on touch devices
+					lightbox.option({'wrapAround': true, 'alwaysShowNavOnTouchDevices': true});
 					// Go get the geo tags and then put the pics on the map
 					tmData.getGeoTags(track.trackId, function(data) {
 						var haveGeoTags = false;	 

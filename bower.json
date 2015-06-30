@@ -10,9 +10,9 @@
     "leaflet.elevation": "git://github.com/jimmyangel/Leaflet.Elevation#master",
     "Leaflet.MakiMarkers": "~1.0.1",
     "leaflet.markercluster": "git://github.com/Leaflet/Leaflet.markercluster#master",
-    "lightbox": "git://github.com/jimmyangel/lightbox2#master",
     "spin.js": "~2.3.0",
-    "jquery-stupid-table": "~1.0.1"
+    "jquery-stupid-table": "~1.0.1",
+    "lightbox2": "~2.8.0"
   },
   "resolutions": {
     "leaflet": "0.7.x"
