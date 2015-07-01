@@ -1,9 +1,0 @@
-{
-	"geoTags": { 
-		"trackId": "T0009",
-		"trackPhotos": [
-			{"picName": "SAM_1466.jpg",  "picThumb": "thumbSAM_1466.jpg", "picLatLng": [-41.004910, 173.00920], "picCaption": "Abel Tasman Water Taxi"},
-			{"picName": "SAM_1477.jpg",  "picThumb": "thumbSAM_1477.jpg", "picLatLng": [-41.018046, 173.022206], "picCaption": "Split Apple"}
-		]
-	}
-}
