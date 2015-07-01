@@ -15,6 +15,7 @@ html, body, #container {
 body {
   padding-top: 50px; 
 }
+
 #map {
   width: auto;
   height: 100%;
@@ -78,10 +79,6 @@ body {
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
   border-radius: 5px;
   overflow: auto;
-}
-
-.XXXinfoPanelBody {
-  display: none;
 }
 
 .infoPanelTitle {
