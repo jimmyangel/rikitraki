@@ -1,7 +1,7 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmMap */
-/* globals L, omnivore, tmConfig, tmData, tmUtils, map, FB */
+/* globals L, omnivore, tmConfig, tmData, tmUtils, map, FB, lightbox */
 
 var TRAIL_MARKER_COLOR = '7A5C1E';
 var WAYPOINT_COLOR = '#3887BE';
