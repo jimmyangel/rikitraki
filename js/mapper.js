@@ -128,16 +128,44 @@ var tmMap = {
 	},
 	setUpAllTracksView: function(tracks, region) {
 
-		// map.setView([45.52, -122.6819], 3);
-		//$('#infoPanelContainer').hide();
 		var trackMarkersLayerGroup = tmMap.setUpMarkersForAllTracks(tracks);
 
 		if (region) {
 			map.fitBounds([region.sw, region.ne], {maxZoom: 9});
 		} else {
-			// map.fitWorld();
 			map.fitBounds(trackMarkersLayerGroup.getBounds());
-		}
+			// Set up motd box (What's new)
+			tmData.getMotd(function(data) {
+				var infoPanelContainer = L.DomUtil.create('div', 'info motd infoPanelContainer');
+				var infoPanelTitle = L.DomUtil.create('div', 'infoPanelTitle', infoPanelContainer);
+				var infoPanelBody = L.DomUtil.create('div', 'infoPanelBody', infoPanelContainer);
+				var infoPanelDescription = L.DomUtil.create('div', 'motdDescription infoPanelDescription', infoPanelBody);
+				var infoPanel = L.control({position: 'topright'});
+				infoPanel.onAdd = function () {
+					infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button><b>What\'s New...</b>';
+					var motdHTML = '<table id="motdTable" class="table table-condensed table-hover"><tbody>';
+					for (var i=0; i<data.motd.motdTracks.length; i++) {
+						motdHTML += '<tr><td><img class="motdThumbs" src=data/' + data.motd.motdTracks[i][0] + '/photos/thumb' + data.motd.motdTracks[i][1] + 
+									// '></td><td>' +
+									'></td><td>' +
+									tracks[data.motd.motdTracks[i][0]].trackName +
+									'</td><td style="display:none">' + 
+									data.motd.motdTracks[i][0] + '</td></tr>';
+					}
+					motdHTML += '</tbody></table>';
+					infoPanelDescription.innerHTML = motdHTML;
+					return infoPanelContainer;
+				};
+				infoPanel.addTo(map);
+				tmMap.setUpInfoPanelEventHandling();
+				// Handle row click
+				$('#motdTable tr').click(function() {
+					var t = $(this).find('td').eq(2).html();
+					if (t) { 
+						window.location.href='?track=' + t;
+					}
+				});
+			});		}
 
 		// Set up twitter and facebook links
 		tmMap.setUpSocialButtons('Check out hiking trails on RikiTraki');
@@ -362,8 +390,15 @@ var tmMap = {
 
 			// Fit th map to the trail boundaries leaving 50% room for the info panel
 	    	map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]}); 
+	    	tmMap.setUpInfoPanelEventHandling();
 
+	
+		}).addTo(map);
 
+		// Set up twitter and facebook links and such
+		tmMap.setUpSocialButtons(track.trackName);
+	},
+	setUpInfoPanelEventHandling: function () {
 			// Enable proper info panel scrolling by adjusting max-height dynamically
 			// The 80 is to cover the bootstrap banner and the attribution at the bottom
 			// TODO: fix hardcoded 80 by querying the actual sizes of elements
@@ -394,11 +429,6 @@ var tmMap = {
 			$('#map').on('click keyup', function(e) {
 				showToggle = tmMap.collapseInfoPanel(showToggle, e, true);
 			});		
-	
-		}).addTo(map);
-
-		// Set up twitter and facebook links and such
-		tmMap.setUpSocialButtons(track.trackName);
 	},
 	expandInfoPanel: function (toggle, e) {
 		e.stopPropagation();
