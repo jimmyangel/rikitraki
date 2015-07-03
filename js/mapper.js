@@ -133,7 +133,7 @@ var tmMap = {
 		if (region) {
 			map.fitBounds([region.sw, region.ne], {maxZoom: 9});
 		} else {
-			map.fitBounds(trackMarkersLayerGroup.getBounds());
+			// map.fitBounds(trackMarkersLayerGroup.getBounds());
 			// Set up motd box (What's new)
 			tmData.getMotd(function(data) {
 				var infoPanelContainer = L.DomUtil.create('div', 'info motd infoPanelContainer');
@@ -165,8 +165,9 @@ var tmMap = {
 						window.location.href='?track=' + t;
 					}
 				});
-			});		}
-
+			});
+			map.fitBounds(trackMarkersLayerGroup.getBounds(), {paddingBottomRight: [$(window).width() < 1000 ? 0 : 240, 0]}); 
+		}
 		// Set up twitter and facebook links
 		tmMap.setUpSocialButtons('Check out hiking trails on RikiTraki');
 	},
@@ -238,7 +239,7 @@ var tmMap = {
 		var el = L.control.elevation({
 			position: 'bottomleft',
 			theme: 'blackwhite-theme',
-			width: 400,
+			width: $(window).width() < 400 ? 300: 400,
 			height: 125,
 			collapsed: true,
 			imperial: imperial
@@ -403,12 +404,17 @@ var tmMap = {
 			// The 80 is to cover the bootstrap banner and the attribution at the bottom
 			// TODO: fix hardcoded 80 by querying the actual sizes of elements
 			$('.info').css('max-height', $(window).height()-80);
-			$(window).bind('resize',function() {
+			$(window).on('resize',function() {
     			$('.info').css('max-height', $(window).height()-80);
 			});
 
+			// Make sure keyboard events can be handled
+			$('.infoPanelContainer').attr('tabindex', '0');
+
 			// Stop propagation of some events that the info box needs to handle
-			$('.infoPanelContainer').bind('mousedown wheel scrollstart touchstart', function(e) {e.stopPropagation();}); 
+			$('.infoPanelContainer').on('mousedown wheel scrollstart touchstart mousewheel DOMMouseScroll MozMousePixelScroll', function(e) {
+				e.stopPropagation();
+			}); 
     		// L.DomEvent.disableClickPropagation(infoPanelContainer);
 
     		// By default, info panel is collapsed so close button should be hidden
@@ -416,12 +422,27 @@ var tmMap = {
 
 			// Event handling for expand/collapse on click
 			var showToggle = true;
+			// Give focus to the info panel to make it easy to use keyboard to scroll, if necessary
+			$('.infoPanelContainer').focus();
+			// Handle keyboard events
+			$('.infoPanelContainer').on('keyup', function(e) {
+				// Collapse info box on ESC or SPACE
+				if ((e.keyCode == 27) || (e.keyCode == 32)) {
+					showToggle = tmMap.collapseInfoPanel(showToggle, e);
+				} else {
+					// Let the info panel handle the other keys (like arrows and page-up/page-down), so stop propagation to the map
+					e.stopPropagation();
+				}
+			});
+			// Expand on title click
 			$('.infoPanelTitle').on('click', function(e) {
 				showToggle = tmMap.expandInfoPanel(showToggle, e);
 			});
+			// Collapse on close button
 			$('.infoPanelTitle button').on('click', function(e) {
 				showToggle = tmMap.collapseInfoPanel(showToggle, e);
 			});
+			// Ignore clicks on description to allow for copy and paste
 			$('.infoPanelDescription').on('click', function(e) {
 				e.stopPropagation();
 			});
