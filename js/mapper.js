@@ -9,6 +9,8 @@ var TRACK_COLOR = '#8D6E27';
 var INSIDE_TRACK_COLOR = '#EBEB00';
 var SELECTED_THUMBNAIL_COLOR = '#00FF00';
 var FAVORITE = '&#10029;';
+var KEYCODE_ESC = 27;
+var KEYCODE_SPACE = 32;
 
 var tmMap = {
 	setUpCommon: function () {
@@ -427,7 +429,7 @@ var tmMap = {
 			// Handle keyboard events
 			$('.infoPanelContainer').on('keyup', function(e) {
 				// Collapse info box on ESC or SPACE
-				if ((e.keyCode == 27) || (e.keyCode == 32)) {
+				if ((e.keyCode === KEYCODE_ESC) || (e.keyCode === KEYCODE_SPACE)) {
 					showToggle = tmMap.collapseInfoPanel(showToggle, e);
 				} else {
 					// Let the info panel handle the other keys (like arrows and page-up/page-down), so stop propagation to the map
