@@ -13,11 +13,11 @@ var KEYCODE_ESC = 27;
 var KEYCODE_SPACE = 32;
 
 var tmMap = {
-	setUpCommon: function () {
+	setUpCommon: function (tracks) {
 		// Handle the about box
 		$('#about-btn').click(function() {
-		  $('#aboutModal').modal('show');
-		  return false;
+			$('#aboutModal').modal('show');
+			return false;
 		});
 
 		// Get and initialize the facebook sdk
@@ -28,6 +28,107 @@ var tmMap = {
 		    });     
 		});
 
+		// Set up bootstrap menus (Go to and Tracks)
+		tmMap.setUpTracksMenu(tracks);
+		return tmMap.setUpGotoMenu(tracks);
+	},
+	setUpGlobe: function (tracks, regions) {
+		$('#map').hide();
+		var viewer = new Cesium.Viewer('globe', {
+							// scene3DOnly: true, 
+							baseLayerPicker: false,
+							imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+								url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
+								enablePickFeatures: false
+							}),
+							animation: false,
+							fullScreenButton: false,
+							geocoder: false,
+							homeButton: false,
+							infoBox: false,
+							sceneModePicker: false,
+							timeline: false,
+							navigationHelpButton: false,
+							navigationInstructionsInitiallyVisible: false,
+							creditContainer: 'creditContainer'});
+
+		viewer.scene.screenSpaceCameraController.enableTilt = false;
+		viewer.scene.screenSpaceCameraController.enableLook = false;
+		viewer.scene.screenSpaceCameraController.enableTranslate = false;
+
+		for (var tId in tracks) {
+			viewer.entities.add({
+				name: tId,
+				position : Cesium.Cartesian3.fromDegrees(tracks[tId].trackLatLng[1], tracks[tId].trackLatLng[0]),
+				point : {
+					pixelSize : 10,
+					color : Cesium.Color.YELLOW
+				}
+			});
+		}
+
+		// On hover, show info
+		$('#globe').on('mousemove', function (e) {
+			var p = viewer.scene.pick(new Cesium.Cartesian2(e.offsetX, e.offsetY));
+			if (Cesium.defined(p)) {
+				var entity = p.id;
+				if (entity instanceof Cesium.Entity) {
+					console.log(entity.name);
+				}
+			}
+		});
+
+
+		// On click, go to track (should change to open pop up)
+		$('#globe').on('click', function (e) {
+			console.log(e);
+			var p = viewer.scene.pick(new Cesium.Cartesian2(e.offsetX, e.offsetY));
+			if (Cesium.defined(p)) {
+				var entity = p.id;
+				if (entity instanceof Cesium.Entity) {
+					console.log(entity.name);
+					window.location.href='?track=' + entity.name;
+				}
+			}
+		})
+
+		tmMap.setUpInfoPanelEventHandling();
+		// Handle row click
+		$('#motdTable tr').on('click', function() {
+			var t = $(this).find('td').eq(2).html();
+			if (t) { 
+				window.location.href='?track=' + t;
+			}
+		});
+
+		// Set up zoom control click events
+		var dest = new Cesium.Cartesian3();
+		// flyTo has a nice animation, that's why I am using it instead of zoomIn/zoomOut
+		$('.leaflet-control-zoom-in').click(function() {
+		 	viewer.camera.flyTo({destination: Cesium.Cartesian3.divideByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
+		 	return false;
+		});
+		$('.leaflet-control-zoom-out').click(function() {
+		 	viewer.camera.flyTo({destination: Cesium.Cartesian3.multiplyByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
+			return false;
+		});
+		$('#globe-control-refresh').click(function() {
+			$('.leaflet-control-zoom-in').off();
+			$('.leaflet-control-zoom-out').off();
+			$('#globe-control-refresh').off();
+			$('#globe').off();
+		 	viewer.destroy();
+		 	tmMap.setUpGlobe(tracks, regions);
+			return false;
+		});
+	},
+	setUpMap: function (l) {
+		$('#globe').hide();
+
+
+		map = new L.map('map');
+
+		// Populate basemap layers from JSON config file
 		// Add layer control
 		var layerControl = L.control.layers(null, null, {position: 'topleft', collapsed: true}).addTo(map);
 
@@ -47,7 +148,6 @@ var tmMap = {
 				$('.spinnerControlContainer').spin(false);
 			}	
 		}; 
-
 		// Set up zoom check handler (so that we do not end up with more zoom than what is available)
 		var baseLayerChangeHandler = function () {
 			var maxZoom = map.getMaxZoom();
@@ -57,28 +157,25 @@ var tmMap = {
 		};
 		map.on('baselayerchange', baseLayerChangeHandler);
 
-		// Populate basemap layers from JSON config file
-		tmConfig.getLayers(function(data) {
-			var layerArray = data.layers;
+		var layerArray = l.layers;
 
-			// Iterate through list of base layers and add to layer control
-			for (var k=0; k<layerArray.length; k++) {
-				var bl = L.tileLayer(layerArray[k].layerUrl, {minZoom: 1, maxZoom: layerArray[k].maxZoom, attribution: layerArray[k].attribution, ext: 'png'});
-				layerControl.addBaseLayer(bl, layerArray[k].layerName);
-				// Wire the spinner handlers
-				bl.on('loading', spinHandler);
-				bl.on('load', spinHandler);
+		// Iterate through list of base layers and add to layer control
+		for (var k=0; k<layerArray.length; k++) {
+			var bl = L.tileLayer(layerArray[k].layerUrl, {minZoom: 1, maxZoom: layerArray[k].maxZoom, attribution: layerArray[k].attribution, ext: 'png'});
+			layerControl.addBaseLayer(bl, layerArray[k].layerName);
+			// Wire the spinner handlers
+			bl.on('loading', spinHandler);
+			bl.on('load', spinHandler);
 
-				// First layer is the one displayed by default
-				if (k === 0) {
-					map.addLayer(bl);
-				}
+			// First layer is the one displayed by default
+			if (k === 0) {
+				map.addLayer(bl);
 			}
-		});
-
+		}
 		// Add scale
 		L.control.scale({position: 'bottomleft'}).addTo(map);
 		return layerControl; // We will need this later
+
 	},
 	setUpTracksMenu: function (tracks) {
 		// Populate tracks dialog box
@@ -451,7 +548,11 @@ var tmMap = {
 			// Close the info panel if clicked (or key pressed) on the map (cannot stop propagation because it breaks lightbox)
 			$('#map').on('click keyup', function(e) {
 				showToggle = tmMap.collapseInfoPanel(showToggle, e, true);
+			});
+			$('#globe').on('click keyup touchstart', function(e) {
+				showToggle = tmMap.collapseInfoPanel(showToggle, e, true);
 			});		
+
 	},
 	expandInfoPanel: function (toggle, e) {
 		e.stopPropagation();

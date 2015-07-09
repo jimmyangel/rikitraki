@@ -1,4 +1,5 @@
 /* Here goes my styling */
+@import url(../components/Cesium/Widgets/widgets.css);
 
 html, body, #container {
   height: 100%;
@@ -12,6 +13,13 @@ body {
 #map {
   width: auto;
   height: 100%;
+}
+
+#globe {
+  width: auto;
+  height: 100%;
+  overflow: hidden;
+  font-family: sans-serif;
 }
 
 .navbar .navbar-brand {
@@ -68,7 +76,7 @@ body {
   padding: 6px 8px;
   font: 14px/16px Arial, Helvetica, sans-serif;
   background: white;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.9);
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
   border-radius: 5px;
   overflow: auto;
@@ -101,4 +109,13 @@ body {
 .spinnerControlContainer {
   width: 50px;
   height: 50px;
+}
+
+.cesium-widget-credits {
+  position: relative;
+  background: black;
+}
+
+.cesium-credit-image img{
+    height: 18px;
 }
