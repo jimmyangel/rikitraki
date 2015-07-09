@@ -173,7 +173,41 @@
       </div> <!-- modal dialog -->
     </div> <!-- modal -->
 
-    <div id="map" />
+    <div id="map"></div>
+    <div id="globe" class="leaflet-container" style="position: relative;">
+      <div class="leaflet-control-container">
+      <div class="leaflet-top leaflet-left">
+        <div class="leaflet-control-zoom leaflet-bar leaflet-control">
+          <a class="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
+          <a class="leaflet-control-zoom-out" href="#" title="Zoom out">-</a>
+        </div>
+        <div class="leaflet-control leaflet-bar">
+          <a id="globe-control-refresh" href="#"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
+        </div>
+      </div>
+      <div class="leaflet-top leaflet-right">
+        <div class="info motd infoPanelContainer leaflet-control" tabindex="0" style="max-height: 1058px;">
+          <div class="infoPanelTitle"><button class="close" aria-hidden="true">×</button><b>What's New...</b></div>
+            <div class="infoPanelBody">
+              <div class="motdDescription infoPanelDescription">
+                <table id="motdTable" class="table table-condensed table-hover">
+                  <tbody>
+                  <tr><td><img class="motdThumbs" src="data/T0139/photos/thumbSAM_4511.jpg"></td><td>Malheur River Trail, near John Day, Oregon</td><td style="display:none">T0139</td></tr>
+                  <tr><td><img class="motdThumbs" src="data/T0138/photos/thumbSAM_4431.jpg"></td><td>Little Strawberry Lake, near Prairie City, Oregon</td><td style="display:none">T0138</td></tr>
+                  <tr><td><img class="motdThumbs" src="data/T0137/photos/thumbIMG_0009.jpg"></td><td>Jefferson Park via Sentinel Hills, near Detroit, Oregon</td><td style="display:none">T0137</td></tr>
+                  <tr><td><img class="motdThumbs" src="data/T0136/photos/thumbSAM_3931.jpg"></td><td>Pamelia Lake and Grizzly Peak, near Detroit, Oregon</td><td style="display:none">T0136</td></tr>
+                  <tr><td><img class="motdThumbs" src="data/T0135/photos/thumbSAM_3689.jpg"></td><td>Battle Ax Mountain Loop, near Detroit, Oregon</td><td style="display:none">T0135</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="leaflet-bottom leaflet-right">
+          <div id="creditContainer" class="leaflet-control"></div>
+        </div>
+       </div>
+   </div>
 
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -190,6 +224,8 @@
     <script src="bower_components/jquery-stupid-table/stupidtable.min.js"></script>
     <script src="bower_components/lightbox2/dist/js/lightbox.js"></script>
     <!-- endbower -->
+    <!-- For Globe -->
+    <script src="components/Cesium/Cesium.js"></script>
     <!-- build: use this block later with processhtml to prepare dist -->
     <script src="bower_components/spin.js/jquery.spin.js"></script>    
     <script src="js/config.js"></script>
