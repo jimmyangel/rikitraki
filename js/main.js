@@ -1,12 +1,16 @@
 'use strict';
 
 // The below is to stop jshint barking at undefined variables
-/* globals L, tmConfig, tmMap, tmData */
+/* globals tmConfig, tmMap, tmData */
+/* exported map */
 
 // The map is global
 var map;
 
 function setUpMap() {
+	// var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+	// alert(navigator.userAgent);
+	
 	// Get trackId from URL query string
 	var trackId = tmConfig.getTrackId();
 

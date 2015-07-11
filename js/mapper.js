@@ -1,7 +1,7 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmMap */
-/* globals L, omnivore, tmConfig, tmData, tmUtils, map, FB, lightbox */
+/* globals L, omnivore, tmData, tmUtils, map:true, FB, lightbox, Cesium */
 
 var TRAIL_MARKER_COLOR = '7A5C1E';
 var WAYPOINT_COLOR = '#3887BE';
@@ -34,6 +34,7 @@ var tmMap = {
 	},
 	setUpGlobe: function (tracks, regions) {
 		$('#map').hide();
+		console.log(regions);
 		var viewer = new Cesium.Viewer('globe', {
 							// scene3DOnly: true, 
 							baseLayerPicker: false,
@@ -47,6 +48,7 @@ var tmMap = {
 							homeButton: false,
 							infoBox: false,
 							sceneModePicker: false,
+							selectionIndicator: false,
 							timeline: false,
 							navigationHelpButton: false,
 							navigationInstructionsInitiallyVisible: false,
@@ -67,30 +69,78 @@ var tmMap = {
 			});
 		}
 
-		// On hover, show info
+		// On hover, change cursor style
+		var savedCursor = $('#globe').css('cursor');
+		console.log(savedCursor);
+		var pointerCursorToggle = false;
 		$('#globe').on('mousemove', function (e) {
 			var p = viewer.scene.pick(new Cesium.Cartesian2(e.offsetX, e.offsetY));
 			if (Cesium.defined(p)) {
 				var entity = p.id;
 				if (entity instanceof Cesium.Entity) {
-					console.log(entity.name);
+					if (!pointerCursorToggle) {
+						pointerCursorToggle = true;
+						$('#globe').css('cursor', 'pointer');
+						console.log(entity.name);
+					}
+				} else {
+					if (pointerCursorToggle) {
+						pointerCursorToggle = false;
+						$('#globe').css('cursor', savedCursor);
+					}
+				}
+			} else {
+				if (pointerCursorToggle) {
+					pointerCursorToggle = false;
+					$('#globe').css('cursor', savedCursor);
 				}
 			}
 		});
 
+		viewer.scene.preRender.addEventListener(function () {
+			// console.log('pre render');
+			// See if the X,Y corresponding to lat, log for the pop up being tracked has changed, if so, move it to the new place
+			// Use jquery to move element around
+		}); 
 
-		// On click, go to track (should change to open pop up)
+		// On click open pop up
 		$('#globe').on('click', function (e) {
-			console.log(e);
+			// console.log(e);
 			var p = viewer.scene.pick(new Cesium.Cartesian2(e.offsetX, e.offsetY));
 			if (Cesium.defined(p)) {
 				var entity = p.id;
 				if (entity instanceof Cesium.Entity) {
 					console.log(entity.name);
-					window.location.href='?track=' + entity.name;
-				}
-			}
-		})
+					var c = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, entity.position.getValue(Cesium.JulianDate.now()));
+					console.log(c);
+					console.log($('#trackPopUpLink a').replaceWith('<a href="?track=' + entity.name + '">' + tracks[entity.name].trackName + '</a>'));
+					$('#trackPopUp').show();
+					var x = c.x - ($('#trackPopUpContent').width()) / 2;
+					var y = c.y - ($('#trackPopUpContent').height());
+					console.log(x);
+					$('#trackPopUpContent').css('left', x + 'px');
+					$('#trackPopUpContent').css('top', y + 'px');
+					var removeHandler = viewer.scene.preRender.addEventListener(function () {
+						var changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, entity.position.getValue(Cesium.JulianDate.now()));
+						if ((c.x !== changedC.x) || (c.y !== changedC.y)) {
+							var x = changedC.x - ($('#trackPopUpContent').width()) / 2;
+							var y = changedC.y - ($('#trackPopUpContent').height());
+							$('#trackPopUpContent').css('left', x + 'px');
+							$('#trackPopUpContent').css('top', y + 'px');
+							c = changedC;
+						}
+					}); 
+					$('.leaflet-popup-close-button').on('click', function () {
+						$('#trackPopUp').hide();
+						removeHandler.call();
+						return false;
+					});					
+					// window.location.href='?track=' + entity.name;
+				} 
+			} 
+		});
+
+
 
 		tmMap.setUpInfoPanelEventHandling();
 		// Handle row click
@@ -104,6 +154,7 @@ var tmMap = {
 		// Set up zoom control click events
 		var dest = new Cesium.Cartesian3();
 		// flyTo has a nice animation, that's why I am using it instead of zoomIn/zoomOut
+		// TO DO: adjust multiplier dapending on camera height
 		$('.leaflet-control-zoom-in').click(function() {
 		 	viewer.camera.flyTo({destination: Cesium.Cartesian3.divideByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
 		 	return false;
@@ -117,6 +168,8 @@ var tmMap = {
 			$('.leaflet-control-zoom-out').off();
 			$('#globe-control-refresh').off();
 			$('#globe').off();
+			$('#trackPopUp').hide();
+
 		 	viewer.destroy();
 		 	tmMap.setUpGlobe(tracks, regions);
 			return false;

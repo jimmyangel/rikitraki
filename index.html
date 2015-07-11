@@ -41,10 +41,10 @@
 
   </head>
   <body>
-    <div id="fb-root"></div>
     <!--[if lt IE 10]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
+    <div id="fb-root"></div>
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -175,19 +175,19 @@
 
     <div id="map"></div>
     <div id="globe" class="leaflet-container" style="position: relative;">
-      <div class="leaflet-control-container">
-      <div class="leaflet-top leaflet-left">
-        <div class="leaflet-control-zoom leaflet-bar leaflet-control">
-          <a class="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
-          <a class="leaflet-control-zoom-out" href="#" title="Zoom out">-</a>
+      <div>
+        <div class="leaflet-top leaflet-left">
+          <div class="leaflet-control-zoom leaflet-bar leaflet-control">
+            <a class="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
+            <a class="leaflet-control-zoom-out" href="#" title="Zoom out">-</a>
+          </div>
+          <div class="leaflet-control leaflet-bar">
+            <a id="globe-control-refresh" href="#"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
+          </div>
         </div>
-        <div class="leaflet-control leaflet-bar">
-          <a id="globe-control-refresh" href="#"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
-        </div>
-      </div>
-      <div class="leaflet-top leaflet-right">
-        <div class="info motd infoPanelContainer leaflet-control" tabindex="0" style="max-height: 1058px;">
-          <div class="infoPanelTitle"><button class="close" aria-hidden="true">×</button><b>What's New...</b></div>
+        <div class="leaflet-top leaflet-right">
+          <div class="info motd infoPanelContainer leaflet-control" tabindex="0" style="max-height: 1058px;">
+            <div class="infoPanelTitle"><button class="close" aria-hidden="true">×</button><b>What's New...</b></div>
             <div class="infoPanelBody">
               <div class="motdDescription infoPanelDescription">
                 <table id="motdTable" class="table table-condensed table-hover">
@@ -206,7 +206,20 @@
         <div class="leaflet-bottom leaflet-right">
           <div id="creditContainer" class="leaflet-control"></div>
         </div>
-       </div>
+      </div>
+      <div id="trackPopUp" style="display: none;">
+        <div id="trackPopUpContent" style="display: block; position: absolute; z-index: 10;">
+          <a class="leaflet-popup-close-button" href="#">×</a>
+          <div class="leaflet-popup-content-wrapper">
+            <div id="trackPopUpLink" class="leaflet-popup-content" style="max-width: 200px;">
+              <a href="?track=T0106">El Ocho De Alájar es un logar muy bonito</a>
+            </div>
+          </div>
+            <div class="leaflet-popup-tip-container">
+              <div class="leaflet-popup-tip"></div>
+            </div>
+        </div>
+      </div>
    </div>
 
     <!-- bower:js -->
