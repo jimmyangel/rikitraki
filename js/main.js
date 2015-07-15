@@ -2,15 +2,15 @@
 
 // The below is to stop jshint barking at undefined variables
 /* globals tmConfig, tmMap, tmData */
-/* exported map */
+/* exported map, isMobile */
 
 // The map is global
 var map;
+var isMobile = tmConfig.getMobileOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 function setUpMap() {
-	// var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 	// alert(navigator.userAgent);
-	
+
 	// Get trackId from URL query string
 	var trackId = tmConfig.getTrackId();
 
@@ -21,7 +21,7 @@ function setUpMap() {
 
 		// Get JSON layer config file and wait before populating map
 		tmConfig.getLayers(function(l) {
-			if (tmConfig.getGlobeFlag()) {
+			if (tmConfig.getGlobeFlag() && !isMobile) {
 				tmMap.setUpGlobe(data.tracks, regions);
 			} else {
 				// Set up map and get layer control which we will need later on

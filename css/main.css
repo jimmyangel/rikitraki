@@ -49,6 +49,8 @@ body {
 
 .leaflet-popup-content-wrapper { 
   text-align: center;
+  max-height: 200px;
+  overflow-y: auto;
 } 
 
 .modal-dialog {
@@ -120,7 +122,9 @@ body {
 
 .cesium-widget-credits {
   position: relative;
-  background: black;
+  color: #000000;
+  text-shadow: none;
+  margin: 0;
 }
 
 .cesium-credit-image img{
