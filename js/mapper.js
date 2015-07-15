@@ -218,7 +218,7 @@ var tmMap = {
 		$('#globe').hide();
 
 		if (!isMobile) {
-			$('#mapGlobeButton').append('<li><a role="button" title="Globe" href="./?globe=yes"><span class="glyphicon icon-earth" aria-hidden="true"></span></a></li>');
+			$('#mapGlobeButton').append('<li><a role="button" title="Globe" href="./?globe=yes"><span class="glyphicon icon-sphere" aria-hidden="true"></span></a></li>');
 		}
 
 		map = new L.map('map');
