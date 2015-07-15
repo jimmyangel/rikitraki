@@ -1,7 +1,7 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmMap */
-/* globals L, omnivore, tmData, tmUtils, map:true, FB, lightbox, Cesium */
+/* globals L, omnivore, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile */
 
 var TRAIL_MARKER_COLOR = '7A5C1E';
 var WAYPOINT_COLOR = '#3887BE';
@@ -29,12 +29,15 @@ var tmMap = {
 		});
 
 		// Set up bootstrap menus (Go to and Tracks)
-		tmMap.setUpTracksMenu(tracks);
-		return tmMap.setUpGotoMenu(tracks);
+		this.setUpTracksMenu(tracks);
+		return this.setUpGotoMenu(tracks);
 	},
 	setUpGlobe: function (tracks, regions) {
+
+		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
+
+		var self = this;
 		$('#map').hide();
-		console.log(regions);
 		var viewer = new Cesium.Viewer('globe', {
 							// scene3DOnly: true, 
 							baseLayerPicker: false,
@@ -43,7 +46,7 @@ var tmMap = {
 								enablePickFeatures: false
 							}),
 							animation: false,
-							fullScreenButton: false,
+							fullscreenButton: false,
 							geocoder: false,
 							homeButton: false,
 							infoBox: false,
@@ -52,12 +55,31 @@ var tmMap = {
 							timeline: false,
 							navigationHelpButton: false,
 							navigationInstructionsInitiallyVisible: false,
+							skyAtmosphere: false,
 							creditContainer: 'creditContainer'});
 
 		viewer.scene.screenSpaceCameraController.enableTilt = false;
 		viewer.scene.screenSpaceCameraController.enableLook = false;
 		viewer.scene.screenSpaceCameraController.enableTranslate = false;
 
+		// Populate regions (did not work as well as imagined)
+		/* for (var region in regions) {
+			if (regions[region].sw[0] != regions[region].ne[0]) { // Ignore single track regions for now
+				console.log(region);	
+				viewer.entities.add({
+					name: region,
+					position : Cesium.Cartesian3.fromDegrees(regions[region].ne[1], regions[region].ne[0]),
+					rectangle: {
+						coordinates : Cesium.Rectangle.fromDegrees(regions[region].sw[1], regions[region].sw[0], regions[region].ne[1], regions[region].ne[0]),
+						material : Cesium.Color.BROWN.withAlpha(0.2),
+						outline : true,
+						outlineColor : Cesium.Color.BROWN
+					}
+				});
+			}
+		} */
+
+		// Populate track markers
 		for (var tId in tracks) {
 			viewer.entities.add({
 				name: tId,
@@ -71,7 +93,6 @@ var tmMap = {
 
 		// On hover, change cursor style
 		var savedCursor = $('#globe').css('cursor');
-		console.log(savedCursor);
 		var pointerCursorToggle = false;
 		$('#globe').on('mousemove', function (e) {
 			var p = viewer.scene.pick(new Cesium.Cartesian2(e.offsetX, e.offsetY));
@@ -81,7 +102,6 @@ var tmMap = {
 					if (!pointerCursorToggle) {
 						pointerCursorToggle = true;
 						$('#globe').css('cursor', 'pointer');
-						console.log(entity.name);
 					}
 				} else {
 					if (pointerCursorToggle) {
@@ -97,59 +117,60 @@ var tmMap = {
 			}
 		});
 
-		viewer.scene.preRender.addEventListener(function () {
-			// console.log('pre render');
-			// See if the X,Y corresponding to lat, log for the pop up being tracked has changed, if so, move it to the new place
-			// Use jquery to move element around
-		}); 
-
 		// On click open pop up
-		$('#globe').on('click', function (e) {
-			// console.log(e);
-			var p = viewer.scene.pick(new Cesium.Cartesian2(e.offsetX, e.offsetY));
-			if (Cesium.defined(p)) {
-				var entity = p.id;
-				if (entity instanceof Cesium.Entity) {
-					console.log(entity.name);
-					var c = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, entity.position.getValue(Cesium.JulianDate.now()));
-					console.log(c);
-					console.log($('#trackPopUpLink a').replaceWith('<a href="?track=' + entity.name + '">' + tracks[entity.name].trackName + '</a>'));
-					$('#trackPopUp').show();
-					var x = c.x - ($('#trackPopUpContent').width()) / 2;
-					var y = c.y - ($('#trackPopUpContent').height());
-					console.log(x);
-					$('#trackPopUpContent').css('left', x + 'px');
-					$('#trackPopUpContent').css('top', y + 'px');
-					var removeHandler = viewer.scene.preRender.addEventListener(function () {
-						var changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, entity.position.getValue(Cesium.JulianDate.now()));
-						if ((c.x !== changedC.x) || (c.y !== changedC.y)) {
-							var x = changedC.x - ($('#trackPopUpContent').width()) / 2;
-							var y = changedC.y - ($('#trackPopUpContent').height());
-							$('#trackPopUpContent').css('left', x + 'px');
-							$('#trackPopUpContent').css('top', y + 'px');
-							c = changedC;
-						}
-					}); 
-					$('.leaflet-popup-close-button').on('click', function () {
-						$('#trackPopUp').hide();
-						removeHandler.call();
-						return false;
-					});					
-					// window.location.href='?track=' + entity.name;
-				} 
-			} 
-		});
-
-
-
-		tmMap.setUpInfoPanelEventHandling();
-		// Handle row click
-		$('#motdTable tr').on('click', function() {
-			var t = $(this).find('td').eq(2).html();
-			if (t) { 
-				window.location.href='?track=' + t;
+		$('#globe').on('click touchstart', function (e) {
+			var c;
+			if (e.type === 'touchstart'){ 
+				c = new Cesium.Cartesian2(e.originalEvent.touches[0].clientX, e.originalEvent.touches[0].clientY - 50);
+			} else {
+				c = new Cesium.Cartesian2(e.offsetX, e.offsetY);
 			}
+			// console.log(e);
+			// viewer.scene.pickPosition(c, savedC3);
+			// console.log(viewer.scene.drillPick(c)); // Need to loop through features and add them to pop up list
+			//var p = viewer.scene.pick(c);
+			var popUpCreated = false;
+			var pArray = viewer.scene.drillPick(c);
+			var pArrayLength = pArray.length;
+			for (var i=0; i<pArrayLength; i++) { 
+				if (Cesium.defined(pArray[i])) {
+					var entity = pArray[i].id;
+					if (entity instanceof Cesium.Entity) {
+						var br = '';
+						if (Cesium.defined(entity.point)) {
+							if (!popUpCreated) {
+								$('#trackPopUpLink').empty();
+								popUpCreated = true;	
+							} else {
+								br = '<br>';
+							}
+							$('#trackPopUpLink').append('<a href="?track=' + entity.name + '">' + br + tracks[entity.name].trackName + '</a>');
+						}
+					}
+				} 
+			}
+			if (popUpCreated) {
+				$('#trackPopUp').show();
+				self.positionPopUp(c); // Initial position at the place item picked
+				var removeHandler = viewer.scene.postRender.addEventListener(function () {
+					var changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, entity.position.getValue(Cesium.JulianDate.now()));
+					// If things moved, move the popUp too
+					if ((c.x !== changedC.x) || (c.y !== changedC.y)) {
+						self.positionPopUp(changedC);
+						c = changedC;
+					}
+				}); 
+				// PopUp close button event handler
+				$('.leaflet-popup-close-button').on('click', function () {
+					$('#trackPopUp').hide();
+					$('#trackPopUpLink').empty();
+					removeHandler.call();
+					return false;
+				});	
+			}		
 		});
+
+		this.setUpMotdInfoBox(tracks, false);
 
 		// Set up zoom control click events
 		var dest = new Cesium.Cartesian3();
@@ -163,21 +184,42 @@ var tmMap = {
 		 	viewer.camera.flyTo({destination: Cesium.Cartesian3.multiplyByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
 			return false;
 		});
+		$('#globe-control-north').click(function() {
+		 	viewer.camera.setView({heading: 0.0});
+			return false;
+		});
+		// Refresh destroys everyting and starts over 
 		$('#globe-control-refresh').click(function() {
 			$('.leaflet-control-zoom-in').off();
 			$('.leaflet-control-zoom-out').off();
 			$('#globe-control-refresh').off();
+			$('#globe-control-north').off();
 			$('#globe').off();
 			$('#trackPopUp').hide();
-
+			$('#infoPanel').empty();
+			$('#mapGlobeButton').empty();
 		 	viewer.destroy();
-		 	tmMap.setUpGlobe(tracks, regions);
+		 	self.setUpGlobe(tracks, regions);
 			return false;
 		});
+
+		// Set up twitter and facebook links
+		this.setUpSocialButtons('Check out hiking trails on the RikiTraki globe');
+	},
+	positionPopUp: function (c) {
+		var x = c.x - ($('#trackPopUpContent').width()) / 2;
+		var y = c.y - ($('#trackPopUpContent').height());
+		/* $('#trackPopUpContent').css('left', x + 'px');
+		$('#trackPopUpContent').css('top', y + 'px'); */
+		$('#trackPopUpContent').css('transform', 'translate3d(' + x + 'px, ' + y + 'px, 0)');
+
 	},
 	setUpMap: function (l) {
 		$('#globe').hide();
 
+		if (!isMobile) {
+			$('#mapGlobeButton').append('<li><a role="button" title="Globe" href="./?globe=yes"><span class="glyphicon icon-earth" aria-hidden="true"></span></a></li>');
+		}
 
 		map = new L.map('map');
 
@@ -274,54 +316,65 @@ var tmMap = {
 		  $('#tracksModal').modal('show');
 		  return false;
 		});
-
-	
-
 	},
 	setUpAllTracksView: function(tracks, region) {
-
-		var trackMarkersLayerGroup = tmMap.setUpMarkersForAllTracks(tracks);
+		var trackMarkersLayerGroup = this.setUpMarkersForAllTracks(tracks);
 
 		if (region) {
 			map.fitBounds([region.sw, region.ne], {maxZoom: 9});
 		} else {
 			// map.fitBounds(trackMarkersLayerGroup.getBounds());
 			// Set up motd box (What's new)
-			tmData.getMotd(function(data) {
-				var infoPanelContainer = L.DomUtil.create('div', 'info motd infoPanelContainer');
-				var infoPanelTitle = L.DomUtil.create('div', 'infoPanelTitle', infoPanelContainer);
-				var infoPanelBody = L.DomUtil.create('div', 'infoPanelBody', infoPanelContainer);
-				var infoPanelDescription = L.DomUtil.create('div', 'motdDescription infoPanelDescription', infoPanelBody);
-				var infoPanel = L.control({position: 'topright'});
-				infoPanel.onAdd = function () {
-					infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button><b>What\'s New...</b>';
-					var motdHTML = '<table id="motdTable" class="table table-condensed table-hover"><tbody>';
-					for (var i=0; i<data.motd.motdTracks.length; i++) {
-						motdHTML += '<tr><td><img class="motdThumbs" src=data/' + data.motd.motdTracks[i][0] + '/photos/thumb' + data.motd.motdTracks[i][1] + 
-									// '></td><td>' +
-									'></td><td>' +
-									tracks[data.motd.motdTracks[i][0]].trackName +
-									'</td><td style="display:none">' + 
-									data.motd.motdTracks[i][0] + '</td></tr>';
-					}
-					motdHTML += '</tbody></table>';
-					infoPanelDescription.innerHTML = motdHTML;
-					return infoPanelContainer;
-				};
-				infoPanel.addTo(map);
-				tmMap.setUpInfoPanelEventHandling();
-				// Handle row click
-				$('#motdTable tr').click(function() {
-					var t = $(this).find('td').eq(2).html();
-					if (t) { 
-						window.location.href='?track=' + t;
-					}
-				});
-			});
+			this.setUpMotdInfoBox(tracks, true);
 			map.fitBounds(trackMarkersLayerGroup.getBounds(), {paddingBottomRight: [$(window).width() < 1000 ? 0 : 240, 0]}); 
 		}
 		// Set up twitter and facebook links
-		tmMap.setUpSocialButtons('Check out hiking trails on RikiTraki');
+		this.setUpSocialButtons('Check out hiking trails on RikiTraki');
+	},
+	setUpMotdInfoBox: function (tracks, isLeaflet) {
+		var self = this;
+		tmData.getMotd(function(data) {
+			var infoPanelContainer = self.buildMotdInfoBoxDOMElement(tracks, data);
+			if (isLeaflet) {
+				var infoPanel = L.control({position: 'topright'});
+				infoPanel.onAdd = function () {
+					return infoPanelContainer;
+				};
+				infoPanel.addTo(map);
+			} else {
+				// Not leaflet, but we still use leaflet's styles
+				infoPanelContainer.className += ' leaflet-control'; 
+				$('#infoPanel').append(infoPanelContainer);
+				self.setUpInfoPanelEventHandling();
+			}
+			self.setUpInfoPanelEventHandling();
+			// Handle row click
+			$('#motdTable tr').click(function() {
+				var t = $(this).find('td').eq(2).html();
+				if (t) { 
+					window.location.href='?track=' + t;
+				}
+			});
+		});
+	},
+	buildMotdInfoBoxDOMElement: function (tracks, data) {
+		var infoPanelContainer = L.DomUtil.create('div', 'info motd infoPanelContainer');
+		var infoPanelTitle = L.DomUtil.create('div', 'infoPanelTitle', infoPanelContainer);
+		var infoPanelBody = L.DomUtil.create('div', 'infoPanelBody', infoPanelContainer);
+		var infoPanelDescription = L.DomUtil.create('div', 'motdDescription infoPanelDescription', infoPanelBody);
+		infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button><b>What\'s New...</b>';
+		var motdHTML = '<table id="motdTable" class="table table-condensed table-hover"><tbody>';
+		for (var i=0; i<data.motd.motdTracks.length; i++) {
+			motdHTML += '<tr><td><img class="motdThumbs" src=data/' + data.motd.motdTracks[i][0] + '/photos/thumb' + data.motd.motdTracks[i][1] + 
+						// '></td><td>' +
+						'></td><td>' +
+						tracks[data.motd.motdTracks[i][0]].trackName +
+						'</td><td style="display:none">' + 
+						data.motd.motdTracks[i][0] + '</td></tr>';
+		}
+		motdHTML += '</tbody></table>';
+		infoPanelDescription.innerHTML = motdHTML;
+		return infoPanelContainer;
 	},
 	setUpMarkersForAllTracks: function(tracks, trackId) {
 		var trackMarkersLayerGroup = L.markerClusterGroup();
@@ -379,7 +432,8 @@ var tmMap = {
 		return regions;
 	},
 	setUpSingleTrackView: function(track, layerControl, tracks) {
-		var trackMarkersLayerGroup = tmMap.setUpMarkersForAllTracks(tracks, track.trackId);
+		var self = this;
+		var trackMarkersLayerGroup = this.setUpMarkersForAllTracks(tracks, track.trackId);
 		layerControl.addOverlay(trackMarkersLayerGroup, 'Show markers for all tracks');
 
 		var trackMetrics;
@@ -543,69 +597,69 @@ var tmMap = {
 
 			// Fit th map to the trail boundaries leaving 50% room for the info panel
 	    	map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]}); 
-	    	tmMap.setUpInfoPanelEventHandling();
+	    	self.setUpInfoPanelEventHandling();
 
 	
 		}).addTo(map);
 
 		// Set up twitter and facebook links and such
-		tmMap.setUpSocialButtons(track.trackName);
+		this.setUpSocialButtons(track.trackName);
 	},
 	setUpInfoPanelEventHandling: function () {
-			// Enable proper info panel scrolling by adjusting max-height dynamically
-			// The 80 is to cover the bootstrap banner and the attribution at the bottom
-			// TODO: fix hardcoded 80 by querying the actual sizes of elements
-			$('.info').css('max-height', $(window).height()-80);
-			$(window).on('resize',function() {
-    			$('.info').css('max-height', $(window).height()-80);
-			});
+		var self = this;
+		// Enable proper info panel scrolling by adjusting max-height dynamically intially and on window resize
+		var windowSlack = $('#navigationBar').outerHeight(true) + $('.leaflet-control-attribution').outerHeight(true);
+		$('.info').css('max-height', $(window).height() - windowSlack);
+		$(window).on('resize', function() {
+			windowSlack = $('#navigationBar').outerHeight(true) + $('.leaflet-control-attribution').outerHeight(true);
+			$('.info').css('max-height', $(window).height() - windowSlack);
+		});
 
-			// Make sure keyboard events can be handled
-			$('.infoPanelContainer').attr('tabindex', '0');
+		// Make sure keyboard events can be handled
+		$('.infoPanelContainer').attr('tabindex', '0');
 
-			// Stop propagation of some events that the info box needs to handle
-			$('.infoPanelContainer').on('mousedown wheel scrollstart touchstart mousewheel DOMMouseScroll MozMousePixelScroll', function(e) {
+		// Stop propagation of some events that the info box needs to handle
+		$('.infoPanelContainer').on('mousedown wheel scrollstart touchstart mousewheel DOMMouseScroll MozMousePixelScroll', function(e) {
+			e.stopPropagation();
+		}); 
+		// L.DomEvent.disableClickPropagation(infoPanelContainer);
+
+		// By default, info panel is collapsed so close button should be hidden
+		// $('.infoPanelTitle button').hide();
+
+		// Event handling for expand/collapse on click
+		var showToggle = true;
+		// Give focus to the info panel to make it easy to use keyboard to scroll, if necessary
+		$('.infoPanelContainer').focus();
+		// Handle keyboard events
+		$('.infoPanelContainer').on('keyup', function(e) {
+			// Collapse info box on ESC or SPACE
+			if ((e.keyCode === KEYCODE_ESC) || (e.keyCode === KEYCODE_SPACE)) {
+				showToggle = self.collapseInfoPanel(showToggle, e);
+			} else {
+				// Let the info panel handle the other keys (like arrows and page-up/page-down), so stop propagation to the map
 				e.stopPropagation();
-			}); 
-    		// L.DomEvent.disableClickPropagation(infoPanelContainer);
-
-    		// By default, info panel is collapsed so close button should be hidden
-    		// $('.infoPanelTitle button').hide();
-
-			// Event handling for expand/collapse on click
-			var showToggle = true;
-			// Give focus to the info panel to make it easy to use keyboard to scroll, if necessary
-			$('.infoPanelContainer').focus();
-			// Handle keyboard events
-			$('.infoPanelContainer').on('keyup', function(e) {
-				// Collapse info box on ESC or SPACE
-				if ((e.keyCode === KEYCODE_ESC) || (e.keyCode === KEYCODE_SPACE)) {
-					showToggle = tmMap.collapseInfoPanel(showToggle, e);
-				} else {
-					// Let the info panel handle the other keys (like arrows and page-up/page-down), so stop propagation to the map
-					e.stopPropagation();
-				}
-			});
-			// Expand on title click
-			$('.infoPanelTitle').on('click', function(e) {
-				showToggle = tmMap.expandInfoPanel(showToggle, e);
-			});
-			// Collapse on close button
-			$('.infoPanelTitle button').on('click', function(e) {
-				showToggle = tmMap.collapseInfoPanel(showToggle, e);
-			});
-			// Ignore clicks on description to allow for copy and paste
-			$('.infoPanelDescription').on('click', function(e) {
-				e.stopPropagation();
-			});
-			// Close the info panel if clicked (or key pressed) on the map (cannot stop propagation because it breaks lightbox)
-			$('#map').on('click keyup', function(e) {
-				showToggle = tmMap.collapseInfoPanel(showToggle, e, true);
-			});
-			$('#globe').on('click keyup touchstart', function(e) {
-				showToggle = tmMap.collapseInfoPanel(showToggle, e, true);
-			});		
-
+			}
+		});
+		// Expand on title click
+		$('.infoPanelTitle').on('click', function(e) {
+			showToggle = self.expandInfoPanel(showToggle, e);
+		});
+		// Collapse on close button
+		$('.infoPanelTitle button').on('click', function(e) {
+			showToggle = self.collapseInfoPanel(showToggle, e);
+		});
+		// Ignore clicks on description to allow for copy and paste
+		$('.infoPanelDescription').on('click', function(e) {
+			e.stopPropagation();
+		});
+		// Close the info panel if clicked (or key pressed) on the map (cannot stop propagation because it breaks lightbox)
+		$('#map').on('click keyup', function(e) {
+			showToggle = self.collapseInfoPanel(showToggle, e, true);
+		});
+		$('#globe').on('click keyup touchstart', function(e) {
+			showToggle = self.collapseInfoPanel(showToggle, e, true);
+		});		
 	},
 	expandInfoPanel: function (toggle, e) {
 		e.stopPropagation();

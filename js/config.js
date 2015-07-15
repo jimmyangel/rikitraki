@@ -12,6 +12,9 @@ var tmConfig = {
 	getGlobeFlag: function () {
 		return tmConfig.getUrlVars().globe === 'yes' ? true : false;
 	},
+	getMobileOverride: function () {
+		return tmConfig.getUrlVars().mobileoverride === 'yes' ? true : false;		
+	},
 	getLayers: function (f) {
 		$.getJSON('config/layers.json', f).fail(function(jqxhr, textStatus, error) {throw error;});
 		return f; //f is the function that is invoked when the data is ready

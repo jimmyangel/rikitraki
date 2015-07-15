@@ -23,6 +23,9 @@
     <!-- endbower -->
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
+    <!-- Fonts -->
+    <link rel="stylesheet" href="components/icomoon/style.css" />
+
     <!-- build: use this block later with processhtml to prepare dist-->
     <link rel="stylesheet" href="css/main.css">
     <!-- endbuild -->
@@ -45,7 +48,7 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     <div id="fb-root"></div>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div id="navigationBar" class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
@@ -69,6 +72,8 @@
               <a data-toggle="collapse" id="tracks-btn" role="button" href="#" data-target="#trackstModal">Tracks</a>
             </li>
           </ul>
+          <ul id="mapGlobeButton" class="nav navbar-nav">
+          </ul>
           <ul class="nav navbar-nav navbar-right">
             <li>
               <a data-toggle="collapse" id="about-btn" role="button" href="#" data-target="#aboutModal">About</a>
@@ -76,12 +81,12 @@
           </ul>
           <ul class="nav navbar-nav navbar-right nav-pills">
             <li>
-              <a href="#" id="fb-btn" class="btn btn-social-icon btn-facebook">
+              <a href="#" id="fb-btn" title="Share on Facebook" class="btn btn-social-icon btn-facebook">
                 <i class="fa fa-facebook"></i>
               </a>
             </li>
             <li>
-              <a href="https://twitter.com/" class="btn btn-social-icon btn-twitter custom-tweet-button">
+              <a href="https://twitter.com/" title="Share on Twitter" class="btn btn-social-icon btn-twitter custom-tweet-button">
                 <i class="fa fa-twitter"></i>
               </a>
             </li>
@@ -122,7 +127,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 class="modal-title">RikiTraki</h3><b>v0.1.3<sup>Alpha</sup> by Ricardo Morin</b>
+            <h3 class="modal-title">RikiTraki</h3><b>v0.1.4<sup>Alpha</sup> by Ricardo Morin</b>
           </div>
           <div class="modal-body">
             <h4>About this site</h4>
@@ -145,7 +150,8 @@
               This project uses free and open source components and data as shown below.<br><br>
               <b>Core mapping framework:</b>
               <ul>
-               <li>The powerful <a href="http://leafletjs.com/" target="_blank">Leaflet</a> Javascript library</li>
+               <li>The powerful <a href="http://leafletjs.com/" target="_blank">Leaflet</a> Javascript library for projection maps</li>
+               <li>The amazing <a href="http://cesiumjs.org/" target="_blank">Cesium</a> Javascript library for globe and 3D mapping</li>
               </ul>
               <b>Components and plugins:</b>
                 <ul>
@@ -153,6 +159,8 @@
                   <li><a href="https://jquery.com/" target="_blank">jQuery</a> mobile-friendly Javascript utility library</li>
                   <li><a href="https://github.com/MrMufflon/Leaflet.Elevation" target="_blank">Leaflet.Elevation</a> to display trail elevation profile</li>
                   <li><a href="https://github.com/jseppi/Leaflet.MakiMarkers" target="_blank">Leaflet.MakiMarkers</a> to display nice Maki icons in markers</li>
+                  <li><a href="http://fortawesome.github.io/Font-Awesome/" target="_blank">Font Awesome</a> icons</li>
+                  <li><a href="https://icomoon.io/" target="_blank">IcoMoon</a> icons</li>
                   <li><a href="http://lokeshdhakar.com/projects/lightbox2/" target="_blank">Lightbox2</a> to display pictures and slideshow</li>
                   <li><a href="https://github.com/mapbox/leaflet-omnivore" target="_blank">Omnivore</a> plug-in to consume GPS tracks in .GPX format</li>
                   <li><a href="http://spin.js.org/" target="_blank">spin.js</a> spinning activity indicator</li>
@@ -182,37 +190,23 @@
             <a class="leaflet-control-zoom-out" href="#" title="Zoom out">-</a>
           </div>
           <div class="leaflet-control leaflet-bar">
-            <a id="globe-control-refresh" href="#"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
+            <a id="globe-control-refresh" href="#" title="Reset view"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
+          </div>
+          <div class="leaflet-control leaflet-bar">
+            <a id="globe-control-north" href="#" title="North">N</a>
           </div>
         </div>
-        <div class="leaflet-top leaflet-right">
-          <div class="info motd infoPanelContainer leaflet-control" tabindex="0" style="max-height: 1058px;">
-            <div class="infoPanelTitle"><button class="close" aria-hidden="true">×</button><b>What's New...</b></div>
-            <div class="infoPanelBody">
-              <div class="motdDescription infoPanelDescription">
-                <table id="motdTable" class="table table-condensed table-hover">
-                  <tbody>
-                  <tr><td><img class="motdThumbs" src="data/T0139/photos/thumbSAM_4511.jpg"></td><td>Malheur River Trail, near John Day, Oregon</td><td style="display:none">T0139</td></tr>
-                  <tr><td><img class="motdThumbs" src="data/T0138/photos/thumbSAM_4431.jpg"></td><td>Little Strawberry Lake, near Prairie City, Oregon</td><td style="display:none">T0138</td></tr>
-                  <tr><td><img class="motdThumbs" src="data/T0137/photos/thumbIMG_0009.jpg"></td><td>Jefferson Park via Sentinel Hills, near Detroit, Oregon</td><td style="display:none">T0137</td></tr>
-                  <tr><td><img class="motdThumbs" src="data/T0136/photos/thumbSAM_3931.jpg"></td><td>Pamelia Lake and Grizzly Peak, near Detroit, Oregon</td><td style="display:none">T0136</td></tr>
-                  <tr><td><img class="motdThumbs" src="data/T0135/photos/thumbSAM_3689.jpg"></td><td>Battle Ax Mountain Loop, near Detroit, Oregon</td><td style="display:none">T0135</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+        <div id="infoPanel" class="leaflet-top leaflet-right">
         </div>
         <div class="leaflet-bottom leaflet-right">
-          <div id="creditContainer" class="leaflet-control"></div>
+          <div id="creditContainer" class="leaflet-control-attribution leaflet-control"></div>
         </div>
       </div>
       <div id="trackPopUp" style="display: none;">
-        <div id="trackPopUpContent" style="display: block; position: absolute; z-index: 10;">
+        <div id="trackPopUpContent" class="leaflet-popup" style="z-index: 10;">
           <a class="leaflet-popup-close-button" href="#">×</a>
           <div class="leaflet-popup-content-wrapper">
-            <div id="trackPopUpLink" class="leaflet-popup-content" style="max-width: 200px;">
-              <a href="?track=T0106">El Ocho De Alájar es un logar muy bonito</a>
+            <div id="trackPopUpLink" class="leaflet-popup-content" style="max-width: 300px;">
             </div>
           </div>
             <div class="leaflet-popup-tip-container">
