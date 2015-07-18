@@ -33,7 +33,6 @@ var tmMap = {
 		return this.setUpGotoMenu(tracks);
 	},
 	setUpGlobe: function (tracks, regions) {
-
 		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
 
 		var self = this;
@@ -61,23 +60,6 @@ var tmMap = {
 		viewer.scene.screenSpaceCameraController.enableTilt = false;
 		viewer.scene.screenSpaceCameraController.enableLook = false;
 		viewer.scene.screenSpaceCameraController.enableTranslate = false;
-
-		// Populate regions (did not work as well as imagined)
-		/* for (var region in regions) {
-			if (regions[region].sw[0] != regions[region].ne[0]) { // Ignore single track regions for now
-				console.log(region);	
-				viewer.entities.add({
-					name: region,
-					position : Cesium.Cartesian3.fromDegrees(regions[region].ne[1], regions[region].ne[0]),
-					rectangle: {
-						coordinates : Cesium.Rectangle.fromDegrees(regions[region].sw[1], regions[region].sw[0], regions[region].ne[1], regions[region].ne[0]),
-						material : Cesium.Color.BROWN.withAlpha(0.2),
-						outline : true,
-						outlineColor : Cesium.Color.BROWN
-					}
-				});
-			}
-		} */
 
 		// Populate track markers
 		for (var tId in tracks) {
@@ -125,10 +107,6 @@ var tmMap = {
 			} else {
 				c = new Cesium.Cartesian2(e.offsetX, e.offsetY);
 			}
-			// console.log(e);
-			// viewer.scene.pickPosition(c, savedC3);
-			// console.log(viewer.scene.drillPick(c)); // Need to loop through features and add them to pop up list
-			//var p = viewer.scene.pick(c);
 			var popUpCreated = false;
 			var pArray = viewer.scene.drillPick(c);
 			var pArrayLength = pArray.length;
@@ -452,6 +430,19 @@ var tmMap = {
 		});
 		el.addTo(map);	
 
+		// Set up terrain button
+		var terrainControl = L.control({position: 'topleft'});
+		terrainControl.onAdd = function () {
+			var terrainControlContainer = L.DomUtil.create('div', 'leaflet-control leaflet-bar terrain-control');
+			terrainControlContainer.innerHTML = '<a id="terrainControl" style="text-shadow: 2px 2px 2px #666666;" href="#" title="3D Terrain">3D</a>';
+			return terrainControlContainer;
+		};
+		terrainControl.addTo(map);
+		$('.terrain-control').on('click', function () {
+			window.location.href='?track=' + track.trackId + '&terrain=yes';
+			return false;
+		});		
+
 		var insideT; // Here we will put the inside line of the track in a different color
 
 		// We use a custom layer to have more control over track display
@@ -605,6 +596,116 @@ var tmMap = {
 		// Set up twitter and facebook links and such
 		this.setUpSocialButtons(track.trackName);
 	},
+	setUpSingleTrackTerrainView: function(track) {
+		var self = this;
+		$('#map').hide();
+		$('.help3d').show();
+		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
+
+		var viewer = new Cesium.Viewer('globe', {
+							// scene3DOnly: true, 
+							baseLayerPicker: false,
+							imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+								url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
+								enablePickFeatures: false
+							}),
+							animation: false,
+							fullscreenButton: false,
+							geocoder: false,
+							homeButton: false,
+							infoBox: false,
+							sceneModePicker: false,
+							selectionIndicator: false,
+							timeline: false,
+							navigationHelpButton: false,
+							navigationInstructionsInitiallyVisible: false,
+							skyAtmosphere: false,
+							scene3DOnly: true,
+							creditContainer: 'creditContainer'});
+
+
+		var terrainProvider = new Cesium.CesiumTerrainProvider({
+			url : 'http://assets.agi.com/stk-terrain/world',
+			requestWaterMask : false,
+			requestVertexNormals : true
+		}); 
+		viewer.terrainProvider = terrainProvider;
+
+		// Should use fly to bounding sphere instead
+		var tl = omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null).on('ready', function() {
+			viewer.camera.flyTo({
+				destination : Cesium.Cartesian3.fromDegrees(this.getBounds().getCenter().lng, this.getBounds().getCenter().lat - 0.09, 5000.0),
+				duration: 0,
+				orientation : {
+					heading : Cesium.Math.toRadians(0.0),
+					pitch : Cesium.Math.toRadians(-35.0),
+					roll : 0.0
+				}
+			}); 
+			// Get the GeoJSON data from omnivore
+			var trackGeoJSON = this.toGeoJSON();
+
+			// Remove all features except LineString (for now)
+			var i = trackGeoJSON.features.length;
+			while (i--) {
+				if (trackGeoJSON.features[i].geometry.type !== 'LineString') {
+					trackGeoJSON.features.splice(i, 1);
+				}
+			}
+
+			// Go ahead and draw the track
+			viewer.dataSources.add(Cesium.GeoJsonDataSource.load(trackGeoJSON, {stroke: Cesium.Color.fromCssColorString(INSIDE_TRACK_COLOR), strokeWidth: 3}));
+			// And draw the trailhead too
+			viewer.entities.add({
+				name: track.trackId,
+				position : Cesium.Cartesian3.fromDegrees(trackGeoJSON.features[0].geometry.coordinates[0][0], trackGeoJSON.features[0].geometry.coordinates[0][1], trackGeoJSON.features[0].geometry.coordinates[0][2]),
+				point : {
+					pixelSize : 15,
+					color : Cesium.Color.fromCssColorString(INSIDE_TRACK_COLOR),
+					outlineColor: Cesium.Color.fromCssColorString(TRACK_COLOR),
+					outlineWidth: 4
+				}
+			});
+		});
+
+		// Set up track name in info box
+		$('#infoPanel').append('<div style="min-width: 200px;" class="info leaflet-control"><b>' + track.trackName + ' ' + (track.trackFav ? FAVORITE : '') + '</b></div>');
+		$('#infoPanel div').css('cursor', 'pointer');
+		$('#infoPanel').on('click', function () {
+			window.location.href='?track=' + track.trackId;
+			return false;
+		});		
+
+		// Set up zoom control click events
+		var dest = new Cesium.Cartesian3();
+		$('.leaflet-control-zoom-in').click(function() {
+		 	viewer.camera.zoomIn(2000);
+		 	return false;
+		});
+		$('.leaflet-control-zoom-out').click(function() {
+		 	viewer.camera.zoomOut(2000);
+			return false;
+		});
+		$('#globe-control-north').hide();
+
+		// Refresh destroys everyting and starts over 
+		$('#globe-control-refresh').click(function() {
+			$('.leaflet-control-zoom-in').off();
+			$('.leaflet-control-zoom-out').off();
+			$('#globe-control-refresh').off();
+			$('#globe-control-north').off();
+			$('#globe').off();
+			$('#infoPanel').empty();
+			$('#mapGlobeButton').empty();
+		 	viewer.destroy();
+		 	self.setUpSingleTrackTerrainView(track);
+			return false;
+		});
+
+		// Set up twitter and facebook links and such
+		this.setUpSocialButtons(track.trackName);
+
+	},
 	setUpInfoPanelEventHandling: function () {
 		var self = this;
 		// Enable proper info panel scrolling by adjusting max-height dynamically intially and on window resize
@@ -685,7 +786,7 @@ var tmMap = {
 	},
 	setUpSocialButtons: function (text) {
 		// Twitter
-		$('.btn-twitter').attr('href', 'https://twitter.com/intent/tweet?text=' + text + '&url=' + window.location.href + '&via=jimmieangel' + '&hashtags=rikitraki');
+		$('.btn-twitter').attr('href', 'https://twitter.com/intent/tweet?text=' + text + '&url=' + encodeURIComponent(window.location.href) + '&via=jimmieangel' + '&hashtags=rikitraki');
 		// Facebook
 		$('#fb-btn').click(function() {
 			FB.ui({

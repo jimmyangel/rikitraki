@@ -92,6 +92,17 @@ body {
   outline: 0 solid;
 }
 
+.help3d {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  overflow: auto;
+  outline: 0 solid;
+}
+
 .motd {
   min-width: 200px;
   cursor: pointer;
