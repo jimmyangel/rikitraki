@@ -673,16 +673,6 @@ var tmMap = {
 				}
 			}); 
 
-			/* viewer.entities.add({
-				name: track.trackId,
-				position : Cesium.Cartesian3.fromDegrees(trackGeoJSON.features[0].geometry.coordinates[0][0], trackGeoJSON.features[0].geometry.coordinates[0][1], trackGeoJSON.features[0].geometry.coordinates[0][2]),
-				point : {
-					pixelSize : 15,
-					color : Cesium.Color.fromCssColorString(INSIDE_TRACK_COLOR),
-					outlineColor: Cesium.Color.fromCssColorString(TRACK_COLOR),
-					outlineWidth: 4
-				}
-			}); */
 		});
 
 		// Set up track name in info box
@@ -707,16 +697,7 @@ var tmMap = {
 
 		// Refresh destroys everyting and starts over 
 		$('#globe-control-refresh').click(function() {
-			$('.leaflet-control-zoom-in').off();
-			$('.leaflet-control-zoom-out').off();
-			$('#globe-control-refresh').off();
-			$('#globe-control-north').off();
-			$('#globe').off();
-			$('#infoPanel').empty();
-			$('#mapGlobeButton').empty();
-			$('#fb-btn').off();
-		 	viewer.destroy();
-		 	self.setUpSingleTrackTerrainView(track);
+			location.reload();
 			return false;
 		});
 
