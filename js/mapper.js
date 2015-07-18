@@ -204,7 +204,8 @@ var tmMap = {
 
 		// Populate basemap layers from JSON config file
 		// Add layer control
-		var layerControl = L.control.layers(null, null, {position: 'topleft', collapsed: true}).addTo(map);
+		// var layerControl = L.control.layers(null, null, {position: 'topleft', collapsed: true}).addTo(map);
+		var layerControl = L.control.layers(null, null, {position: 'topleft', collapsed: true});
 
 		// Set up spinner control
 		var spinnerControl = L.control({position: 'bottomright'});
@@ -296,7 +297,9 @@ var tmMap = {
 		  return false;
 		});
 	},
-	setUpAllTracksView: function(tracks, region) {
+	setUpAllTracksView: function(tracks, region, layerControl) {
+
+		layerControl.addTo(map);
 		var trackMarkersLayerGroup = this.setUpMarkersForAllTracks(tracks);
 
 		if (region) {
@@ -410,7 +413,7 @@ var tmMap = {
 		}
 		return regions;
 	},
-	setUpSingleTrackView: function(track, layerControl, tracks) {
+	setUpSingleTrackView: function(track, tracks, layerControl) {
 		var self = this;
 		var trackMarkersLayerGroup = this.setUpMarkersForAllTracks(tracks, track.trackId);
 		layerControl.addOverlay(trackMarkersLayerGroup, 'Show markers for all tracks');
@@ -442,7 +445,10 @@ var tmMap = {
 		$('.terrain-control').on('click', function () {
 			window.location.href='?track=' + track.trackId + '&terrain=yes';
 			return false;
-		});		
+		});
+		// Later control should always be the last one
+		layerControl.addTo(map);
+
 
 		var insideT; // Here we will put the inside line of the track in a different color
 
@@ -657,7 +663,17 @@ var tmMap = {
 			// Go ahead and draw the track
 			viewer.dataSources.add(Cesium.GeoJsonDataSource.load(trackGeoJSON, {stroke: Cesium.Color.fromCssColorString(INSIDE_TRACK_COLOR), strokeWidth: 3}));
 			// And draw the trailhead too
+			var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
 			viewer.entities.add({
+				name: track.trackId,
+				position : Cesium.Cartesian3.fromDegrees(trackGeoJSON.features[0].geometry.coordinates[0][0], trackGeoJSON.features[0].geometry.coordinates[0][1], trackGeoJSON.features[0].geometry.coordinates[0][2]),
+				billboard : {
+					image : '../images/' + thIconName + '.png',
+					verticalOrigin : Cesium.VerticalOrigin.BOTTOM
+				}
+			}); 
+
+			/* viewer.entities.add({
 				name: track.trackId,
 				position : Cesium.Cartesian3.fromDegrees(trackGeoJSON.features[0].geometry.coordinates[0][0], trackGeoJSON.features[0].geometry.coordinates[0][1], trackGeoJSON.features[0].geometry.coordinates[0][2]),
 				point : {
@@ -666,7 +682,7 @@ var tmMap = {
 					outlineColor: Cesium.Color.fromCssColorString(TRACK_COLOR),
 					outlineWidth: 4
 				}
-			});
+			}); */
 		});
 
 		// Set up track name in info box
