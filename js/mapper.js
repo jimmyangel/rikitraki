@@ -176,6 +176,7 @@ var tmMap = {
 			$('#trackPopUp').hide();
 			$('#infoPanel').empty();
 			$('#mapGlobeButton').empty();
+			$('#fb-btn').off();
 		 	viewer.destroy();
 		 	self.setUpGlobe(tracks, regions);
 			return false;
@@ -697,6 +698,7 @@ var tmMap = {
 			$('#globe').off();
 			$('#infoPanel').empty();
 			$('#mapGlobeButton').empty();
+			$('#fb-btn').off();
 		 	viewer.destroy();
 		 	self.setUpSingleTrackTerrainView(track);
 			return false;
