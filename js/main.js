@@ -35,10 +35,10 @@ function setUpMap() {
 						// Since trackId not found then add all tracks markers to map and display all
 						// But first lets see if we need to zoom into a region
 						var regionParm = tmConfig.getRegion();
-						tmMap.setUpAllTracksView(data.tracks, regions[regionParm]);
+						tmMap.setUpAllTracksView(data.tracks, regions[regionParm], layerControl);
 					// Otherwise, go for a single track and its gory details
 					} else {
-						tmMap.setUpSingleTrackView(data.tracks[trackId], layerControl, data.tracks);
+						tmMap.setUpSingleTrackView(data.tracks[trackId], data.tracks, layerControl);
 					}
 				});
 			}
