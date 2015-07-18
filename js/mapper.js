@@ -668,7 +668,7 @@ var tmMap = {
 				name: track.trackId,
 				position : Cesium.Cartesian3.fromDegrees(trackGeoJSON.features[0].geometry.coordinates[0][0], trackGeoJSON.features[0].geometry.coordinates[0][1], trackGeoJSON.features[0].geometry.coordinates[0][2]),
 				billboard : {
-					image : '../images/' + thIconName + '.png',
+					image : 'images/' + thIconName + '.png',
 					verticalOrigin : Cesium.VerticalOrigin.BOTTOM
 				}
 			}); 
