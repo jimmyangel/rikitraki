@@ -11,6 +11,7 @@ var SELECTED_THUMBNAIL_COLOR = '#00FF00';
 var FAVORITE = '&#10029;';
 var KEYCODE_ESC = 27;
 var KEYCODE_SPACE = 32;
+var CAMERA_OFFSET = 6000;
 
 var tmMap = {
 	setUpCommon: function (tracks) {
@@ -604,7 +605,6 @@ var tmMap = {
 		this.setUpSocialButtons(track.trackName);
 	},
 	setUpSingleTrackTerrainView: function(track) {
-		var self = this;
 		$('#map').hide();
 		$('.help3d').show();
 		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
@@ -639,9 +639,15 @@ var tmMap = {
 		viewer.terrainProvider = terrainProvider;
 
 		// Should use fly to bounding sphere instead
-		var tl = omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null).on('ready', function() {
+		omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null).on('ready', function() {
+			// First grab the GeoJSON data from omnivore
+			var trackGeoJSON = this.toGeoJSON();
+
 			viewer.camera.flyTo({
-				destination : Cesium.Cartesian3.fromDegrees(this.getBounds().getCenter().lng, this.getBounds().getCenter().lat - 0.09, 5000.0),
+				destination : Cesium.Cartesian3.fromDegrees(
+								this.getBounds().getCenter().lng, 
+								this.getBounds().getCenter().lat - 0.09, 
+								trackGeoJSON.features[0].geometry.coordinates[0][2] + CAMERA_OFFSET),
 				duration: 0,
 				orientation : {
 					heading : Cesium.Math.toRadians(0.0),
@@ -649,8 +655,6 @@ var tmMap = {
 					roll : 0.0
 				}
 			}); 
-			// Get the GeoJSON data from omnivore
-			var trackGeoJSON = this.toGeoJSON();
 
 			// Remove all features except LineString (for now)
 			var i = trackGeoJSON.features.length;
@@ -666,7 +670,10 @@ var tmMap = {
 			var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
 			viewer.entities.add({
 				name: track.trackId,
-				position : Cesium.Cartesian3.fromDegrees(trackGeoJSON.features[0].geometry.coordinates[0][0], trackGeoJSON.features[0].geometry.coordinates[0][1], trackGeoJSON.features[0].geometry.coordinates[0][2]),
+				position : Cesium.Cartesian3.fromDegrees(
+								trackGeoJSON.features[0].geometry.coordinates[0][0], 
+								trackGeoJSON.features[0].geometry.coordinates[0][1], 
+								trackGeoJSON.features[0].geometry.coordinates[0][2]),
 				billboard : {
 					image : 'images/' + thIconName + '.png',
 					verticalOrigin : Cesium.VerticalOrigin.BOTTOM
@@ -684,7 +691,6 @@ var tmMap = {
 		});		
 
 		// Set up zoom control click events
-		var dest = new Cesium.Cartesian3();
 		$('.leaflet-control-zoom-in').click(function() {
 		 	viewer.camera.zoomIn(2000);
 		 	return false;
