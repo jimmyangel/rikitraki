@@ -6,12 +6,12 @@
 
 // The map is global
 var map;
-var isMobile = tmConfig.getMobileOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+var isMobile = tmConfig.getOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 var isWebGlSupported = false;
 
 function setUpMap() {
-	isWebGlSupported = tmConfig.getWebGlFlag();
-	
+	isWebGlSupported = tmConfig.getOverride() ? true : tmConfig.getWebGlFlag();
+
 	// Get trackId from URL query string
 	var trackId = tmConfig.getTrackId();
 
@@ -21,7 +21,7 @@ function setUpMap() {
 		var regions = tmMap.setUpCommon(data.tracks);
 
 		// Now figure out what view to set up
-		if (tmConfig.getTerrainFlag() && (trackId in data.tracks)) {
+		if (tmConfig.getTerrainFlag() &&isWebGlSupported && (trackId in data.tracks)) {
 			tmMap.setUpSingleTrackTerrainView(data.tracks[trackId]);		
 		} else {
 			if (tmConfig.getGlobeFlag() && isWebGlSupported) {
