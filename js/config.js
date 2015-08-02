@@ -12,8 +12,8 @@ var tmConfig = {
 	getGlobeFlag: function () {
 		return tmConfig.getUrlVars().globe === 'yes' ? true : false;
 	},
-	getMobileOverride: function () {
-		return tmConfig.getUrlVars().mobileoverride === 'yes' ? true : false;		
+	getOverride: function () {
+		return tmConfig.getUrlVars().override === 'yes' ? true : false;		
 	},
 	getTerrainFlag: function () {
 		return tmConfig.getUrlVars().terrain === 'yes' ? true : false;
