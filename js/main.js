@@ -7,10 +7,11 @@
 // The map is global
 var map;
 var isMobile = tmConfig.getMobileOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+var isWebGlSupported = false;
 
 function setUpMap() {
-	// alert(navigator.userAgent);
-
+	isWebGlSupported = tmConfig.getWebGlFlag();
+	
 	// Get trackId from URL query string
 	var trackId = tmConfig.getTrackId();
 
@@ -23,7 +24,7 @@ function setUpMap() {
 		if (tmConfig.getTerrainFlag() && (trackId in data.tracks)) {
 			tmMap.setUpSingleTrackTerrainView(data.tracks[trackId]);		
 		} else {
-			if (tmConfig.getGlobeFlag() && !isMobile) {
+			if (tmConfig.getGlobeFlag() && isWebGlSupported) {
 				tmMap.setUpGlobe(data.tracks, regions);
 			} else {
 				// Get JSON layer config file and wait before populating map

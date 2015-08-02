@@ -1,7 +1,7 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmMap */
-/* globals L, omnivore, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile */
+/* globals L, omnivore, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile, isWebGlSupported */
 
 var TRAIL_MARKER_COLOR = '7A5C1E';
 var WAYPOINT_COLOR = '#3887BE';
@@ -38,6 +38,7 @@ var tmMap = {
 
 		var self = this;
 		$('#map').hide();
+		var drillPickLimit = isMobile ? 1 : undefined;
 		var viewer = new Cesium.Viewer('globe', {
 							// scene3DOnly: true, 
 							baseLayerPicker: false,
@@ -109,7 +110,7 @@ var tmMap = {
 				c = new Cesium.Cartesian2(e.offsetX, e.offsetY);
 			}
 			var popUpCreated = false;
-			var pArray = viewer.scene.drillPick(c);
+			var pArray = viewer.scene.drillPick(c, drillPickLimit);
 			var pArrayLength = pArray.length;
 			for (var i=0; i<pArrayLength; i++) { 
 				if (Cesium.defined(pArray[i])) {
@@ -197,7 +198,7 @@ var tmMap = {
 	setUpMap: function (l) {
 		$('#globe').hide();
 
-		if (!isMobile) {
+		if (isWebGlSupported) {
 			$('#mapGlobeButton').append('<li><a role="button" title="Globe" href="./?globe=yes"><span class="glyphicon icon-sphere" aria-hidden="true"></span></a></li>');
 		}
 
@@ -435,18 +436,20 @@ var tmMap = {
 		});
 		el.addTo(map);	
 
-		// Set up terrain button
-		var terrainControl = L.control({position: 'topleft'});
-		terrainControl.onAdd = function () {
-			var terrainControlContainer = L.DomUtil.create('div', 'leaflet-control leaflet-bar terrain-control');
-			terrainControlContainer.innerHTML = '<a id="terrainControl" style="text-shadow: 2px 2px 2px #666666;" href="#" title="3D Terrain">3D</a>';
-			return terrainControlContainer;
-		};
-		terrainControl.addTo(map);
-		$('.terrain-control').on('click', function () {
-			window.location.href='?track=' + track.trackId + '&terrain=yes';
-			return false;
-		});
+		// Set up terrain button (but only if WebGL is supported)
+		if (isWebGlSupported) {
+			var terrainControl = L.control({position: 'topleft'});
+			terrainControl.onAdd = function () {
+				var terrainControlContainer = L.DomUtil.create('div', 'leaflet-control leaflet-bar terrain-control');
+				terrainControlContainer.innerHTML = '<a id="terrainControl" style="text-shadow: 2px 2px 2px #666666;" href="#" title="3D Terrain">3D</a>';
+				return terrainControlContainer;
+			};
+			terrainControl.addTo(map);
+			$('.terrain-control').on('click', function () {
+				window.location.href='?track=' + track.trackId + '&terrain=yes';
+				return false;
+			});
+		}
 		// Later control should always be the last one
 		layerControl.addTo(map);
 
