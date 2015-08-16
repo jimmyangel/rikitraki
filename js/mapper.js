@@ -1,7 +1,7 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmMap */
-/* globals L, omnivore, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile, isWebGlSupported */
+/* globals L, omnivore, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
 
 var TRAIL_MARKER_COLOR = '7A5C1E';
 var WAYPOINT_COLOR = '#3887BE';
@@ -342,14 +342,15 @@ var tmMap = {
 		});
 	},
 	buildMotdInfoBoxDOMElement: function (tracks, data) {
+		console.log(tracks);
 		var infoPanelContainer = L.DomUtil.create('div', 'info motd infoPanelContainer');
 		var infoPanelTitle = L.DomUtil.create('div', 'infoPanelTitle', infoPanelContainer);
 		var infoPanelBody = L.DomUtil.create('div', 'infoPanelBody', infoPanelContainer);
 		var infoPanelDescription = L.DomUtil.create('div', 'motdDescription infoPanelDescription', infoPanelBody);
 		infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button><b>What\'s New...</b>';
 		var motdHTML = '<table id="motdTable" class="table table-condensed table-hover"><tbody>';
-		for (var i=0; i<data.motd.motdTracks.length; i++) {
-			motdHTML += '<tr><td><img class="motdThumbs" src=data/' + data.motd.motdTracks[i][0] + '/photos/thumb' + data.motd.motdTracks[i][1] + 
+		for (var i=0; i<data.motd.motdTracks.length; i++) {			
+			motdHTML += '<tr><td><img class="motdThumbs" src=' + API_BASE_URL + '/v1/tracks/' + data.motd.motdTracks[i][0] + '/thumbnail/' + data.motd.motdTracks[i][1] + 
 						// '></td><td>' +
 						'></td><td>' +
 						tracks[data.motd.motdTracks[i][0]].trackName +
@@ -474,7 +475,7 @@ var tmMap = {
 		});
 
 		// Get gpx track data and put it on the map
-		var tl = omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null, customLayer).on('ready', function() {
+		var tl = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null, customLayer).on('ready', function() {
 			// Change the default icon for waypoints
 	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: WAYPOINT_COLOR, size: 's'});
 	        var trackDate = 'Not Available'; // By default
@@ -538,7 +539,7 @@ var tmMap = {
 									' <b>Min Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[3] * 3.28084)) + 'ft') : (trackMetrics[3] + 'm')) +
 									'<br><b>Region:</b> ' + track.trackRegionTags + '<br><b>Date Recorded:</b> ' + trackDate +  
 									'<hr>' + track.trackDescription + '<hr>' +
-									'<a href="data/' + track.trackId + '/gpx/' + track.trackGPX + '" download>Download GPS track</a>'; 
+									'<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX' + '" download>Download GPS track</a>'; 
 				
 				// Populate photos
 				if (track.hasPhotos) {
@@ -552,18 +553,19 @@ var tmMap = {
 
 						for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
 							// Tell lightbox that this is a slideshow
-							slideShowContainer.innerHTML += '<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName +
+							slideShowContainer.innerHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' + k +
 												  '" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
 												  '><img  nopin="nopin" class="infoThumbs" geoTagXRef="' + k + 
-												  '" src="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" /></a>';
+												  '" src="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/thumbnail/' + k + '" /></a>';
 
 							// If we have geotags, go ahead and place them on thumbnail photo markers and don't do a slideshow, just single image
 							if (data.geoTags.trackPhotos[k].picLatLng) {
 								haveGeoTags = true;
-								var img ='<a href="data/' + track.trackId + '/photos/' + data.geoTags.trackPhotos[k].picName + 
+								var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' + k + 
 										 '" data-lightbox="picture' + '" data-title="' + data.geoTags.trackPhotos[k].picCaption +
-										 '" ><img geoTagRef="' + k + '"picLatLng="' + data.geoTags.trackPhotos[k].picLatLng.toString() + '" src="data/' + track.trackId + 
-										 '/photos/' + data.geoTags.trackPhotos[k].picThumb + '" width="40" height="40"/></a>';
+										 '" ><img geoTagRef="' + k + '"picLatLng="' + data.geoTags.trackPhotos[k].picLatLng.toString() + 
+										 '" src="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + 
+										 '/thumbnail/' + k + '" width="40" height="40"/></a>';
 								var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
 									clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
 									icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
@@ -642,7 +644,7 @@ var tmMap = {
 		viewer.terrainProvider = terrainProvider;
 
 		// Should use fly to bounding sphere instead
-		omnivore.gpx('data/' + track.trackId + '/gpx/' + track.trackGPX, null).on('ready', function() {
+		omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
 			// First grab the GeoJSON data from omnivore
 			var trackGeoJSON = this.toGeoJSON();
 
