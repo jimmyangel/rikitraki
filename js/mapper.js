@@ -342,7 +342,6 @@ var tmMap = {
 		});
 	},
 	buildMotdInfoBoxDOMElement: function (tracks, data) {
-		console.log(tracks);
 		var infoPanelContainer = L.DomUtil.create('div', 'info motd infoPanelContainer');
 		var infoPanelTitle = L.DomUtil.create('div', 'infoPanelTitle', infoPanelContainer);
 		var infoPanelBody = L.DomUtil.create('div', 'infoPanelBody', infoPanelContainer);
