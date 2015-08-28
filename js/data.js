@@ -13,6 +13,7 @@ var tmData = {
 		$.getJSON(API_BASE_URL + '/v1/tracks/' + tId + '/geotags/', successCallback).fail(errorCallback);
 	},
 	getMotd: function (successCallback) {
-		$.getJSON('data/motd.json', successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
+		// $.getJSON('data/motd.json', successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
+		$.getJSON(API_BASE_URL + '/v1/motd', successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
 	}
 };
