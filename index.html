@@ -69,14 +69,19 @@
           </ul>
           <ul class="nav navbar-nav">
             <li>
-              <a data-toggle="collapse" id="tracks-btn" role="button" href="#" data-target="#trackstModal">Tracks</a>
+              <a data-toggle="collapse" id="tracks-btn" role="button" href="#">Tracks</a>
             </li>
           </ul>
           <ul id="mapGlobeButton" class="nav navbar-nav">
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li>
-              <a data-toggle="collapse" id="about-btn" role="button" href="#" data-target="#aboutModal">About</a>
+              <a data-toggle="collapse" id="about-btn" role="button" href="#">About</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a data-toggle="collapse" id="user-btn" role="button" title="User" href="#"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right nav-pills">
@@ -121,6 +126,278 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Welcome to RikiTraki!</h4>
+              <p>Please login if you wish to upload your own tracks and photos...</p>
+            </div>
+            <div class="modal-body">
+                <div class="well">
+                  <div>
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a class="small" id="loginTab" href="#login" data-toggle="tab">Login...</a></li>
+                      <li><a class="small" id="registerTab" href="#register" data-toggle="tab">or Register</a></li>
+                    </ul>
+                  </div>
+                  <div class ="well well-sm">
+                    <div id="userTabContent" class="tab-content">
+                      <div class="tab-pane active in" id="login">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                              <label class="control-label col-sm-2">Username</label>
+                              <div class="col-sm-10">
+                                <input type="text" id="login-username" placeholder="User name" class="form-control" required>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="control-label col-sm-2">Password</label>
+                              <div class="col-sm-10">
+                                <input type="password" id="login-password" placeholder="Password" class="form-control">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <div class="col-sm-offset-2 col-sm-10">
+                                <button id="loginButton" href="" class="btn btn-default">Login</button>
+                              </div>
+                            </div>
+                            <div class="alert alert-danger" id="loginError" role="alert" style="display: none">
+                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                              <span class="sr-only">Error:</span>
+                              Please enter valid username and password
+                            </div>                            
+                            <hr>
+                            <div class="form-group">
+                              <div class="col-sm-offset-2 col-sm-10">
+                                <a id="forgotPasswordLink" data-toggle="collapse" href="#forgotPanel" aria-expanded="false">Forgot password and/or username?</a>
+                              </div> 
+                            </div>
+                            <div id="forgotPanel" class="collapse">
+                              <div class="form-group has-feedback">
+                                <label class="control-label col-sm-2">Email</label>
+                                <div class="col-sm-10">
+                                  <input type="email" id="forgot-email" placeholder="Registered email address" class="form-control">
+                                  <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                  <button id="forgotButton" href="" class="btn btn-default">Reset</button>
+                                </div>
+                              </div>
+                              <div class="alert alert-warning" id="forgotMessage" role="alert" style="display: none">
+                                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                                <span class="sr-only">Info:</span>
+                                Your password has been reset. Please check your email.
+                              </div>
+                              <div class="alert alert-danger" id="forgotError" role="alert" style="display: none">
+                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                <span class="sr-only">Error:</span>
+                                <span id="forgotErrorText"></span>
+                              </div>
+                            </div>
+                        </form>
+
+                      </div>
+                      <div class="tab-pane fade" id="register">
+                        <form class="form-horizontal" role="form" id="tab">
+                          <div class="form-group has-feedback">
+                            <label class="control-label col-sm-4">Username</label>
+                            <div class="col-sm-8">
+                              <input type="text" id="reg-username" placeholder="User name (6-40 characters)" class="form-control">
+                              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                            </div>
+                          </div>
+                          <div class="form-group has-feedback">
+                            <label class="control-label col-sm-4">Email</label>
+                            <div class="col-sm-8">
+                              <input type="email" id="reg-email" placeholder="Valid email address" class="form-control">
+                              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                            </div>
+                          </div>
+                          <div class="form-group has-feedback">
+                            <label class="control-label col-sm-4">Password</label>
+                            <div class="col-sm-8">
+                              <input type="password" id="reg-password" placeholder="Password (6-18 characters)" class="form-control">
+                              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                            </div>
+                          </div>
+                          <div class="form-group has-feedback">
+                            <label class="control-label col-sm-4">Re-enter password</label>
+                            <div class="col-sm-8">
+                              <input type="password" id="reg-repassword" placeholder="Re-enter password (must match password)" class="form-control">
+                              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                           </div>
+                          </div>
+
+                          <div class="form-group has-feedback">
+                            <label class="control-label col-sm-4">Invitation code</label>
+                            <div class="col-sm-8">
+                              <input type="text" id="reg-invitation" placeholder="Invitation code (must be valid)" class="form-control">
+                              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <p class="col-sm-offset-4 col-sm-8">By registering you agree to upload only GPX files and photos that you own, and you agree to release all the content you  
+                            upload to the <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">public domain</a>.</p>
+                          </div>
+
+                          <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-8">
+                              <button id="registerButton" class="btn btn-default">Register</button>
+                            </div>
+                          </div>
+                          <div class="alert alert-danger" id="registrationError" role="alert" style="display: none">
+                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Error:</span>
+                            <span id="registrationErrorText"></span>
+                          </div>
+                          <hr>
+                          <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-8">
+                              <a id="noInvitationLink" data-toggle="collapse" href="#noInvitationPanel" aria-expanded="false">No invitation code?</a>
+                            </div> 
+                          </div>
+                          <div id="noInvitationPanel" class="collapse">
+                            <div class="form-group has-feedback">
+                              <label class="control-label col-sm-4">Email</label>
+                               <div class="col-sm-8">
+                                <input type="email" id="inv-email" placeholder="Email" class="form-control">
+                                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                              </div> 
+                            </div>
+                            <div class="form-group">
+                              <p class="col-sm-offset-4 col-sm-8">We will not send you spam nor share your email address.</p>
+                            </div>
+                            <div class="form-group">                          
+                              <div class="col-sm-offset-4 col-sm-8">
+                                 <button id="invitationButton" class="btn btn-default">Request invitation</button>
+                              </div>
+                            </div>
+                            <div class="alert alert-warning" id="invitationMessage" role="alert" style="display: none">
+                              <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                              <span class="sr-only">Info:</span>
+                              Your request has been recorded. Thank you.
+                            </div>
+                            <div class="alert alert-danger" id="invitationError" role="alert" style="display: none">
+                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                              <span class="sr-only">Error:</span>
+                              <span id="invitationErrorText"></span>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Hi <span id="hi-username"></span>!</h4>
+              <p>Log out, update, or remove your user profile...</p>
+              <a id="logoffLink" href="">Log out of Rikitraki</a>
+            </div>
+            <div class="modal-body">
+              <div class="well">
+                <div>
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a class="small" id="updateProfileTab" href="#update" data-toggle="tab">Update</a></li>
+                    <li><a class="small" id="removeTab" href="#remove" data-toggle="tab">Remove profile</a></li>
+                  </ul>
+                </div>
+                <div class ="well well-sm">
+                  <div id="userTabContent" class="tab-content">
+                    <div class="tab-pane active in" id="update">
+                      <form class="form-horizontal" role="form" id="tab">
+                        <legend><h5>Update your email</h5></legend>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-4">New email</label>
+                          <div class="col-sm-8">
+                            <input type="email" id="usr-email" placeholder="Enter new email" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <legend><h5>Update your password</h5></legend>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-4" for="password">Current Password</label>
+                          <div class="col-sm-8">
+                            <input type="password" id="usr-oldpassword" placeholder="Password" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-4" for="password">New password</label>
+                          <div class="col-sm-8">
+                            <input type="password" id="usr-password" placeholder="Enter new password" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-4" for="password">Re-enter password</label>
+                          <div class="col-sm-8">
+                            <input type="password" id="usr-repassword" placeholder="Re-enter new password" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                          <div class="col-sm-offset-4 col-sm-8">
+                            <button id="updateProfileButton" class="btn btn-default" disabled="disabled">Update</button>
+                          </div>
+                        </div>
+
+                        <div class="alert alert-warning" id="profileMessage" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Info:</span>
+                          Your profile has been updated.
+                        </div>
+                        <div class="alert alert-danger" id="profileError" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Error:</span>
+                          <span id="profileErrorText"></span>
+                        </div>
+
+                      </form>
+                    </div>
+                    <div class="tab-pane" id="remove">
+                      <form class="form-horizontal" role="form" id="tab">
+                        <div class="form-group">
+                          <label class="control-label col-sm-4">Are you sure?</label>
+                            <div class="checkbox">
+                              <label><input type="checkbox" id="confirmRemoval" value="">Check to confirm. This action cannot be undone.</label>
+                            </div>
+                        </div>
+                        <div class="form-group">                          
+                          <div class="col-sm-offset-4 col-sm-8">
+                             <button class="btn btn-default" id="removeProfileButton" disabled="disabled">Proceed</button>
+                          </div>
+                        </div>
+                        <div class="alert alert-warning" id="removeMessage" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Info:</span>
+                          Your profile has been removed.
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -238,6 +515,7 @@
     <script src="bower_components/spin.js/jquery.spin.js"></script>    
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/forms.js"></script>
     <script src="js/data.js"></script>
     <script src="js/mapper.js"></script>
     <script src="js/main.js"></script>
