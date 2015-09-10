@@ -48,5 +48,9 @@ var tmUtils = {
 			smoothElevation[i] = smoothElevation[i] / w;
 		}
 		return smoothElevation;
+	},
+	isValidEmail: function (email) {
+ 		var re = /\S+@\S+\.\S+/;
+		return re.test(email);
 	}
 };

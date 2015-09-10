@@ -15,5 +15,29 @@ var tmData = {
 	getMotd: function (successCallback) {
 		// $.getJSON('data/motd.json', successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
 		$.getJSON(API_BASE_URL + '/v1/motd', successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
+	},
+	getJWTToken: function (username, password, successCallback, errorCallback) {
+		// $.getJSON(API_BASE_URL + '/v1/token', successCallback).fail(errorCallback);
+		$.ajax({
+			url: API_BASE_URL + '/v1/token',
+			type: 'GET',
+			headers: {
+				'Authorization': 'Basic ' + btoa(username + ':' + password)
+			 },
+			success: successCallback,
+			error: errorCallback
+		});
+	},
+	registerUser: function (reg, successCallback, errorCallback) {
+		// $.getJSON(API_BASE_URL + '/v1/token', successCallback).fail(errorCallback);
+		console.log(reg);
+		$.ajax({
+			url: API_BASE_URL + '/v1/users',
+			type: 'POST',
+			data: JSON.stringify(reg),
+			contentType: 'application/json; charset=utf-8',
+			success: successCallback,
+			error: errorCallback
+		});
 	}
 };
