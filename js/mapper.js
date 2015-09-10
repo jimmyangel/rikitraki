@@ -1,7 +1,7 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmMap */
-/* globals L, omnivore, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
+/* globals L, omnivore, tmForms, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
 
 var TRAIL_MARKER_COLOR = '7A5C1E';
 var WAYPOINT_COLOR = '#3887BE';
@@ -15,6 +15,9 @@ var CAMERA_OFFSET = 6000;
 
 var tmMap = {
 	setUpCommon: function (tracks) {
+
+		tmForms.setUpUserForms();
+
 		// Handle the about box
 		$('#about-btn').click(function() {
 			$('#aboutModal').modal('show');
