@@ -3,8 +3,8 @@
 // The below is to stop jshint barking at undefined variables
 /* globals tmConfig, tmMap, tmData */
 /* exported map, isMobile, API_BASE_URL */
-var API_BASE_URL = 'http://192.168.1.17:3000/api';
-// var API_BASE_URL = 'https://rikitrakiws-rikitraki.rhcloud.com/api';
+// var API_BASE_URL = 'http://192.168.1.17:3000/api';
+var API_BASE_URL = 'https://rikitrakiws-rikitraki.rhcloud.com/api';
 
 // The map is global
 var map;

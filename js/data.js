@@ -39,5 +39,20 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
+	},
+	updateUserProfile: function (reg, token, successCallback, errorCallback) {
+		// $.getJSON(API_BASE_URL + '/v1/token', successCallback).fail(errorCallback);
+		console.log(reg);
+		$.ajax({
+			url: API_BASE_URL + '/v1/users/me',
+			type: 'PUT',
+			headers: {
+				'Authorization': 'JWT ' + token
+			 },
+			data: JSON.stringify(reg),
+			contentType: 'application/json; charset=utf-8',
+			success: successCallback,
+			error: errorCallback
+		});
 	}
 };

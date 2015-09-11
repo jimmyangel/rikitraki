@@ -7,8 +7,6 @@ var tmForms = {
 	//---- Handle login, user registration and user profile forms
 	setUpUserForms: function () {
 		var self = this;
-		console.log(self);
-
 
 		// Handle the user button (if token present, then user profile, otherwise login)
 		if (localStorage.getItem('rikitraki-token')) {
@@ -53,7 +51,6 @@ var tmForms = {
 						$('#userModal').modal('show');
 						return false;
 					});
-					console.log(data);
 				}, function() { // jqxhr, textStatus
 					$('#loginError').show();
 				});
@@ -64,7 +61,6 @@ var tmForms = {
 		// Forgot password button handler
 		$('#forgotButton').click(function() {
 			if (!tmUtils.isValidEmail($('#forgot-email').val())) {
-				console.log('forgot email button click');
 				$('#forgot-email').next().addClass('glyphicon-remove');
 				$('#forgot-email').focus();
 				$('#forgotErrorText').text('Please enter a valid email');
@@ -82,7 +78,6 @@ var tmForms = {
 
 		// Register button handler
 		$('#registerButton').click(function() {
-			console.log('register ' + $('#reg-username').val() + ' ' + $('#reg-password').val());
 
 			// if (self.isValidRegistration()) {
 			if (self.isValidForm('registration')) {
@@ -97,7 +92,6 @@ var tmForms = {
 						$('#userModal').modal('show');
 						return false;
 					});
-					console.log(data);
 				}, function(jqxhr) { // jqxhr, textStatus
 					$('#reg-invitation').next().addClass('glyphicon-remove');
 					$('#reg-invitation').focus();
@@ -113,7 +107,6 @@ var tmForms = {
 		// Request invitation button handler
 		$('#invitationButton').click(function() {
 			if (!tmUtils.isValidEmail($('#inv-email').val())) {
-				console.log('invitation button click');
 				$('#inv-email').next().addClass('glyphicon-remove');
 				$('#inv-email').focus();
 				$('#invitationErrorText').text('Please enter a valid email');
@@ -144,11 +137,26 @@ var tmForms = {
 		$('#updateProfileButton').click(function() {
 			if (!self.isEmptyForm('profile')) {
 				if (self.isValidForm('profile')) {
-					$('#profileMessage').fadeIn('slow');
-					setTimeout(function () {
-						self.resetUserDialog();
-					}, 2000);
-					console.log('update profile');
+					var reg = {};
+					var email = $('#usr-email').val();
+					var password = $('#usr-password').val();
+					if (email) {
+						reg.email = email;
+					}
+					if (password) {
+						reg.password = password;
+					}
+					tmData.updateUserProfile(reg, localStorage.getItem('rikitraki-token'), function() {
+						$('#profileMessage').fadeIn('slow');
+						setTimeout(function () {
+							self.resetUserDialog();
+						}, 2000);
+					}, function(jqxhr) { // jqxhr, textStatus
+						// Password mismatch error will come here
+						// Add internal error message here
+						console.log(jqxhr);
+					});
+					return false;
 				}
 			}
 			return false;
@@ -168,7 +176,6 @@ var tmForms = {
 		$('#removeProfileButton').click(function() {
 			$('#removeMessage').fadeIn('slow');
 			setTimeout(function () {
-				console.log('remove profile');
 				self.resetUserDialog();
 				self.logoff();
 			}, 2000);
