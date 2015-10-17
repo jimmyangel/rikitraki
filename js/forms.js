@@ -14,7 +14,9 @@ var tmForms = {
 			$('#user-btn').click(function() {
 				$('#userModal').modal('show');
 				return false;
-			});			
+			});
+			// If user is logged in, then upload button needs to be be enabled
+			this.enableUploadButton();
 		} else {
 			$('#user-btn').click(function() {
 				$('#loginModal').modal('show');
@@ -51,6 +53,7 @@ var tmForms = {
 						$('#userModal').modal('show');
 						return false;
 					});
+					self.enableUploadButton();
 				}, function() { // jqxhr, textStatus
 					$('#loginError').show();
 				});
@@ -294,16 +297,53 @@ var tmForms = {
 					}
 				}
 			}
+		],
+		upload: [
+			{
+				fieldId: '#track-file',
+				errorMsg: 'Please select a GPX file for this track (up to 1MB size)',
+			 	isValid: function () {
+			 		if ($('#track-file')[0].files[0]) {
+			 			if ($('#track-file')[0].files[0].size > 1000000) {
+			 				return false;
+			 			}
+			 			return true;
+			 		} else {
+			 			return false;
+			 		}
+				}
+			},
+			{
+				fieldId: '#track-name',
+				errorMsg: 'Please enter a name for this track',
+			 	isValid: function () {
+			 		return ($(this.fieldId).val() === '') ? false : true;
+			 		// return (!($(this.fieldId).val() === ''));
+				}
+			},
+			{
+				fieldId: '#track-description',
+				errorMsg: 'Please enter a description for this track',
+			 	isValid: function () {
+			 		return ($(this.fieldId).val() === '') ? false : true;
+			 		// return !($(this.fieldId).val() === '');
+				}
+			},
+			{
+				fieldId: '#track-region-tags',
+				errorMsg: 'Please enter region tags for this track',
+			 	isValid: function () {
+			 		return ($(this.fieldId).val() === '') ? false : true;
+			 		// return !($(this.fieldId).val() === '');
+				}
+			}
 		]
 	},
 	isValidForm: function (formName) {
 		this.cleanupErrorMarks();
 		for (var i = 0; i<this.formValidation[formName].length; i++) {
 			if (!this.formValidation[formName][i].isValid()) {
-				$(this.formValidation[formName][i].fieldId).next().addClass('glyphicon-remove');
-				$(this.formValidation[formName][i].fieldId).focus();
-				$('#' + formName + 'ErrorText').text(this.formValidation[formName][i].errorMsg);
-				$('#' + formName + 'Error').fadeIn('slow');
+				this.displayErrorMessage(formName, this.formValidation[formName][i].fieldId, this.formValidation[formName][i].errorMsg);
 				return false;
 			}
 		}
@@ -316,6 +356,12 @@ var tmForms = {
 			}
 		}
 		return true;
+	},
+	displayErrorMessage: function (formName, fieldId, errorMessage) {
+		$(fieldId).next().addClass('glyphicon-remove');
+		$(fieldId).focus();
+		$('#' + formName + 'ErrorText').text(errorMessage);
+		$('#' + formName + 'Error').fadeIn('slow');
 	},
 	resetLoginDialog: function () {
 		$('#loginModal').modal('hide');
@@ -347,5 +393,70 @@ var tmForms = {
 		localStorage.removeItem('rikitraki-username');
 		// ...and reload the page
 		window.location.href='';
+	},
+	enableUploadButton: function () {
+		var self = this;
+		$('#uploadTrackButton').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
+		$('#upload-btn').click(function() {
+			$('#uploadTrackModal').modal('show');
+			return false;
+		});
+
+
+		$('#uploadButton').click(function() {
+
+			if (self.isValidForm('upload')) {
+				var fReader = new FileReader();
+				fReader.onload = function() {
+					var parser = new DOMParser();
+					var lat;
+					var lon;
+					console.log('here is the file');
+					var doc = parser.parseFromString(fReader.result, 'application/xml');
+					if (doc.documentElement.tagName !== 'gpx') {
+						self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
+						console.log('invalid file');
+						return;
+					}
+					try {
+						lat = Number(doc.getElementsByTagName('trk')[0].getElementsByTagName('trkpt')[0].getAttribute('lat'));
+						lon = Number(doc.getElementsByTagName('trk')[0].getElementsByTagName('trkpt')[0].getAttribute('lon'));
+						console.log('the track lat long...', lat, lon);
+					} catch (e) {
+						self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
+						console.log('BAD GPX FILE');
+						return;
+					}
+					console.log('ready to save data');
+					var track = {};
+					track.trackLatLng = [lat, lon];
+					track.trackRegionTags = ($('#track-region-tags').val().split(',')).map($.trim);
+					// track.trackType = $('#track-activity:checked').val(); -- Need to add this one to the schema
+					track.trackLevel = $('#track-level:checked').val();
+					track.trackFav = $('#track-favorite').is(':checked');
+					track.trackGPX = $('#track-file')[0].files[0].name;
+					track.trackName = $('#track-name').val();
+					track.trackDescription = $('#track-description').val();
+					track.trackGPXBlob = fReader.result;
+					tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
+						console.log('added track >>> ', data);
+					}, function(jqxhr) { // jqxhr, textStatus
+						// Add internal error message here
+						console.log(jqxhr);
+					});
+					console.log(track);
+				};
+				// console.log('lets read this file...', $('#track-file')[0].files[0].type);
+				console.log('the file url is... ', URL.createObjectURL($('#track-file')[0].files[0]));
+				console.log('the file name is... ', $('#track-file')[0].files[0].name);
+				console.log($('#track-file')[0].files[0]);
+				try {
+					fReader.readAsText($('#track-file')[0].files[0]);
+				} catch (e) {
+					console.log(e);
+				}
+			}
+			return false;
+		});
 	}
 };
