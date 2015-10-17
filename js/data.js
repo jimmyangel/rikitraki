@@ -54,5 +54,19 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
+	},
+	addTrack: function (reg, token, successCallback, errorCallback) {
+		console.log(reg);
+		$.ajax({
+			url: API_BASE_URL + '/v1/tracks',
+			type: 'POST',
+			headers: {
+				'Authorization': 'JWT ' + token
+			 },
+			data: JSON.stringify(reg),
+			contentType: 'application/json; charset=utf-8',
+			success: successCallback,
+			error: errorCallback
+		});
 	}
 };
