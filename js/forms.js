@@ -402,7 +402,6 @@ var tmForms = {
 			return false;
 		});
 
-
 		$('#uploadButton').click(function() {
 
 			if (self.isValidForm('upload')) {
@@ -419,12 +418,20 @@ var tmForms = {
 						return;
 					}
 					try {
-						lat = Number(doc.getElementsByTagName('trk')[0].getElementsByTagName('trkpt')[0].getAttribute('lat'));
-						lon = Number(doc.getElementsByTagName('trk')[0].getElementsByTagName('trkpt')[0].getAttribute('lon'));
+						// TODO: parse the gpx with omnivore to make sure it can be fully supported by the viewer
+						// Get lat, long for first track point
+						lat = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lat'));
+						lon = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lon'));
 						console.log('the track lat long...', lat, lon);
+
+						// Make sure we have elevation data available
+						if (!(doc.getElementsByTagName('trkpt')[0].getElementsByTagName('ele')[0])) {
+							self.displayErrorMessage('upload', '#track-file', 'Please select a  GPX file with valid elevation info');
+							return;
+						} 
 					} catch (e) {
-						self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
-						console.log('BAD GPX FILE');
+						self.displayErrorMessage('upload', '#track-file', 'Please select a GPX file with valid track info');
+						console.log('BAD GPX FILE', e);
 						return;
 					}
 					console.log('ready to save data');
@@ -458,5 +465,24 @@ var tmForms = {
 			}
 			return false;
 		});
+
+		$('#track-photo-files').change(function () {
+			var imgHandler = function(fr, fn) {
+				return function() {
+					$('#track-photos-container').append('<div style="float: left;"><div><input type="text" value="' + fn + '"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + fr.result + '"></div></div>');
+					console.log('file name from handler:', fn);
+				};
+			};
+			var files = $('#track-photo-files')[0].files;
+			for (var i=0; i<files.length; i++) {
+				console.log('image file name: ', files[i].name);
+				var fReader = new FileReader();
+				fReader.onload = imgHandler(fReader, files[i].name);
+				fReader.readAsDataURL(files[i]);
+			}
+    		console.log('track-photo-files changed ', $('#track-photo-files')[0].files.length, $('#track-photo-files')[0].files);
+    		// console.log($('#track-photos-container').children().replaceWith('<div>Hola mundo</div>'));
+		});
+
 	}
 };
