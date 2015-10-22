@@ -119,6 +119,18 @@ body {
   object-fit: cover;
 }
 
+.trackUploadThumbs {
+  border: 2px solid #fff;
+  width: 200px;
+  height: 140px;
+  object-fit: cover;
+}
+
+.trackUploadThumbCaption {
+  width: 200px;
+  object-fit: cover;
+}
+
 .motdThumbs {
   border: 2px solid #fff;
   width: 100px;

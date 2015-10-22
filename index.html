@@ -410,70 +410,107 @@
           </div>
           <div class="modal-body">
             <div class="well">
-              <form class="form-horizontal" role="form">
-                <div class="form-group has-feedback">
-                  <label class="control-label col-sm-3">GPX file</label>
-                  <div class="col-sm-9">
-                    <input type="file" id="track-file" class="form-control">
-                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                  </div>
+
+                <div>
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a class="small" id="trackInfoTab" href="#track-info-tab" data-toggle="tab">Info</a></li>
+                    <li><a class="small" id="phototsTab" href="#track-photos-tab" data-toggle="tab">Photos</a></li>
+                  </ul>
                 </div>
-                <div class="form-group has-feedback">
-                  <label class="control-label col-sm-3">Track name</label>
-                  <div class="col-sm-9">
-                    <input type="text" id="track-name" placeholder="Enter track name" class="form-control">
-                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                  </div>
-                </div>
-                <div class="form-group has-feedback">
-                  <label class="control-label col-sm-3">Track description</label>
-                  <div class="col-sm-9">
-                    <textarea id="track-description" rows="5" placeholder="Enter track description" class="form-control" style="resize: vertical;"></textarea>
-                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="control-label col-sm-3">Favorite?</label>
-                  <div class="checkbox col-sm-9">
-                    <label><input type="checkbox" id="track-favorite" value="True"></label>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="control-label col-sm-3">Difficulty</label>
-                  <div class="col-sm-9">
-                    <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="track-level" value="Easy" checked>Easy</label>
-                    <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="track-level" value="Moderate">Moderate</label>
-                    <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="track-level" value="Difficult">Difficult</label>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="control-label col-sm-3">Activity</label>
-                  <div class="col-sm-9">
-                    <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="track-activity" value="Hiking" checked>Hiking</label>
-                    <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="track-activity" value="Boating">Boating</label>
-                    <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="track-activity" value="Offroad">Offroad</label>
-                  </div>
-                </div>
-                <div class="form-group has-feedback">
-                  <label class="control-label col-sm-3">Region tags</label>
-                  <div class="col-sm-9">
-                    <input type="text" id="track-region-tags" placeholder="Enter comma-separated region tags" class="form-control">
-                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-sm-offset-3 col-sm-9">
-                    <button id="uploadButton" href="" class="btn btn-default">Upload</button>
+                <div class ="well well-sm">
+                  <div id="trackInfoTabContent" class="tab-content">
+                    <div class="tab-pane active in" id="track-info-tab">
+
+                      <form class="form-horizontal" role="form">
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">GPX file</label>
+                          <div class="col-sm-9">
+                            <input type="file" id="track-file" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">Track name</label>
+                          <div class="col-sm-9">
+                            <input type="text" id="track-name" placeholder="Enter track name" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">Track description</label>
+                          <div class="col-sm-9">
+                            <textarea id="track-description" rows="5" placeholder="Enter track description" class="form-control" style="resize: vertical;"></textarea>
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">Favorite?</label>
+                          <div class="checkbox col-sm-9">
+                            <label><input type="checkbox" id="track-favorite" value="True"></label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">Difficulty</label>
+                          <div class="col-sm-9">
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="track-level" value="Easy" checked>Easy</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="track-level" value="Moderate">Moderate</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="track-level" value="Difficult">Difficult</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">Activity</label>
+                          <div class="col-sm-9">
+                            <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="track-activity" value="Hiking" checked>Hiking</label>
+                            <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="track-activity" value="Boating">Boating</label>
+                            <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="track-activity" value="Offroad">Offroad</label>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">Region tags</label>
+                          <div class="col-sm-9">
+                            <input type="text" id="track-region-tags" placeholder="Enter comma-separated region tags" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+
+                        <div class="alert alert-danger" id="uploadError" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Error:</span>
+                          <span id="uploadErrorText"></span>
+                        </div>
+
+                      </form>
+                    </div>
+
+                    <div class="tab-pane" id="track-photos-tab">
+
+                      <form class="form-horizontal" role="form" id="tab">
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">Photo files</label>
+                          <div class="col-sm-9">
+                            <input type="file" multiple accept="image/*" id="track-photo-files" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div id="track-photos-container" style="padding-left: 15px;">
+                          </div>
+                        </div>                          
+                      </form>
+                    </div>
                   </div>
                 </div>
 
-                <div class="alert alert-danger" id="uploadError" role="alert" style="display: none">
-                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                  <span class="sr-only">Error:</span>
-                  <span id="uploadErrorText"></span>
-                </div>
+                <form class="form-horizontal" role="form">
+                  <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                      <button id="uploadButton" href="" class="btn btn-default">Upload</button>
+                    </div>
+                  </div>
 
-              </form>
+                </form>
+
+
             </div>
           </div>
         </div>
