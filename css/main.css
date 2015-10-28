@@ -121,13 +121,13 @@ body {
 
 .trackUploadThumbs {
   border: 2px solid #fff;
-  width: 200px;
+  width: 202px;
   height: 140px;
   object-fit: cover;
 }
 
 .trackUploadThumbCaption {
-  width: 200px;
+  width: 202px;
   object-fit: cover;
 }
 
