@@ -468,9 +468,11 @@ var tmForms = {
 				track.trackName = $('#track-name').val();
 				track.trackDescription = $('#track-description').val();
 				track.trackGPXBlob = fReader.result;
+				track.hasPhotos = false;
 				var trackPhotos = self.makeThumbs();
 				if (trackPhotos.length > 0) {
 					track.trackPhotos = trackPhotos;
+					track.hasPhotos = true;
 				}
 				tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
 					console.log('added track >>> ', data);
