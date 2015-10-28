@@ -403,86 +403,115 @@ var tmForms = {
 		});
 
 		$('#uploadButton').click(function() {
-
-			if (self.isValidForm('upload')) {
-				var fReader = new FileReader();
-				fReader.onload = function() {
-					var parser = new DOMParser();
-					var lat;
-					var lon;
-					console.log('here is the file');
-					var doc = parser.parseFromString(fReader.result, 'application/xml');
-					if (doc.documentElement.tagName !== 'gpx') {
-						self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
-						console.log('invalid file');
-						return;
-					}
-					try {
-						// TODO: parse the gpx with omnivore to make sure it can be fully supported by the viewer
-						// Get lat, long for first track point
-						lat = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lat'));
-						lon = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lon'));
-						console.log('the track lat long...', lat, lon);
-
-						// Make sure we have elevation data available
-						if (!(doc.getElementsByTagName('trkpt')[0].getElementsByTagName('ele')[0])) {
-							self.displayErrorMessage('upload', '#track-file', 'Please select a  GPX file with valid elevation info');
-							return;
-						} 
-					} catch (e) {
-						self.displayErrorMessage('upload', '#track-file', 'Please select a GPX file with valid track info');
-						console.log('BAD GPX FILE', e);
-						return;
-					}
-					console.log('ready to save data');
-					var track = {};
-					track.trackLatLng = [lat, lon];
-					track.trackRegionTags = ($('#track-region-tags').val().split(',')).map($.trim);
-					// track.trackType = $('#track-activity:checked').val(); -- Need to add this one to the schema
-					track.trackLevel = $('#track-level:checked').val();
-					track.trackFav = $('#track-favorite').is(':checked');
-					track.trackGPX = $('#track-file')[0].files[0].name;
-					track.trackName = $('#track-name').val();
-					track.trackDescription = $('#track-description').val();
-					track.trackGPXBlob = fReader.result;
-					tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
-						console.log('added track >>> ', data);
-					}, function(jqxhr) { // jqxhr, textStatus
-						// Add internal error message here
-						console.log(jqxhr);
-					});
-					console.log(track);
-				};
-				// console.log('lets read this file...', $('#track-file')[0].files[0].type);
-				console.log('the file url is... ', URL.createObjectURL($('#track-file')[0].files[0]));
-				console.log('the file name is... ', $('#track-file')[0].files[0].name);
-				console.log($('#track-file')[0].files[0]);
-				try {
-					fReader.readAsText($('#track-file')[0].files[0]);
-				} catch (e) {
-					console.log(e);
-				}
-			}
+			self.uploadTrack();
 			return false;
 		});
 
 		$('#track-photo-files').change(function () {
-			var imgHandler = function(fr, fn) {
-				return function() {
-					$('#track-photos-container').append('<div style="float: left;"><div><input type="text" value="' + fn + '"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + fr.result + '"></div></div>');
-					console.log('file name from handler:', fn);
-				};
-			};
+			$('#track-photos-container').empty();
 			var files = $('#track-photo-files')[0].files;
 			for (var i=0; i<files.length; i++) {
-				console.log('image file name: ', files[i].name);
-				var fReader = new FileReader();
-				fReader.onload = imgHandler(fReader, files[i].name);
-				fReader.readAsDataURL(files[i]);
+				$('#track-photos-container').append
+					(
+						'<div style="float: left;"><div><input type="text" value="' + 
+						files[i].name +
+						'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + 
+						URL.createObjectURL(files[i]) + 
+						'"></div></div>'
+					);
 			}
     		console.log('track-photo-files changed ', $('#track-photo-files')[0].files.length, $('#track-photo-files')[0].files);
-    		// console.log($('#track-photos-container').children().replaceWith('<div>Hola mundo</div>'));
 		});
 
+	},
+	uploadTrack: function () {
+		var self = this;
+
+		if (self.isValidForm('upload')) {
+			var fReader = new FileReader();
+			fReader.onload = function() {
+				var parser = new DOMParser();
+				var lat;
+				var lon;
+				console.log('here is the file');
+				var doc = parser.parseFromString(fReader.result, 'application/xml');
+				if (doc.documentElement.tagName !== 'gpx') {
+					self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
+					console.log('invalid file');
+					return;
+				}
+				try {
+					// TODO: parse the gpx with omnivore to make sure it can be fully supported by the viewer
+					// Get lat, long for first track point
+					lat = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lat'));
+					lon = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lon'));
+					console.log('the track lat long...', lat, lon);
+
+					// Make sure we have elevation data available
+					if (!(doc.getElementsByTagName('trkpt')[0].getElementsByTagName('ele')[0])) {
+						self.displayErrorMessage('upload', '#track-file', 'Please select a  GPX file with valid elevation info');
+						return;
+					} 
+				} catch (e) {
+					self.displayErrorMessage('upload', '#track-file', 'Please select a GPX file with valid track info');
+					console.log('BAD GPX FILE', e);
+					return;
+				}
+				console.log('ready to save data');
+				var track = {};
+				track.trackLatLng = [lat, lon];
+				track.trackRegionTags = ($('#track-region-tags').val().split(',')).map($.trim);
+				// TODO: track.trackType = $('#track-activity:checked').val(); -- Need to add this one to the schema
+				track.trackLevel = $('#track-level:checked').val();
+				track.trackFav = $('#track-favorite').is(':checked');
+				track.trackGPX = $('#track-file')[0].files[0].name;
+				track.trackName = $('#track-name').val();
+				track.trackDescription = $('#track-description').val();
+				track.trackGPXBlob = fReader.result;
+				var trackPhotos = self.makeThumbs();
+				if (trackPhotos.length > 0) {
+					track.trackPhotos = trackPhotos;
+				}
+				tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
+					console.log('added track >>> ', data);
+				}, function(jqxhr) { // jqxhr, textStatus
+					// Add internal error message here
+					console.log(jqxhr);
+				});
+				console.log(track);
+			};
+			// console.log('lets read this file...', $('#track-file')[0].files[0].type);
+			console.log('the file url is... ', URL.createObjectURL($('#track-file')[0].files[0]));
+			console.log('the file name is... ', $('#track-file')[0].files[0].name);
+			console.log($('#track-file')[0].files[0]);
+			try {
+				fReader.readAsText($('#track-file')[0].files[0]);
+			} catch (e) {
+				console.log(e);
+			}
+		}		
+	},
+	makeThumbs: function() {
+		var trackPhotos = [];
+		// Use canvas to resize images and create thumbnails
+		var canvas = document.createElement('canvas');
+		// TODO: Set constants for thumbnail dimensions
+		canvas.width = 202;
+		canvas.height = 140;
+		var ctx = canvas.getContext('2d');
+		var images = $('#track-photos-container img');
+		for (var i=0; i<images.length; i++) {
+			ctx.drawImage(images[i], 0, 0, 202, 140);
+			trackPhotos.push({
+				picName: i.toString(),
+				picThumb: i.toString(), 
+				picCaption: $('#track-photos-container input')[i].value,
+				picThumbDataUrl: canvas.toDataURL('image/jpeg', 0.8)
+			});
+			// Keep things clean by releasing the object URLs
+			URL.revokeObjectURL(images[i].src);
+		}
+		console.log(trackPhotos);
+		return trackPhotos;
 	}
 };
