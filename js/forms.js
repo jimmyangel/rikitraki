@@ -463,6 +463,7 @@ var tmForms = {
 				track.trackRegionTags = ($('#track-region-tags').val().split(',')).map($.trim);
 				// TODO: track.trackType = $('#track-activity:checked').val(); -- Need to add this one to the schema
 				track.trackLevel = $('#track-level:checked').val();
+				track.trackType = $('#track-activity:checked').val();
 				track.trackFav = $('#track-favorite').is(':checked');
 				track.trackGPX = $('#track-file')[0].files[0].name;
 				track.trackName = $('#track-name').val();
