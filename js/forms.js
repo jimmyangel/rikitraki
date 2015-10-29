@@ -477,6 +477,14 @@ var tmForms = {
 				}
 				tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
 					console.log('added track >>> ', data);
+					var files = $('#track-photo-files')[0].files;
+					for (var i=0; i<files.length; i++) {
+						tmData.uploadTrackPic(files[i], data.trackId, i, localStorage.getItem('rikitraki-token'), function(data) {
+							console.log('added picture >>> ', data);
+						}, function(jqxhr) {
+							console.log(jqxhr);
+						});
+					}
 				}, function(jqxhr) { // jqxhr, textStatus
 					// Add internal error message here
 					console.log(jqxhr);
