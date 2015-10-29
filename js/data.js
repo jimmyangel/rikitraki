@@ -55,16 +55,31 @@ var tmData = {
 			error: errorCallback
 		});
 	},
-	addTrack: function (reg, token, successCallback, errorCallback) {
-		console.log(reg);
+	addTrack: function (trk, token, successCallback, errorCallback) {
+		console.log(trk);
 		$.ajax({
 			url: API_BASE_URL + '/v1/tracks',
 			type: 'POST',
 			headers: {
 				'Authorization': 'JWT ' + token
 			 },
-			data: JSON.stringify(reg),
+			data: JSON.stringify(trk),
 			contentType: 'application/json; charset=utf-8',
+			success: successCallback,
+			error: errorCallback
+		});
+	},
+	uploadTrackPic: function (file, tId, picIndex, token, successCallback, errorCallback) {
+		console.log('picture upload ', tId, picIndex);
+		$.ajax({
+			url: API_BASE_URL + '/v1/tracks/' + tId + '/' + 'picture/' + picIndex,
+			type: 'POST',
+			headers: {
+				'Authorization': 'JWT ' + token
+			 },
+			data: file,
+			processData: false,
+			contentType: 'image/jpeg',
 			success: successCallback,
 			error: errorCallback
 		});
