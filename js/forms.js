@@ -337,6 +337,29 @@ var tmForms = {
 			 		// return !($(this.fieldId).val() === '');
 				}
 			}
+		],
+		edit: [
+			{
+				fieldId: '#edit-track-name',
+				errorMsg: 'Please enter a name for this track',
+			 	isValid: function () {
+			 		return ($(this.fieldId).val() === '') ? false : true;
+				}
+			},
+			{
+				fieldId: '#edit-track-description',
+				errorMsg: 'Please enter a description for this track',
+			 	isValid: function () {
+			 		return ($(this.fieldId).val() === '') ? false : true;
+				}
+			},
+			{
+				fieldId: '#edit-track-region-tags',
+				errorMsg: 'Please enter region tags for this track',
+			 	isValid: function () {
+			 		return ($(this.fieldId).val() === '') ? false : true;
+				}
+			}
 		]
 	},
 	isValidForm: function (formName) {
@@ -402,6 +425,15 @@ var tmForms = {
 			return false;
 		});
 
+		$('#phototsTab').click(function() {
+			console.log('clicked photos tab');
+			if (self.isValidForm('upload')) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+
 		$('#uploadButton').click(function() {
 			self.uploadTrack();
 			return false;
@@ -445,7 +477,6 @@ var tmForms = {
 					// Get lat, long for first track point
 					lat = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lat'));
 					lon = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lon'));
-					console.log('the track lat long...', lat, lon);
 
 					// Make sure we have elevation data available
 					if (!(doc.getElementsByTagName('trkpt')[0].getElementsByTagName('ele')[0])) {
@@ -457,11 +488,9 @@ var tmForms = {
 					console.log('BAD GPX FILE', e);
 					return;
 				}
-				console.log('ready to save data');
 				var track = {};
 				track.trackLatLng = [lat, lon];
 				track.trackRegionTags = ($('#track-region-tags').val().split(',')).map($.trim);
-				// TODO: track.trackType = $('#track-activity:checked').val(); -- Need to add this one to the schema
 				track.trackLevel = $('#track-level:checked').val();
 				track.trackType = $('#track-activity:checked').val();
 				track.trackFav = $('#track-favorite').is(':checked');
@@ -478,23 +507,30 @@ var tmForms = {
 				tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
 					console.log('added track >>> ', data);
 					var files = $('#track-photo-files')[0].files;
-					for (var i=0; i<files.length; i++) {
-						tmData.uploadTrackPic(files[i], data.trackId, i, localStorage.getItem('rikitraki-token'), function(data) {
-							console.log('added picture >>> ', data);
-						}, function(jqxhr) {
-							console.log(jqxhr);
-						});
+					function uploadPicture(i) {
+						return tmData.uploadTrackPic(files[i], data.trackId, i, localStorage.getItem('rikitraki-token'));
 					}
+					// Set up upload image tasks
+					var uploadPictureTasks = [];
+					for (var i=0; i<files.length; i++) {
+						uploadPictureTasks.push(uploadPicture(i));
+					}
+					// Execute tasks and wait for all to complete
+					$.when.apply(this, uploadPictureTasks).then(function () {
+						console.log('i am done uploading pictures');
+						$('#uploadMessage').fadeIn('slow');
+						setTimeout(function () {
+							window.location.href='?track=' + data.trackId;
+						}, 2000);
+					}, function (jqxhr) {
+						console.log(jqxhr);
+					});
 				}, function(jqxhr) { // jqxhr, textStatus
 					// Add internal error message here
 					console.log(jqxhr);
 				});
 				console.log(track);
 			};
-			// console.log('lets read this file...', $('#track-file')[0].files[0].type);
-			console.log('the file url is... ', URL.createObjectURL($('#track-file')[0].files[0]));
-			console.log('the file name is... ', $('#track-file')[0].files[0].name);
-			console.log($('#track-file')[0].files[0]);
 			try {
 				fReader.readAsText($('#track-file')[0].files[0]);
 			} catch (e) {
@@ -524,5 +560,59 @@ var tmForms = {
 		}
 		console.log(trackPhotos);
 		return trackPhotos;
+	},
+	enableEditButton: function(track) {
+		var self = this;
+
+		if ((localStorage.getItem('rikitraki-token')) && (track.username === localStorage.getItem('rikitraki-username')))  {
+			$('#uploadTrackButton').append('<li><a role="button" id="edit-btn" title="Edit track info" href="."><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>');
+		} else {
+			return;
+		}
+
+		$('#edit-btn').click(function() {
+			// Set current values on the form for editing
+			$('#edit-track-name').val(track.trackName);
+			$('#edit-track-description').val(track.trackDescription);
+			$('#edit-track-activity[value="' + track.trackType + '"]').prop('checked', true);
+			$('#edit-track-level[value=' + track.trackLevel + ']').prop('checked', true);
+			if (track.trackFav) {
+				$('#edit-track-favorite').prop('checked', true);
+			}
+			$('#edit-track-region-tags').val(track.trackRegionTags);
+			$('#editTrackModal').modal('show');
+			return false;
+		});
+
+		$('#saveButton').click(function() {
+			self.saveEditedTrackInfo(track);
+			return false;
+		});
+	},
+	saveEditedTrackInfo: function(track) {
+		if (this.isValidForm('edit')) {
+			var trackChanged = false;
+			var fields = ['trackName', 'trackDescription', 'trackFav', 'trackLevel', 'trackType', 'trackRegionTags'];
+			var t = {};
+			t.trackId = track.trackId;
+			t.trackName = $('#edit-track-name').val();
+			t.trackDescription = $('#edit-track-description').val();
+			t.trackFav = $('#edit-track-favorite').is(':checked');
+			t.trackLevel = $('#edit-track-level:checked').val();
+			t.trackType = $('#edit-track-activity:checked').val();
+			t.trackRegionTags = ($('#edit-track-region-tags').val().split(',')).map($.trim);
+
+			// Just keep the fields that have changed
+			for (var i=0; i<fields.length; i++) {
+				if (t[fields[i]].toString() !== track[fields[i]].toString()) {
+					trackChanged = true;
+				} else {
+					delete t[fields[i]];
+				}
+			}
+			if (trackChanged) {
+				console.log('about to save track ', t);
+			}
+		}
 	}
 };

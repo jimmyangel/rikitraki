@@ -76,6 +76,8 @@
           </ul>
           <ul id="uploadTrackButton" class="nav navbar-nav">
           </ul>
+          <ul id="editTrackButton" class="nav navbar-nav">
+          </ul>
           <ul class="nav navbar-nav navbar-right">
             <li>
               <a data-toggle="collapse" id="about-btn" role="button" href="#">About</a>
@@ -474,6 +476,7 @@
                           </div>
                         </div>
 
+
                         <div class="alert alert-danger" id="uploadError" role="alert" style="display: none">
                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                           <span class="sr-only">Error:</span>
@@ -502,6 +505,12 @@
                   </div>
                 </div>
 
+                <div class="alert alert-warning" id="uploadMessage" role="alert" style="display: none">
+                  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                  <span class="sr-only">Info:</span>
+                  Track uploaded.
+                </div>
+
                 <form class="form-horizontal" role="form">
                   <div class="form-group">
                     <div class="col-sm-offset-3 col-sm-9">
@@ -510,7 +519,124 @@
                   </div>
 
                 </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+
+
+    <div class="modal fade" id="editTrackModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Edit track info</h4>
+            <p>Edit track information below...</p>
+          </div>
+          <div class="modal-body">
+            <div class="well">
+                <div>
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a class="small" id="editInfoTab" href="#edit-track-info-tab" data-toggle="tab">Info</a></li>
+                    <li><a class="small" id="removeTrackTab" href="#remove-track-info-tab" data-toggle="tab">Remove track</a></li>
+                  </ul>
+                </div>
+                <div class ="well well-sm">
+                  <div id="editTrackInfoTabContent" class="tab-content">
+                    <div class="tab-pane active in" id="edit-track-info-tab">
+
+                      <form class="form-horizontal" role="form">
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">Track name</label>
+                          <div class="col-sm-9">
+                            <input type="text" id="edit-track-name" placeholder="Enter track name" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">Track description</label>
+                          <div class="col-sm-9">
+                            <textarea id="edit-track-description" rows="5" placeholder="Enter track description" class="form-control" style="resize: vertical;"></textarea>
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">Favorite?</label>
+                          <div class="checkbox col-sm-9">
+                            <label><input type="checkbox" id="edit-track-favorite" value="True"></label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">Difficulty</label>
+                          <div class="col-sm-9">
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="edit-track-level" value="Easy" checked>Easy</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="edit-track-level" value="Moderate">Moderate</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="edit-track-level" value="Difficult">Difficult</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">Activity</label>
+                          <div class="col-sm-9">
+                            <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="edit-track-activity" value="Hiking" checked>Hiking</label>
+                            <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="edit-track-activity" value="Biking">Biking</label>
+                            <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="edit-track-activity" value="Boating">Boating</label>
+                            <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="edit-track-activity" value="Offroad">Offroad</label>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">Region tags</label>
+                          <div class="col-sm-9">
+                            <input type="text" id="edit-track-region-tags" placeholder="Enter comma-separated region tags" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+
+                        <form class="form-horizontal" role="form">
+                          <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                              <button id="saveButton" href="" class="btn btn-default">Save</button>
+                            </div>
+                          </div>
+                        </form>
+
+                        <div class="alert alert-warning" id="editMessage" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Info:</span>
+                          Track info saved.
+                        </div>
+
+                        <div class="alert alert-danger" id="editError" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Error:</span>
+                          <span id="editErrorText"></span>
+                        </div>
+
+                      </form>
+                    </div>
+                    <div class="tab-pane" id="remove-track-info-tab">
+                      <form class="form-horizontal" role="form" id="tab">
+                        <div class="form-group">
+                          <label class="control-label col-sm-4">Are you sure?</label>
+                            <div class="checkbox">
+                              <label><input type="checkbox" id="confirmTrackRemoval" value="">Check to confirm. This action cannot be undone.</label>
+                            </div>
+                        </div>
+                        <div class="form-group">                          
+                          <div class="col-sm-offset-4 col-sm-8">
+                             <button class="btn btn-default" id="removeTrackButton" disabled="disabled">Proceed</button>
+                          </div>
+                        </div>
+                        <div class="alert alert-warning" id="removeTrackMessage" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Info:</span>
+                          Track has been removed.
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
 
             </div>
           </div>
