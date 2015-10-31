@@ -420,6 +420,9 @@ var tmMap = {
 	},
 	setUpSingleTrackView: function(track, tracks, layerControl) {
 		var self = this;
+
+		tmForms.enableEditButton(track); // If the user is logged in and owns the track then allow editing
+
 		var trackMarkersLayerGroup = this.setUpMarkersForAllTracks(tracks, track.trackId);
 		layerControl.addOverlay(trackMarkersLayerGroup, 'Show markers for all tracks');
 

@@ -69,9 +69,9 @@ var tmData = {
 			error: errorCallback
 		});
 	},
-	uploadTrackPic: function (file, tId, picIndex, token, successCallback, errorCallback) {
-		console.log('picture upload ', tId, picIndex);
-		$.ajax({
+	uploadTrackPic: function (file, tId, picIndex, token) {
+		// console.log('picture upload setup ', tId, picIndex);
+		return $.ajax({
 			url: API_BASE_URL + '/v1/tracks/' + tId + '/' + 'picture/' + picIndex,
 			type: 'POST',
 			headers: {
@@ -80,8 +80,8 @@ var tmData = {
 			data: file,
 			processData: false,
 			contentType: 'image/jpeg',
-			success: successCallback,
-			error: errorCallback
+			success: function() {console.log('picture upload ', tId, picIndex);}
+			// error: errorCallback
 		});
 	}
 };
