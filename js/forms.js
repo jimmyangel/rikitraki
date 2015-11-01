@@ -301,10 +301,10 @@ var tmForms = {
 		upload: [
 			{
 				fieldId: '#track-file',
-				errorMsg: 'Please select a GPX file for this track (up to 1MB size)',
+				errorMsg: 'Please select a GPX file for this track (up to 4MB size)',
 			 	isValid: function () {
 			 		if ($('#track-file')[0].files[0]) {
-			 			if ($('#track-file')[0].files[0].size > 1000000) {
+			 			if ($('#track-file')[0].files[0].size > 4000000) {
 			 				return false;
 			 			}
 			 			return true;
@@ -543,6 +543,7 @@ var tmForms = {
 		// Use canvas to resize images and create thumbnails
 		var canvas = document.createElement('canvas');
 		// TODO: Set constants for thumbnail dimensions
+		// TODO: Proportional resize (no visible stretching on thumbnails)
 		canvas.width = 202;
 		canvas.height = 140;
 		var ctx = canvas.getContext('2d');
@@ -588,9 +589,26 @@ var tmForms = {
 			self.saveEditedTrackInfo(track);
 			return false;
 		});
+
+		// Remove track button handler
+		// Handle the removal button enable/disable
+		$('#confirmTrackRemoval').click(function() {
+			if($(this).is(':checked')){
+				$('#removeTrackButton').removeAttr('disabled');
+			} else {
+		        $('#removeTrackButton').attr('disabled', 'disabled');
+		    }
+		});
+
+		// Handle the remove track button
+		$('#removeTrackButton').click(function() {
+			self.removeTrack(track.trackId);
+			return false;
+		});
 	},
 	saveEditedTrackInfo: function(track) {
-		if (this.isValidForm('edit')) {
+		var self = this;
+		if (self.isValidForm('edit')) {
 			var trackChanged = false;
 			var fields = ['trackName', 'trackDescription', 'trackFav', 'trackLevel', 'trackType', 'trackRegionTags'];
 			var t = {};
@@ -604,15 +622,39 @@ var tmForms = {
 
 			// Just keep the fields that have changed
 			for (var i=0; i<fields.length; i++) {
-				if (t[fields[i]].toString() !== track[fields[i]].toString()) {
+				if (t[fields[i]].toString() !== ((track[fields[i]]) ? track[fields[i]].toString() : '')) {
 					trackChanged = true;
 				} else {
-					delete t[fields[i]];
+					delete t[fields[i]]; // If not changed, remove from API request
 				}
 			}
 			if (trackChanged) {
 				console.log('about to save track ', t);
+				tmData.updateTrack(t, localStorage.getItem('rikitraki-token'), function(data) {
+					$('#editMessage').fadeIn('slow');
+					setTimeout(function () {
+						window.location.href='?track=' + data.trackId;
+					}, 2000);
+				}, function(jqxhr) { // jqxhr, textStatus
+					$('#editErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+					$('#editError').fadeIn('slow');					
+					console.log(jqxhr);
+				});
 			}
 		}
+	},
+	removeTrack: function(trackId) {
+		console.log('about to remove track ', trackId);
+		tmData.removeTrack(trackId, localStorage.getItem('rikitraki-token'), function() {
+			$('#removeTrackMessage').fadeIn('slow');
+			setTimeout(function () {
+				window.location.href='/';
+			}, 2000);
+		}, function(jqxhr) { // jqxhr, textStatus
+			$('#removeTrackErrorText').text('Remove error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+			$('#removeTrackError').fadeIn('slow');					
+			console.log(jqxhr);
+		});
+
 	}
 };
