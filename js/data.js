@@ -83,5 +83,33 @@ var tmData = {
 			success: function() {console.log('picture upload ', tId, picIndex);}
 			// error: errorCallback
 		});
+	},
+	updateTrack: function (trk, token, successCallback, errorCallback) {
+		console.log(trk);
+		$.ajax({
+			url: API_BASE_URL + '/v1/tracks/' + trk.trackId,
+			type: 'PUT',
+			headers: {
+				'Authorization': 'JWT ' + token
+			 },
+			data: JSON.stringify(trk),
+			contentType: 'application/json; charset=utf-8',
+			success: successCallback,
+			error: errorCallback
+		});
+	},
+	removeTrack: function (trackId, token, successCallback, errorCallback) {
+		console.log(trackId);
+		$.ajax({
+			url: API_BASE_URL + '/v1/tracks/' + trackId,
+			type: 'DELETE',
+			headers: {
+				'Authorization': 'JWT ' + token
+			 },
+			// data: JSON.stringify(trk),
+			// contentType: 'application/json; charset=utf-8',
+			success: successCallback,
+			error: errorCallback
+		});
 	}
 };

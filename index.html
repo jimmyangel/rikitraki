@@ -425,7 +425,7 @@
 
                       <form class="form-horizontal" role="form">
                         <div class="form-group has-feedback">
-                          <label class="control-label col-sm-3">GPX file</label>
+                          <label class="control-label col-sm-3">GPX file (up to 4MB)</label>
                           <div class="col-sm-9">
                             <input type="file" id="track-file" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
@@ -490,11 +490,12 @@
 
                       <form class="form-horizontal" role="form" id="tab">
                         <div class="form-group has-feedback">
-                          <label class="control-label col-sm-3">Photo files</label>
-                          <div class="col-sm-9">
+                          <label class="control-label col-sm-3">Images</label>
+                          <div class="col-sm-5">
                             <input type="file" multiple accept="image/*" id="track-photo-files" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
+                          <span class="help-block col-sm-4">Up to 8 jpeg files @ &lt;1MB each</span>
                         </div>
                         <div class="form-group">
                           <div id="track-photos-container" style="padding-left: 15px;">
@@ -524,8 +525,6 @@
         </div>
       </div>
     </div>
-
-
 
     <div class="modal fade" id="editTrackModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -632,6 +631,11 @@
                           <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                           <span class="sr-only">Info:</span>
                           Track has been removed.
+                        </div>
+                        <div class="alert alert-danger" id="removeTrackError" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Error:</span>
+                          <span id="removeTrackErrorText"></span>
                         </div>
                       </form>
                     </div>
