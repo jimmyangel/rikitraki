@@ -1,7 +1,7 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmForms */
-/* globals tmData, tmUtils */
+/* globals tmData, tmUtils, EXIF */
 
 var tmForms = {
 	//---- Handle login, user registration and user profile forms
@@ -445,7 +445,7 @@ var tmForms = {
 			for (var i=0; i<files.length; i++) {
 				$('#track-photos-container').append
 					(
-						'<div style="float: left;"><div><input type="text" value="' + 
+						'<div style="float: left;"><div><input type="text" maxLength="200" value="' + 
 						files[i].name +
 						'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + 
 						URL.createObjectURL(files[i]) + 
@@ -499,37 +499,39 @@ var tmForms = {
 				track.trackDescription = $('#track-description').val();
 				track.trackGPXBlob = fReader.result;
 				track.hasPhotos = false;
-				var trackPhotos = self.makeThumbs();
-				if (trackPhotos.length > 0) {
-					track.trackPhotos = trackPhotos;
-					track.hasPhotos = true;
-				}
-				tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
-					console.log('added track >>> ', data);
-					var files = $('#track-photo-files')[0].files;
-					function uploadPicture(i) {
-						return tmData.uploadTrackPic(files[i], data.trackId, i, localStorage.getItem('rikitraki-token'));
+				self.makeTrackPhotos (function(trackPhotos) {
+					if (trackPhotos.length > 0) {
+						track.trackPhotos = trackPhotos;
+						track.hasPhotos = true;
 					}
-					// Set up upload image tasks
-					var uploadPictureTasks = [];
-					for (var i=0; i<files.length; i++) {
-						uploadPictureTasks.push(uploadPicture(i));
-					}
-					// Execute tasks and wait for all to complete
-					$.when.apply(this, uploadPictureTasks).then(function () {
-						console.log('i am done uploading pictures');
-						$('#uploadMessage').fadeIn('slow');
-						setTimeout(function () {
-							window.location.href='?track=' + data.trackId;
-						}, 2000);
-					}, function (jqxhr) {
+					tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
+						console.log('added track >>> ', data);
+						var files = $('#track-photo-files')[0].files;
+						function uploadPicture(i) {
+							return tmData.uploadTrackPic(files[i], data.trackId, i, localStorage.getItem('rikitraki-token'));
+						}
+						// Set up upload image tasks
+						var uploadPictureTasks = [];
+						for (var i=0; i<files.length; i++) {
+							uploadPictureTasks.push(uploadPicture(i));
+						}
+						// Execute tasks and wait for all to complete
+						$.when.apply(this, uploadPictureTasks).then(function () {
+							console.log('i am done uploading pictures');
+							$('#uploadMessage').fadeIn('slow');
+							setTimeout(function () {
+								window.location.href='?track=' + data.trackId;
+							}, 2000);
+						}, function (jqxhr) {
+							console.log(jqxhr);
+						});
+					}, function(jqxhr) { // jqxhr, textStatus
+						// Add internal error message here
 						console.log(jqxhr);
 					});
-				}, function(jqxhr) { // jqxhr, textStatus
-					// Add internal error message here
-					console.log(jqxhr);
+					console.log(track);
 				});
-				console.log(track);
+
 			};
 			try {
 				fReader.readAsText($('#track-file')[0].files[0]);
@@ -538,7 +540,7 @@ var tmForms = {
 			}
 		}		
 	},
-	makeThumbs: function() {
+	makeTrackPhotos: function(callback) {
 		var trackPhotos = [];
 		// Use canvas to resize images and create thumbnails
 		var canvas = document.createElement('canvas');
@@ -548,6 +550,29 @@ var tmForms = {
 		canvas.height = 140;
 		var ctx = canvas.getContext('2d');
 		var images = $('#track-photos-container img');
+
+		// Set up tasks to grab lat, lon from exif
+		function grabLatLon (i) {
+			var d = $.Deferred();
+			EXIF.getData(images[i], function () {
+				var lat = EXIF.getTag(this, 'GPSLatitude');
+				var lon = EXIF.getTag(this, 'GPSLongitude');
+				if (lat) {
+					var latRef = EXIF.getTag(this, 'GPSLatitudeRef') || 'N';
+					lat = (lat[0] + lat[1]/60 + lat[2]/3600) * (latRef === 'N' ? 1 : -1); 
+					if (lon) {
+						var lonRef = EXIF.getTag(this, 'GPSLongitudeRef') || 'W';
+						lon = (lon[0] + lon[1]/60 + lon[2]/3600) * (lonRef === 'W' ? -1 : 1);
+						trackPhotos[i].picLatLng = [lat, lon];
+					}
+				}
+				d.resolve();
+			});
+			return d.promise();
+		}
+		var grabLatLonTasks = [];
+
+		// Loop through images to set up trackPhotos object
 		for (var i=0; i<images.length; i++) {
 			ctx.drawImage(images[i], 0, 0, 202, 140);
 			trackPhotos.push({
@@ -556,11 +581,17 @@ var tmForms = {
 				picCaption: $('#track-photos-container input')[i].value,
 				picThumbDataUrl: canvas.toDataURL('image/jpeg', 0.8)
 			});
+
+			// Extract geotags
+			grabLatLonTasks.push(grabLatLon(i));			
 			// Keep things clean by releasing the object URLs
 			URL.revokeObjectURL(images[i].src);
 		}
-		console.log(trackPhotos);
-		return trackPhotos;
+
+		// Call back when all the lat lon tasks finish
+		$.when.apply(this, grabLatLonTasks).then(function () {
+			callback(trackPhotos);
+		});
 	},
 	enableEditButton: function(track) {
 		var self = this;
