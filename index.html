@@ -434,14 +434,14 @@
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-3">Track name</label>
                           <div class="col-sm-9">
-                            <input type="text" id="track-name" placeholder="Enter track name" class="form-control">
+                            <input type="text" maxLength="200" id="track-name" placeholder="Enter track name" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-3">Track description</label>
                           <div class="col-sm-9">
-                            <textarea id="track-description" rows="5" placeholder="Enter track description" class="form-control" style="resize: vertical;"></textarea>
+                            <textarea maxLength="5000" id="track-description" rows="5" placeholder="Enter track description" class="form-control" style="resize: vertical;"></textarea>
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
@@ -471,7 +471,7 @@
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-3">Region tags</label>
                           <div class="col-sm-9">
-                            <input type="text" id="track-region-tags" placeholder="Enter comma-separated region tags" class="form-control">
+                            <input type="text" maxLength="200" id="track-region-tags" placeholder="Enter comma-separated region tags" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
@@ -550,14 +550,14 @@
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-3">Track name</label>
                           <div class="col-sm-9">
-                            <input type="text" id="edit-track-name" placeholder="Enter track name" class="form-control">
+                            <input type="text" maxLength="200" id="edit-track-name" placeholder="Enter track name" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-3">Track description</label>
                           <div class="col-sm-9">
-                            <textarea id="edit-track-description" rows="5" placeholder="Enter track description" class="form-control" style="resize: vertical;"></textarea>
+                            <textarea maxLength="5000" id="edit-track-description" rows="5" placeholder="Enter track description" class="form-control" style="resize: vertical;"></textarea>
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
@@ -587,7 +587,7 @@
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-3">Region tags</label>
                           <div class="col-sm-9">
-                            <input type="text" id="edit-track-region-tags" placeholder="Enter comma-separated region tags" class="form-control">
+                            <input type="text" maxLength="200" id="edit-track-region-tags" placeholder="Enter comma-separated region tags" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
@@ -757,6 +757,7 @@
     <script src="bower_components/spin.js/spin.js"></script>
     <script src="bower_components/jquery-stupid-table/stupidtable.min.js"></script>
     <script src="bower_components/lightbox2/dist/js/lightbox.js"></script>
+    <script src="bower_components/exif-js/exif.js"></script>
     <!-- endbower -->
     <!-- For Globe -->
     <script src="components/Cesium/Cesium.js"></script>
