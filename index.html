@@ -324,39 +324,37 @@
                   <div id="userTabContent" class="tab-content">
                     <div class="tab-pane active in" id="update">
                       <form class="form-horizontal" role="form" id="tab">
-                        <legend><h5>Update your email</h5></legend>
                         <div class="form-group has-feedback">
-                          <label class="control-label col-sm-4">New email</label>
-                          <div class="col-sm-8">
-                            <input type="email" id="usr-email" placeholder="Enter new email" class="form-control">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                          </div>
-                        </div>
-                        <legend><h5>Update your password</h5></legend>
-                        <div class="form-group has-feedback">
-                          <label class="control-label col-sm-4" for="password">Current Password</label>
-                          <div class="col-sm-8">
+                          <label class="control-label col-sm-5" for="password">Enter your password</label>
+                          <div class="col-sm-7">
                             <input type="password" id="usr-oldpassword" placeholder="Password" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
                         <div class="form-group has-feedback">
-                          <label class="control-label col-sm-4" for="password">New password</label>
-                          <div class="col-sm-8">
+                          <label class="control-label col-sm-5">Update your email</label>
+                          <div class="col-sm-7">
+                            <input type="email" id="usr-email" placeholder="Enter new email" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-5" for="password">Update your password</label>
+                          <div class="col-sm-7">
                             <input type="password" id="usr-password" placeholder="Enter new password" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
                         <div class="form-group has-feedback">
-                          <label class="control-label col-sm-4" for="password">Re-enter password</label>
-                          <div class="col-sm-8">
+                          <label class="control-label col-sm-5" for="password">Re-enter new password</label>
+                          <div class="col-sm-7">
                             <input type="password" id="usr-repassword" placeholder="Re-enter new password" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
                         <hr>
                         <div class="form-group">
-                          <div class="col-sm-offset-4 col-sm-8">
+                          <div class="col-sm-offset-5 col-sm-7">
                             <button id="updateProfileButton" class="btn btn-default" disabled="disabled">Update</button>
                           </div>
                         </div>
@@ -376,14 +374,23 @@
                     </div>
                     <div class="tab-pane" id="remove">
                       <form class="form-horizontal" role="form" id="tab">
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-5">Enter your password</label>
+                          <div class="col-sm-7">
+                            <input type="password" autocomplete="off" id="rem-password" placeholder="Password" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
                         <div class="form-group">
-                          <label class="control-label col-sm-4">Are you sure?</label>
-                            <div class="checkbox">
-                              <label><input type="checkbox" id="confirmRemoval" value="">Check to confirm. This action cannot be undone.</label>
+                          <label class="control-label col-sm-5">Are you sure?</label>
+                           <div class="col-sm-7">
+                              <div class="checkbox">
+                                <label><input type="checkbox" id="confirmRemoval" value="">Check to confirm. Cannot be undone.</label>
+                              </div>
                             </div>
                         </div>
                         <div class="form-group">                          
-                          <div class="col-sm-offset-4 col-sm-8">
+                          <div class="col-sm-offset-5 col-sm-7">
                              <button class="btn btn-default" id="removeProfileButton" disabled="disabled">Proceed</button>
                           </div>
                         </div>
@@ -391,6 +398,11 @@
                           <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                           <span class="sr-only">Info:</span>
                           Your profile has been removed.
+                        </div>
+                        <div class="alert alert-danger" id="removeProfileError" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Error:</span>
+                          <span id="removeProfileErrorText"></span>
                         </div>
                       </form>
                     </div>
@@ -490,12 +502,12 @@
 
                       <form class="form-horizontal" role="form" id="tab">
                         <div class="form-group has-feedback">
-                          <label class="control-label col-sm-3">Images</label>
+                          <label class="control-label col-sm-3">Up to 8 jpeg images</label>
                           <div class="col-sm-5">
                             <input type="file" multiple accept="image/*" id="track-photo-files" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
-                          <span class="help-block col-sm-4">Up to 8 jpeg files @ &lt;1MB each</span>
+                          <span class="help-block col-sm-4">Images larger than 1MB will be resized</span>
                         </div>
                         <div class="form-group">
                           <div id="track-photos-container" style="padding-left: 15px;">
@@ -758,6 +770,7 @@
     <script src="bower_components/jquery-stupid-table/stupidtable.min.js"></script>
     <script src="bower_components/lightbox2/dist/js/lightbox.js"></script>
     <script src="bower_components/exif-js/exif.js"></script>
+    <script src="bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.js"></script>
     <!-- endbower -->
     <!-- For Globe -->
     <script src="components/Cesium/Cesium.js"></script>

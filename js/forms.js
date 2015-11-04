@@ -3,6 +3,11 @@
 /* exported tmForms */
 /* globals tmData, tmUtils, EXIF */
 
+var MAX_IMAGE_SIZE = 1000000;
+var IMAGE_RESIZE_WIDTH = 1200;
+var IMAGE_RESIZE_QUALITY = 0.8;
+var THUMBNAIL_WIDTH = 300;
+
 var tmForms = {
 	//---- Handle login, user registration and user profile forms
 	setUpUserForms: function () {
@@ -137,6 +142,11 @@ var tmForms = {
 			} 
 		});
 
+		// Clear profile form upon closing
+		$('#userModal').on('hidden.bs.modal', function () {
+			self.resetUserDialog();
+		});
+
 		$('#updateProfileButton').click(function() {
 			if (!self.isEmptyForm('profile')) {
 				if (self.isValidForm('profile')) {
@@ -149,15 +159,19 @@ var tmForms = {
 					if (password) {
 						reg.password = password;
 					}
-					tmData.updateUserProfile(reg, localStorage.getItem('rikitraki-token'), function() {
+					tmData.updateUserProfile(reg, localStorage.getItem('rikitraki-username'), $('#usr-oldpassword').val(), function() {
 						$('#profileMessage').fadeIn('slow');
 						setTimeout(function () {
-							self.resetUserDialog();
+							$('#userModal').modal('hide');
 						}, 2000);
 					}, function(jqxhr) { // jqxhr, textStatus
-						// Password mismatch error will come here
-						// Add internal error message here
-						console.log(jqxhr);
+						if (jqxhr.status === 401) {
+							$('#profileErrorText').text('Please enter a valid password');
+							$('#profileError').show();
+						} else { 
+							// Add internal error message here
+							console.log(jqxhr);
+						}
 					});
 					return false;
 				}
@@ -177,11 +191,22 @@ var tmForms = {
 		
 		// Handle the remove profile button
 		$('#removeProfileButton').click(function() {
-			$('#removeMessage').fadeIn('slow');
-			setTimeout(function () {
-				self.resetUserDialog();
-				self.logoff();
-			}, 2000);
+			tmData.removeUserProfile(localStorage.getItem('rikitraki-username'), $('#rem-password').val(), function() {
+				$('#removeMessage').fadeIn('slow');
+				setTimeout(function () {
+					$('#userModal').modal('hide');
+					self.logoff();
+				}, 2000);
+				return false;
+			}, function(jqxhr) { // jqxhr, textStatus
+				if (jqxhr.status === 401) {
+					$('#removeProfileErrorText').text('Please enter a valid password');
+					$('#removeProfileError').show();
+				} else { 
+					// Add internal error message here
+					console.log(jqxhr);
+				}
+			});
 			return false;
 		});
 	},
@@ -254,16 +279,12 @@ var tmForms = {
 			},
 			{
 				fieldId: '#usr-oldpassword',
-				errorMsg: 'Password must be between 6 and 18 characters long',
+				errorMsg: 'Please enter a valid password',
 			 	isValid: function () {
-			 		if (($(this.fieldId).val() === '') && ($('#usr-password').val() === '')) {
+					if (($(this.fieldId).val().length < 6) || ($(this.fieldId).val().length > 18)) {
+						return false;
+					} else {
 						return true;
-					} else { 
-						if (($(this.fieldId).val().length < 6) || ($(this.fieldId).val().length > 18)) {
-							return false;
-						} else {
-							return true;
-						}
 					}
 				}
 			},
@@ -271,7 +292,7 @@ var tmForms = {
 				fieldId: '#usr-password',
 				errorMsg: 'Password must be between 6 and 18 characters long',
 			 	isValid: function () {
-			 		if (($(this.fieldId).val() === '') && ($('#usr-oldpassword').val() === '')) {
+			 		if (($(this.fieldId).val() === '')) {
 						return true;
 					} else { 
 						if (($(this.fieldId).val().length < 6) || ($(this.fieldId).val().length > 18)) {
@@ -398,7 +419,7 @@ var tmForms = {
 
 	},
 	resetUserDialog: function () {
-		$('#userModal').modal('hide');
+		// $('#userModal').modal('hide');
 		$('#userModal').find('form').trigger('reset');
 		this.cleanupErrorMarks();
 		$('#profileMessage').hide();
@@ -426,7 +447,6 @@ var tmForms = {
 		});
 
 		$('#phototsTab').click(function() {
-			console.log('clicked photos tab');
 			if (self.isValidForm('upload')) {
 				return true;
 			} else {
@@ -442,17 +462,16 @@ var tmForms = {
 		$('#track-photo-files').change(function () {
 			$('#track-photos-container').empty();
 			var files = $('#track-photo-files')[0].files;
-			for (var i=0; i<files.length; i++) {
+			for (var i=0; i<Math.min(files.length, 8); i++) {
 				$('#track-photos-container').append
 					(
 						'<div style="float: left;"><div><input type="text" maxLength="200" value="' + 
-						files[i].name +
+						files[i].name.replace(/\.[^/.]+$/, '') +
 						'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + 
 						URL.createObjectURL(files[i]) + 
 						'"></div></div>'
 					);
 			}
-    		console.log('track-photo-files changed ', $('#track-photo-files')[0].files.length, $('#track-photo-files')[0].files);
 		});
 
 	},
@@ -465,11 +484,9 @@ var tmForms = {
 				var parser = new DOMParser();
 				var lat;
 				var lon;
-				console.log('here is the file');
 				var doc = parser.parseFromString(fReader.result, 'application/xml');
 				if (doc.documentElement.tagName !== 'gpx') {
 					self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
-					console.log('invalid file');
 					return;
 				}
 				try {
@@ -485,7 +502,6 @@ var tmForms = {
 					} 
 				} catch (e) {
 					self.displayErrorMessage('upload', '#track-file', 'Please select a GPX file with valid track info');
-					console.log('BAD GPX FILE', e);
 					return;
 				}
 				var track = {};
@@ -505,19 +521,29 @@ var tmForms = {
 						track.hasPhotos = true;
 					}
 					tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
-						console.log('added track >>> ', data);
 						var files = $('#track-photo-files')[0].files;
-						function uploadPicture(i) {
-							return tmData.uploadTrackPic(files[i], data.trackId, i, localStorage.getItem('rikitraki-token'));
+						var images = $('#track-photos-container img');
+						// This function is a task to upload a single image
+						function uploadPicture(i, blob) {
+							return tmData.uploadTrackPic(blob, data.trackId, i, localStorage.getItem('rikitraki-token'));
+						}
+						// This function makes a canvas.toBlob handler for converting a resized image to jpeg for uploading
+						function makeToBlobHandler (i) {
+							// After image is resized we can push the upload task
+							return function (blob) {uploadPictureTasks.push(uploadPicture(i, blob));};
 						}
 						// Set up upload image tasks
 						var uploadPictureTasks = [];
-						for (var i=0; i<files.length; i++) {
-							uploadPictureTasks.push(uploadPicture(i));
+						for (var i=0; i<Math.min(files.length, 8); i++) {
+							// But first resize the image if it is big
+							if (files[i].size > MAX_IMAGE_SIZE) {
+								self.resizeImage(images[i], IMAGE_RESIZE_WIDTH).toBlob(makeToBlobHandler(i),'image/jpeg', IMAGE_RESIZE_QUALITY);
+							} else {
+								uploadPictureTasks.push(uploadPicture(i, files[i]));
+							}
 						}
 						// Execute tasks and wait for all to complete
 						$.when.apply(this, uploadPictureTasks).then(function () {
-							console.log('i am done uploading pictures');
 							$('#uploadMessage').fadeIn('slow');
 							setTimeout(function () {
 								window.location.href='?track=' + data.trackId;
@@ -542,13 +568,6 @@ var tmForms = {
 	},
 	makeTrackPhotos: function(callback) {
 		var trackPhotos = [];
-		// Use canvas to resize images and create thumbnails
-		var canvas = document.createElement('canvas');
-		// TODO: Set constants for thumbnail dimensions
-		// TODO: Proportional resize (no visible stretching on thumbnails)
-		canvas.width = 202;
-		canvas.height = 140;
-		var ctx = canvas.getContext('2d');
 		var images = $('#track-photos-container img');
 
 		// Set up tasks to grab lat, lon from exif
@@ -574,12 +593,11 @@ var tmForms = {
 
 		// Loop through images to set up trackPhotos object
 		for (var i=0; i<images.length; i++) {
-			ctx.drawImage(images[i], 0, 0, 202, 140);
 			trackPhotos.push({
 				picName: i.toString(),
 				picThumb: i.toString(), 
 				picCaption: $('#track-photos-container input')[i].value,
-				picThumbDataUrl: canvas.toDataURL('image/jpeg', 0.8)
+				picThumbDataUrl: this.resizeImage(images[i], THUMBNAIL_WIDTH).toDataURL('image/jpeg', IMAGE_RESIZE_QUALITY)
 			});
 
 			// Extract geotags
@@ -592,6 +610,24 @@ var tmForms = {
 		$.when.apply(this, grabLatLonTasks).then(function () {
 			callback(trackPhotos);
 		});
+	},
+	resizeImage: function (img, width) {
+		var height;
+		if ((width <= 0) || (img.naturalWidth <= width)) {
+			// Do not resize if the image is already small
+			width = img.naturalWidth;
+			height = img.naturalHeight;
+		} else {
+			height = img.naturalHeight * (width / img.naturalWidth);
+		}
+		var canvas = document.createElement('canvas');
+		canvas.width = width;
+		canvas.height = height;
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0, width, height);
+
+		// Return canvas with resized image
+		return canvas;
 	},
 	enableEditButton: function(track) {
 		var self = this;
@@ -660,7 +696,6 @@ var tmForms = {
 				}
 			}
 			if (trackChanged) {
-				console.log('about to save track ', t);
 				tmData.updateTrack(t, localStorage.getItem('rikitraki-token'), function(data) {
 					$('#editMessage').fadeIn('slow');
 					setTimeout(function () {
@@ -675,7 +710,6 @@ var tmForms = {
 		}
 	},
 	removeTrack: function(trackId) {
-		console.log('about to remove track ', trackId);
 		tmData.removeTrack(trackId, localStorage.getItem('rikitraki-token'), function() {
 			$('#removeTrackMessage').fadeIn('slow');
 			setTimeout(function () {
