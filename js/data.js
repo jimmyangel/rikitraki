@@ -34,6 +34,28 @@ var tmData = {
 			error: errorCallback
 		});
 	},
+	addInvitation: function (reg, successCallback, errorCallback) {
+		$.ajax({
+			url: API_BASE_URL + '/v1/invitation',
+			type: 'POST',
+			data: JSON.stringify(reg),
+			contentType: 'application/json; charset=utf-8',
+			success: successCallback,
+			error: errorCallback
+		});
+	},
+	validateEmail: function (email, successCallback, errorCallback) {
+		$.ajax({
+			url: 'https://api.mailgun.net/v3/address/validate',
+			type: 'GET',
+			data: {address: email},
+			username: 'api',
+			password: 'pubkey-006969454903b02211a68c07550724b2',
+			dataType: 'jsonp',
+			success: successCallback,
+			error: errorCallback
+		});		
+	},
 	updateUserProfile: function (reg, username, password, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/users/me',
@@ -43,6 +65,15 @@ var tmData = {
 			 },
 			data: JSON.stringify(reg),
 			contentType: 'application/json; charset=utf-8',
+			success: successCallback,
+			error: errorCallback
+		});
+	},
+	requestPasswordResetToken: function (email, successCallback, errorCallback) {
+		$.ajax({
+			url: API_BASE_URL + '/v1/resettoken',
+			type: 'GET',
+			data: {email: email, rturl: location.href.split('?')[0]},
 			success: successCallback,
 			error: errorCallback
 		});

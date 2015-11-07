@@ -1,0 +1,151 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+    <title>RikiTraki</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+
+
+    <!-- build: use this block later with processhtml to prepare dist-->
+    <link rel="stylesheet" href="css/main.css">
+    <!-- endbuild -->
+
+  </head>
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <div id="fb-root"></div>
+    <div id="navigationBar" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href=".">RikiTraki</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="resetPModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Hi <span id="hi-username"></span>!</h4>
+              <p>Reset your password...</p>
+            </div>
+            <div class="modal-body">
+              <div class="well">
+                <div>
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a class="small" id="updateProfileTab" href="#update" data-toggle="tab">Reset</a></li>
+                  </ul>
+                </div>
+                <div class ="well well-sm">
+                  <div id="userTabContent" class="tab-content">
+                    <div class="tab-pane active in" id="update">
+                      <form class="form-horizontal" role="form" id="tab">
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-5" for="password">Update your password</label>
+                          <div class="col-sm-7">
+                            <input type="password" id="usr-password" placeholder="Enter new password" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-5" for="password">Re-enter new password</label>
+                          <div class="col-sm-7">
+                            <input type="password" id="usr-repassword" placeholder="Re-enter new password" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                          <div class="col-sm-offset-5 col-sm-7">
+                            <button id="updateProfileButton" class="btn btn-default" disabled="disabled">Update</button>
+                          </div>
+                        </div>
+                        <div class="alert alert-warning" id="profileMessage" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Info:</span>
+                          Your password has been reset.
+                        </div>
+                        <div class="alert alert-danger" id="profileError" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Error:</span>
+                          <span id="profileErrorText"></span>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="js/config.js"></script>
+
+    <script>
+
+    function setUpForm () {
+      var urlVars = tmConfig.getUrlVars();
+      console.log(urlVars);
+      var username = urlVars.username;
+      var token = urlVars.token;
+      $('#hi-username').text(username);
+
+      $('#resetPModal').modal('show');
+      $('#usr-password').focus();
+      $('#update .form-control').on('input', function () {
+        if ($(this).val() !== '') {
+          $('#updateProfileButton').removeAttr('disabled');
+        } 
+      });
+
+      $('#updateProfileButton').click(function() {
+        $('#profileError').hide();
+        var password = $('#usr-password').val();
+        var repassword = $('#usr-repassword').val();
+        if ((password.length < 6) || (repassword.lengh > 18) || (password !== repassword)){
+          $('#profileErrorText').text('Password must be 6 to 18 characters long, both fields must match');        
+          $('#profileError').show();
+        } else {
+          $.ajax({
+            url: tmConfig.API_BASE_URL + '/v1/users/' + username,
+            type: 'PUT',
+            headers: {
+              'Authorization': 'JWT ' + token
+             },
+            data: JSON.stringify({password: password}),
+            contentType: 'application/json; charset=utf-8',
+            success: function () {
+              $('#profileMessage').fadeIn('slow');
+              setTimeout(function () {
+                window.location.href='/';
+              }, 2000);
+            },
+            error: function (jqxhr) {
+              if (jqxhr.status === 400) {
+                $('#profileErrorText').text('Password cannot contain special characters');
+              } else {
+                $('#profileErrorText').text('Password reset error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+              }
+              $('#profileError').show();
+            }
+          });
+        }
+        return false;
+      });
+    }
+
+    window.onload = setUpForm;
+    </script>
+
+</body>
+</html>
