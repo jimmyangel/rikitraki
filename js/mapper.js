@@ -414,7 +414,7 @@ var tmMap = {
 		$('#goto-menu').append('<li class="divider"></li>');
 		for (var i=0; i< sortedRegions.length; i++) {
 			$('#goto-menu').append('<li><a href="?region=' + encodeURIComponent(sortedRegions[i]) + '">' +
-									 sortedRegions[i] + '<span class="badge pull-right">' + regions[sortedRegions[i]].n +'</span></a></li>');
+									 sortedRegions[i].substr(0, 30) + '<span class="badge pull-right">' + regions[sortedRegions[i]].n +'</span></a></li>');
 		}
 		return regions;
 	},

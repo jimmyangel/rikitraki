@@ -384,14 +384,6 @@ var tmForms = {
 			 		return ($(this.fieldId).val() === '') ? false : true;
 			 		// return !($(this.fieldId).val() === '');
 				}
-			},
-			{
-				fieldId: '#track-region-tags',
-				errorMsg: 'Please enter region tags for this track',
-			 	isValid: function () {
-			 		return ($(this.fieldId).val() === '') ? false : true;
-			 		// return !($(this.fieldId).val() === '');
-				}
 			}
 		],
 		edit: [
@@ -405,13 +397,6 @@ var tmForms = {
 			{
 				fieldId: '#edit-track-description',
 				errorMsg: 'Please enter a description for this track',
-			 	isValid: function () {
-			 		return ($(this.fieldId).val() === '') ? false : true;
-				}
-			},
-			{
-				fieldId: '#edit-track-region-tags',
-				errorMsg: 'Please enter region tags for this track',
 			 	isValid: function () {
 			 		return ($(this.fieldId).val() === '') ? false : true;
 				}
@@ -541,7 +526,8 @@ var tmForms = {
 				}
 				var track = {};
 				track.trackLatLng = [lat, lon];
-				track.trackRegionTags = ($('#track-region-tags').val().split(',')).map($.trim);
+				var country = $('#track-country').val();
+				track.trackRegionTags = new Array((country === 'United States') ? 'US' : country, $('#track-region').val());
 				track.trackLevel = $('#track-level:checked').val();
 				track.trackType = $('#track-activity:checked').val();
 				track.trackFav = $('#track-favorite').is(':checked');
@@ -682,7 +668,18 @@ var tmForms = {
 			if (track.trackFav) {
 				$('#edit-track-favorite').prop('checked', true);
 			}
-			$('#edit-track-region-tags').val(track.trackRegionTags);
+			// $('#edit-track-region-tags').val(track.trackRegionTags);
+			if (track.trackRegionTags[0]) {			
+				var country = track.trackRegionTags[0];
+				console.log(country);
+				$('#edit-track-country').attr('data-default-value', (country === 'US') ? 'United States' : country);
+				$('#edit-track-country').attr('data-crs-loaded', 'false');
+				window.crs.init();
+				if (track.trackRegionTags[1]) {
+					// $('#edit-track-region').attr('data-default-value', track.trackRegionTags[1]);
+					$('#edit-track-region').val(track.trackRegionTags[1]);
+				} 
+			}
 			$('#editTrackModal').modal('show');
 			return false;
 		});
@@ -720,7 +717,9 @@ var tmForms = {
 			t.trackFav = $('#edit-track-favorite').is(':checked');
 			t.trackLevel = $('#edit-track-level:checked').val();
 			t.trackType = $('#edit-track-activity:checked').val();
-			t.trackRegionTags = ($('#edit-track-region-tags').val().split(',')).map($.trim);
+			var country = $('#edit-track-country').val();
+			t.trackRegionTags = new Array((country === 'United States') ? 'US' : country, $('#edit-track-region').val());
+
 
 			// Just keep the fields that have changed
 			for (var i=0; i<fields.length; i++) {
