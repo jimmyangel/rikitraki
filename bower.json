@@ -14,7 +14,8 @@
     "jquery-stupid-table": "~1.0.1",
     "lightbox2": "~2.8.0",
     "exif-js": "~2.1.1",
-    "blueimp-canvas-to-blob": "~2.2.0"
+    "blueimp-canvas-to-blob": "~2.2.0",
+    "country-region-selector": "~0.2.2"
   },
   "resolutions": {
     "leaflet": "0.7.x"

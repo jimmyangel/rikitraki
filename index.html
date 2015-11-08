@@ -480,15 +480,18 @@
                             <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="track-activity" value="Offroad">Offroad</label>
                           </div>
                         </div>
-                        <div class="form-group has-feedback">
+                        <div class="form-group">
                           <label class="control-label col-sm-3">Region tags</label>
-                          <div class="col-sm-9">
-                            <input type="text" maxLength="200" id="track-region-tags" placeholder="Enter comma-separated region tags" class="form-control">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          <div class="col-sm-4">
+                            <select class="form-control crs-country" data-region-id="track-region" data-default-value="United States" data-show-default-option="false" id="track-country">
+                            </select>
                           </div>
+                          <div class="col-sm-5">
+                            <select class="form-control" data-show-default-option="false" id="track-region">
+                            </select>
+                          </div>
+
                         </div>
-
-
                         <div class="alert alert-danger" id="uploadError" role="alert" style="display: none">
                           <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                           <span class="sr-only">Error:</span>
@@ -596,11 +599,15 @@
                             <label class="radio-inline"><input type="radio" name="activityRadioOptions" id="edit-track-activity" value="Offroad">Offroad</label>
                           </div>
                         </div>
-                        <div class="form-group has-feedback">
+                        <div class="form-group">
                           <label class="control-label col-sm-3">Region tags</label>
-                          <div class="col-sm-9">
-                            <input type="text" maxLength="200" id="edit-track-region-tags" placeholder="Enter comma-separated region tags" class="form-control">
-                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          <div class="col-sm-4">
+                            <select class="form-control crs-country" data-default-value="" data-region-id="edit-track-region" data-show-default-option="false" id="edit-track-country">
+                            </select>
+                          </div>
+                          <div class="col-sm-5">
+                            <select class="form-control" data-default-value="" data-show-default-option="false" id="edit-track-region">
+                            </select>
                           </div>
                         </div>
 
@@ -772,6 +779,8 @@
     <script src="bower_components/exif-js/exif.js"></script>
     <script src="bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.js"></script>
     <!-- endbower -->
+    <script src="bower_components/country-region-selector/dist/jquery.crs.min.js"></script>
+
     <!-- For Globe -->
     <script src="components/Cesium/Cesium.js"></script>
     <!-- build: use this block later with processhtml to prepare dist -->
