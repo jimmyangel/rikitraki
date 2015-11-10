@@ -46,7 +46,7 @@ var tmMap = {
 							// scene3DOnly: true, 
 							baseLayerPicker: false,
 							imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-								url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
+								url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
 								enablePickFeatures: false
 							}),
 							animation: false,
@@ -543,7 +543,7 @@ var tmMap = {
 									' <b>Max Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[2] * 3.28084)) + 'ft') : (trackMetrics[2] + 'm')) + 
 									' <b>Min Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[3] * 3.28084)) + 'ft') : (trackMetrics[3] + 'm')) +
 									'<br><b>Region:</b> ' + track.trackRegionTags + '<br><b>Date Recorded:</b> ' + trackDate +  
-									'<hr>' + track.trackDescription + '<hr>' +
+									'<hr>' + track.trackDescription + '<br><br><b>By: </b>' + track.username + '<hr>' +
 									'<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX' + '" download>Download GPS track</a>'; 
 				
 				// Populate photos
@@ -623,7 +623,7 @@ var tmMap = {
 							// scene3DOnly: true, 
 							baseLayerPicker: false,
 							imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-								url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
+								url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
 								enablePickFeatures: false
 							}),
 							animation: false,
@@ -642,7 +642,7 @@ var tmMap = {
 
 
 		var terrainProvider = new Cesium.CesiumTerrainProvider({
-			url : 'http://assets.agi.com/stk-terrain/world',
+			url : 'https://assets.agi.com/stk-terrain/world',
 			requestWaterMask : false,
 			requestVertexNormals : true
 		}); 

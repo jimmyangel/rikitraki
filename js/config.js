@@ -3,8 +3,8 @@
 /* exported tmConfig */
 
 var tmConfig = {
-//  API_BASE_URL = 'https://rikitrakiws-rikitraki.rhcloud.com/api',
-	API_BASE_URL: 'http://192.168.1.17:3000/api',
+	API_BASE_URL: 'https://rikitrakiws-rikitraki.rhcloud.com/api',
+//	API_BASE_URL: 'http://192.168.1.17:3000/api',
 	getTrackId: function () {
 		return tmConfig.getUrlVars().track;
 	},
