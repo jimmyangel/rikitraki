@@ -108,6 +108,7 @@ var tmForms = {
 						$('#userModal').modal('show');
 						return false;
 					});
+					self.enableUploadButton();
 				}, function(jqxhr) { // jqxhr, textStatus
 					$('#reg-invitation').next().addClass('glyphicon-remove');
 					$('#reg-invitation').focus();
