@@ -17,6 +17,10 @@ var tmMap = {
 	setUpCommon: function (tracks) {
 
 		tmForms.setUpUserForms();
+		$('#filter-btn').append('</span><span class="badge">' + Object.keys(tracks).length + '</span>');
+		if(localStorage.getItem('rikitraki-filter')) {
+			$('#filter-icon').addClass('filter-active');
+		}
 
 		// Handle the about box
 		$('#about-btn').click(function() {
@@ -338,8 +342,12 @@ var tmMap = {
 			// Handle row click
 			$('#motdTable tr').click(function() {
 				var t = $(this).find('td').eq(2).html();
-				if (t) { 
-					window.location.href='?track=' + t;
+				if (t) {
+					if (!tracks[t]) {
+						$('#trackNotAvailable').modal('show');
+					} else {
+						window.location.href='?track=' + t;
+					}
 				}
 			});
 		});
@@ -355,7 +363,7 @@ var tmMap = {
 			motdHTML += '<tr><td><img class="motdThumbs" src=' + API_BASE_URL + '/v1/tracks/' + data.motd.motdTracks[i][0] + '/thumbnail/' + data.motd.motdTracks[i][1] + 
 						// '></td><td>' +
 						'></td><td>' +
-						tracks[data.motd.motdTracks[i][0]].trackName +
+						data.motd.motdTracks[i][2] +
 						'</td><td style="display:none">' + 
 						data.motd.motdTracks[i][0] + '</td></tr>';
 		}
@@ -410,7 +418,7 @@ var tmMap = {
 		}
 		sortedRegions.sort();
 
-		$('#goto-menu').append('<li><a href=".">World <span class="badge pull-right">' + nWorld + '</span></a></li>');
+		$('#goto-menu').append('<li><a href=".">All <span class="badge pull-right">' + nWorld + '</span></a></li>');
 		$('#goto-menu').append('<li class="divider"></li>');
 		for (var i=0; i< sortedRegions.length; i++) {
 			$('#goto-menu').append('<li><a href="?region=' + encodeURIComponent(sortedRegions[i]) + '">' +

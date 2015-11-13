@@ -14,6 +14,9 @@ var tmForms = {
 	setUpUserForms: function () {
 		var self = this;
 
+		// Enable filter button
+		this.enableFilterButton();
+
 		// Handle the user button (if token present, then user profile, otherwise login)
 		if (localStorage.getItem('rikitraki-token')) {
 			$('#hi-username').text(localStorage.getItem('rikitraki-username'));
@@ -461,7 +464,8 @@ var tmForms = {
 	},
 	enableUploadButton: function () {
 		var self = this;
-		$('#uploadTrackButton').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
+		// $('#uploadTrackButton').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
+		$('#uploadEditContainer').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
 		$('#upload-btn').click(function() {
 			$('#uploadTrackModal').modal('show');
 			return false;
@@ -655,7 +659,8 @@ var tmForms = {
 		var self = this;
 
 		if ((localStorage.getItem('rikitraki-token')) && (track.username === localStorage.getItem('rikitraki-username')))  {
-			$('#uploadTrackButton').append('<li><a role="button" id="edit-btn" title="Edit track info" href="."><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>');
+			// $('#uploadTrackButton').append('<li><a role="button" id="edit-btn" title="Edit track info" href="."><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>');
+			$('#uploadEditContainer').append('<li><a role="button" id="edit-btn" title="Edit track info" href="."><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>');
 		} else {
 			return;
 		}
@@ -755,6 +760,98 @@ var tmForms = {
 			$('#removeTrackError').fadeIn('slow');					
 			console.log(jqxhr);
 		});
+	},
+	enableFilterButton: function() {
+		var self = this;
+		$('#filter-btn').click(function() {
+			self.cleanupErrorMarks();
+			$('#filterModal').find('form').trigger('reset');
+			var filter = localStorage.getItem('rikitraki-filter');
+			console.log('the filter is', filter);
+			if (filter) {
+				filter = JSON.parse(filter);
+				if (filter.username) {
+					$('#filter-username').val(filter.username);
+				}
+				if (filter.trackFav) {
+					$('#filter-favorite').prop('checked', true);
+				}
+				if (filter.level) {
+					filter.level = filter.level.split(',');
+					for (var i=0; i<filter.level.length; i++) {
+						$('#filter-level[value="' + filter.level[i] + '"]').prop('checked', true);						
+					}
+				}
+				if (filter.activity) {
+					filter.activity = filter.activity.split(',');
+					for (var i=0; i<filter.activity.length; i++) {
+						$('#filter-activity[value="' + filter.activity[i] + '"]').prop('checked', true);						
+					}
+				}
+				if (filter.country) {
+					$('#filter-country').attr('data-default-value', (filter.country === 'US') ? 'United States' : filter.country);
+					$('#filter-country').attr('data-crs-loaded', 'false');
+					window.crs.init();
+				}
+				if (filter.region) {
+					$('#filter-region').val(filter.region);
+				}
+			}
 
+			$('#filterModal').modal('show');
+			return false;
+		});
+
+		$('#applyFilterButton').click(function() {
+			var filter = {};
+			var username = $('#filter-username').val();
+			if (username.trim()) {
+				filter.username = username.trim();
+			}
+			var trackFav = $('#filter-favorite').is(':checked');
+			if (trackFav) {
+				filter.trackFav = true;
+			}
+			var filterLevel = $('#filter-level:checked');
+			if (filterLevel.length < 3) {
+				for (var i=0; i<filterLevel.length; i++) {
+					filter.level = (i === 0) ? (filterLevel[i].value) : (filter.level + ',' + filterLevel[i].value);
+				}
+			}
+			var filterActivity = $('#filter-activity:checked');
+			if (filterActivity.length < 4) {
+				for (var i=0; i<filterActivity.length; i++) {
+					filter.activity = (i === 0) ? (filterActivity[i].value) : (filter.activity + ',' + filterActivity[i].value);
+				}
+			}
+			var country = $('#filter-country').val();
+			if (country) {
+				filter.country = (country === 'United States') ? 'US' : country;
+			}
+			var region = $('#filter-region').val()
+			if (region) {
+				filter.region = region;
+			}
+
+			tmData.getNumberOfTracks(JSON.stringify(filter), function(data) {
+				console.log('number of tracks with filter', data.numberOfTracks);
+				if (data.numberOfTracks < 1) {
+					$('#filterErrorText').text('No tracks found for these filter settings');
+					$('#filterError').fadeIn('slow');
+				} else {
+					localStorage.setItem('rikitraki-filter', JSON.stringify(filter));
+					window.location.reload();					
+				}
+			});
+
+			return false;
+		});
+
+		$('#clearFilterButton').click(function() {
+			// $('#filterModal').find('form').trigger('reset');
+			localStorage.removeItem('rikitraki-filter');
+			window.location.reload();
+			return false;
+		});
 	}
 };
