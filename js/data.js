@@ -5,7 +5,16 @@
 
 var tmData = {
 	getTrackInfo: function (successCallback) {
-		$.getJSON(API_BASE_URL + '/v1/tracks', successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
+		var filter = localStorage.getItem('rikitraki-filter');
+		filter = (filter) ? ('/?filter=' + filter) : ('');
+		console.log('filter is ', filter);
+		$.getJSON(API_BASE_URL + '/v1/tracks' + filter, successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
+	},
+	getNumberOfTracks: function (filter, successCallback) {
+		// var filter = localStorage.getItem('rikitraki-filter');
+		filter = (filter) ? ('/?filter=' + filter) : ('');
+		console.log('filter is ', filter);
+		$.getJSON(API_BASE_URL + '/v1/tracks/number' + filter, successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
 	},
 	getGeoTags: function (tId, successCallback, errorCallback) {
 		$.getJSON(API_BASE_URL + '/v1/tracks/' + tId + '/geotags/', successCallback).fail(errorCallback);

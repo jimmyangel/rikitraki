@@ -9,7 +9,7 @@
     <title>RikiTraki</title>
     <meta name="description" content="Welcome to RikiTraki, a personal hiking log. Feel free to use the slippy map to explore our hiking experiences and learn more about their locations.">
     <meta name="keywords" content="maps,hiking,travel,leaflet,gps,gpx">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta property="og:image" content="http://rikitraki.com/images/hikinglg.png" />
     <link rel="shortcut icon" href="/favicon.ico">
     
@@ -62,25 +62,25 @@
         <div id="navbarCollapse" class="collapse navbar-collapse">
           <ul id="mapGlobeButton" class="nav navbar-nav">
           </ul>
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav nav-pills">
+            <li>
+              <a data-toggle="collapse" id="filter-btn" role="button" title="Set filter" href="#"><span id="filter-icon" class="glyphicon glyphicon-filter" aria-hidden="true"></a>
+            </li>
+            <li>
+              <a data-toggle="collapse" id="tracks-btn" role="button" title="Find a track" href="#"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a>
+            </li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Go to <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Zoom to tracks in..." role="button" aria-expanded="false"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></a>
               <ul id="goto-menu" class="dropdown-menu scrollable-menu" role="menu">
               </ul>
             </li>
+
           </ul>
-          <ul class="nav navbar-nav">
-            <li>
-              <a data-toggle="collapse" id="tracks-btn" role="button" href="#">Tracks</a>
-            </li>
-          </ul>
-          <ul id="uploadTrackButton" class="nav navbar-nav">
-          </ul>
-          <ul id="editTrackButton" class="nav navbar-nav">
+          <ul class="nav navbar-nav nav-pills" id="uploadEditContainer">
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li>
-              <a data-toggle="collapse" id="about-btn" role="button" href="#">About</a>
+              <a data-toggle="collapse" id="about-btn" role="button" href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></a>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
@@ -109,7 +109,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 class="modal-title">Track List</h3>
+            <h4 class="modal-title">Find a track in filtered list</h4>
             <input type="text" class="form-control" id="tracksSearch" placeholder="Search..." />
           </div>
           <div>
@@ -662,6 +662,126 @@
                 </div>
 
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Filter tracks</h4>
+            <p>Enter filter criteria below...</p>
+          </div>
+          <div class="modal-body">
+            <div class="well">
+                <div>
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a class="small" id="filterTab" href="#filter-tab" data-toggle="tab">Filter</a></li>
+                  </ul>
+                </div>
+                <div class ="well well-sm">
+                  <div id="filterTabContent" class="tab-content">
+                    <div class="tab-pane active in" id="filter-tab">
+
+                      <form class="form-horizontal" role="form">
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">By username</label>
+                          <div class="col-sm-9">
+                            <input type="text" maxLength="200" id="filter-username" placeholder="Blank equals all" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">Only favorite?</label>
+                          <div class="checkbox col-sm-9">
+                            <label><input type="checkbox" id="filter-favorite" value="True"></label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">By difficulty</label>
+                          <div class="col-sm-9">
+                            <label class="checkbox-inline"><input type="checkbox" id="filter-level" value="Easy">Easy</label>
+                            <label class="checkbox-inline"><input type="checkbox" id="filter-level" value="Moderate">Moderate</label>
+                            <label class="checkbox-inline"><input type="checkbox" id="filter-level" value="Difficult">Difficult</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">By activity</label>
+                          <div class="col-sm-9">
+                            <label class="checkbox-inline"><input type="checkbox" id="filter-activity" value="Hiking">Hiking</label>
+                            <label class="checkbox-inline"><input type="checkbox" id="filter-activity" value="Biking">Biking</label>
+                            <label class="checkbox-inline"><input type="checkbox" id="filter-activity" value="Boating">Boating</label>
+                            <label class="checkbox-inline"><input type="checkbox" id="filter-activity" value="Offroad">Offroad</label>
+                          </div>
+                        </div>
+                        <div class="form-group" style="display: none">
+                          <label class="control-label col-sm-3">Near me by</label>
+                          <div class="col-sm-2">
+                            <input type="number" id="filter-near" class="form-control">
+                          </div>
+                          <div class="col-sm-7">
+                            <label class="radio-inline"><input type="radio" name="nearRadioOptions" id="filter-near-units" value="Km" checked>Km</label>
+                            <label class="radio-inline"><input type="radio" name="nearRadioOptions" id="filter-near-units" value="Miles">Miles</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-3">By region tags</label>
+                          <div class="col-sm-4">
+                            <select class="form-control crs-country" data-default-value="" data-region-id="filter-region" id="filter-country">
+                            </select>
+                          </div>
+                          <div class="col-sm-5">
+                            <select class="form-control" data-default-value="" id="filter-region">
+                            </select>
+                          </div>
+                        </div>
+
+                        <form class="form-horizontal" role="form">
+                          <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                              <button id="applyFilterButton" href="" class="btn btn-default">Apply filter</button>
+                              <button id="clearFilterButton" href="" class="btn btn-default">Clear filter</button>
+                            </div>
+                          </div>
+                        </form>
+
+                        <div class="alert alert-warning" id="filterMessage" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Info:</span>
+                          Filter applied.
+                        </div>
+
+                        <div class="alert alert-danger" id="filterError" role="alert" style="display: none">
+                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                          <span class="sr-only">Error:</span>
+                          <span id="filterErrorText"></span>
+                        </div>
+
+                      </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="trackNotAvailable" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Track details not available</h4>
+          </div>
+          <div class="modal-body">
+            <p>The detailed information for this track cannot be shown because it has been filtered out. To view it, please expand the filter set.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
           </div>
         </div>
       </div>
