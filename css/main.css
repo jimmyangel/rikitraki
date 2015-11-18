@@ -161,3 +161,7 @@ body {
 .filter-active:hover {
     color: #FFFFFF;
 }
+
+#uploadingMessage {
+  position: relative;
+}
