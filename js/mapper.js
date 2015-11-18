@@ -625,6 +625,8 @@ var tmMap = {
 	setUpSingleTrackTerrainView: function(track) {
 		$('#map').hide();
 		$('.help3d').show();
+		$('#2Dbutton').show();
+
 		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
 
 		var viewer = new Cesium.Viewer('globe', {
@@ -717,6 +719,12 @@ var tmMap = {
 		 	viewer.camera.zoomOut(2000);
 			return false;
 		});
+		
+		$('#terrain-control-2d').on('click', function () {
+			window.location.href='?track=' + track.trackId;
+			return false;
+		});		
+
 		$('#globe-control-north').hide();
 
 		// Refresh destroys everyting and starts over 
