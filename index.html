@@ -5,6 +5,9 @@
     <!-- Google site verification, do not remove -->
     <meta name="google-site-verification" content="V3zPYd6pZFm3oRhweiVTRbjETwWLS62wUoitWk4KFmw" />
     <!-- End of Google site verification -->
+    <!-- Domain verification, do not remove -->
+    <meta name="globalsign-domain-verification" content="d77HuFbkaXg5CVjeSwr7Q913KE6mFgsKO6YkhawWUW" />
+     <!-- End of domain verification, do not remove -->
 
     <title>RikiTraki</title>
     <meta name="description" content="Welcome to RikiTraki, a personal hiking log. Feel free to use the slippy map to explore our hiking experiences and learn more about their locations.">
@@ -483,11 +486,11 @@
                         <div class="form-group">
                           <label class="control-label col-sm-3">Region tags</label>
                           <div class="col-sm-4">
-                            <select class="form-control crs-country" data-region-id="track-region" data-default-value="United States" data-show-default-option="false" id="track-country">
+                            <select class="form-control crs-country" data-region-id="track-region" data-default-value="United States" id="track-country">
                             </select>
                           </div>
                           <div class="col-sm-5">
-                            <select class="form-control" data-show-default-option="false" id="track-region">
+                            <select class="form-control" data-default-value="" data-show-default-option="false" id="track-region">
                             </select>
                           </div>
 
@@ -521,6 +524,12 @@
                   </div>
                 </div>
 
+                <div class="alert alert-warning" id="uploadingMessage" role="alert" style="display: none">
+                  <div id="uploadSpinner"></div>
+                  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                  <span class="sr-only">Info:</span>
+                  Uploading...
+                </div>
                 <div class="alert alert-warning" id="uploadMessage" role="alert" style="display: none">
                   <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                   <span class="sr-only">Info:</span>

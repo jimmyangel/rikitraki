@@ -216,7 +216,7 @@ var tmMap = {
 		// var layerControl = L.control.layers(null, null, {position: 'topleft', collapsed: true}).addTo(map);
 		var layerControl = L.control.layers(null, null, {position: 'topleft', collapsed: true});
 
-		// Set up spinner control
+		// Set up Spinnerner control
 		var spinnerControl = L.control({position: 'bottomright'});
 		spinnerControl.onAdd = function () {
 			var spinnerControlContainer = L.DomUtil.create('div', 'spinnerControlContainer');

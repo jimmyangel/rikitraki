@@ -7,13 +7,11 @@ var tmData = {
 	getTrackInfo: function (successCallback) {
 		var filter = localStorage.getItem('rikitraki-filter');
 		filter = (filter) ? ('/?filter=' + filter) : ('');
-		console.log('filter is ', filter);
 		$.getJSON(API_BASE_URL + '/v1/tracks' + filter, successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
 	},
 	getNumberOfTracks: function (filter, successCallback) {
 		// var filter = localStorage.getItem('rikitraki-filter');
 		filter = (filter) ? ('/?filter=' + filter) : ('');
-		console.log('filter is ', filter);
 		$.getJSON(API_BASE_URL + '/v1/tracks/number' + filter, successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
 	},
 	getGeoTags: function (tId, successCallback, errorCallback) {
@@ -121,7 +119,7 @@ var tmData = {
 			data: file,
 			processData: false,
 			contentType: 'image/jpeg',
-			success: function() {console.log('picture upload ', tId, picIndex);}
+			success: function() {}
 		});
 	},
 	updateTrack: function (trk, token, successCallback, errorCallback) {
