@@ -3,7 +3,8 @@
 // The below is to stop jshint barking at undefined variables
 /* globals tmConfig, tmMap, tmData */
 /* exported map, isMobile, API_BASE_URL */
-var API_BASE_URL = tmConfig.API_BASE_URL;
+
+var API_BASE_URL = tmConfig.getApiBaseUrl();
 
 // The map is global
 var map;
