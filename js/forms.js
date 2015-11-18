@@ -7,6 +7,7 @@
 var MAX_IMAGE_SIZE = 1000000;
 var IMAGE_RESIZE_WIDTH = 1200;
 var IMAGE_RESIZE_QUALITY = 0.8;
+var THUMB_RESIZE_QUALITY = 0.5;
 var THUMBNAIL_WIDTH = 300;
 
 var tmForms = {
@@ -80,7 +81,6 @@ var tmForms = {
 				$('#forgotError').fadeIn('slow');
 			} else {
 				tmData.requestPasswordResetToken(email, function(data) {
-					console.log(data);
 					$('#forgotError').hide();
 					$('#forgot-email').next().removeClass('glyphicon-remove');
 					$('#forgotMessage').fadeIn('slow');
@@ -388,6 +388,14 @@ var tmForms = {
 			 		return ($(this.fieldId).val() === '') ? false : true;
 			 		// return !($(this.fieldId).val() === '');
 				}
+			},
+			{
+				fieldId: '#track-region',
+				errorMsg: 'Please select a region for this track',
+			 	isValid: function () {
+			 		return ($(this.fieldId).val() === '') ? false : true;
+			 		// return !($(this.fieldId).val() === '');
+				}
 			}
 		],
 		edit: [
@@ -504,6 +512,10 @@ var tmForms = {
 		var self = this;
 
 		if (self.isValidForm('upload')) {
+			$('#uploadingMessage').fadeIn('slow');
+			$('#uploadSpinner').spin({left: '90%'});
+			$('#uploadButton').attr('disabled', 'disabled');
+
 			var fReader = new FileReader();
 			fReader.onload = function() {
 				var parser = new DOMParser();
@@ -553,35 +565,56 @@ var tmForms = {
 						function uploadPicture(i, blob) {
 							return tmData.uploadTrackPic(blob, data.trackId, i, localStorage.getItem('rikitraki-token'));
 						}
-						// This function makes a canvas.toBlob handler for converting a resized image to jpeg for uploading
-						function makeToBlobHandler (i) {
-							// After image is resized we can push the upload task
-							return function (blob) {uploadPictureTasks.push(uploadPicture(i, blob));};
+						// This function makes a canvas.toBlob task for converting a resized image to jpeg for uploading
+						function resizeToBlob (i) {
+							var d = $.Deferred();
+							self.resizeImage(images[i], IMAGE_RESIZE_WIDTH).toBlob(function (blob) {
+									uploadPictureTasks.push(uploadPicture(i, blob));
+									d.resolve();
+							},
+							'image/jpeg', IMAGE_RESIZE_QUALITY);
+							return d.promise();
 						}
 						// Set up upload image tasks
+						// var uploadResizedPictureTasks = [];
+						var resizeToBlobTasks = [];
 						var uploadPictureTasks = [];
 						for (var i=0; i<Math.min(files.length, 8); i++) {
 							// But first resize the image if it is big
 							if (files[i].size > MAX_IMAGE_SIZE) {
-								self.resizeImage(images[i], IMAGE_RESIZE_WIDTH).toBlob(makeToBlobHandler(i),'image/jpeg', IMAGE_RESIZE_QUALITY);
+								resizeToBlobTasks.push(resizeToBlob(i));
 							} else {
 								uploadPictureTasks.push(uploadPicture(i, files[i]));
 							}
 						}
-						// Execute tasks and wait for all to complete
-						$.when.apply(this, uploadPictureTasks).then(function () {
-							$('#uploadMessage').fadeIn('slow');
-							setTimeout(function () {
-								window.location.href='?track=' + data.trackId;
-							}, 2000);
-						}, function (jqxhr) {
-							console.log(jqxhr);
-						});
+						// This is a mess because we have to do a bunch of async tasks of two kinds in a loop
+						if (resizeToBlobTasks.length > 0) {
+							$.when.apply(this, resizeToBlobTasks).then(function () {
+								$.when.apply(this, uploadPictureTasks).then(function () {
+									$('#uploadingMessage').hide();
+									$('#uploadMessage').fadeIn('slow');
+									setTimeout(function () {
+										window.location.href='?track=' + data.trackId;
+									}, 2000);
+								}, function (jqxhr) {
+									console.log(jqxhr);
+								});
+							});
+						} else {
+							$.when.apply(this, uploadPictureTasks).then(function () {
+								$('#uploadingMessage').hide();
+								$('#uploadMessage').fadeIn('slow');
+								setTimeout(function () {
+									window.location.href='?track=' + data.trackId;
+								}, 2000);
+							}, function (jqxhr) {
+								console.log(jqxhr);
+							});
+						}
 					}, function(jqxhr) { // jqxhr, textStatus
 						// Add internal error message here
 						console.log(jqxhr);
 					});
-					console.log(track);
 				});
 
 			};
@@ -623,7 +656,7 @@ var tmForms = {
 				picName: i.toString(),
 				picThumb: i.toString(), 
 				picCaption: $('#track-photos-container input')[i].value,
-				picThumbDataUrl: this.resizeImage(images[i], THUMBNAIL_WIDTH).toDataURL('image/jpeg', IMAGE_RESIZE_QUALITY)
+				picThumbDataUrl: this.resizeImage(images[i], THUMBNAIL_WIDTH).toDataURL('image/jpeg', THUMB_RESIZE_QUALITY)
 			});
 
 			// Extract geotags
@@ -677,7 +710,6 @@ var tmForms = {
 			// $('#edit-track-region-tags').val(track.trackRegionTags);
 			if (track.trackRegionTags[0]) {			
 				var country = track.trackRegionTags[0];
-				console.log(country);
 				$('#edit-track-country').attr('data-default-value', (country === 'US') ? 'United States' : country);
 				$('#edit-track-country').attr('data-crs-loaded', 'false');
 				window.crs.init();
@@ -767,7 +799,6 @@ var tmForms = {
 			self.cleanupErrorMarks();
 			$('#filterModal').find('form').trigger('reset');
 			var filter = localStorage.getItem('rikitraki-filter');
-			console.log('the filter is', filter);
 			if (filter) {
 				filter = JSON.parse(filter);
 				if (filter.username) {
@@ -834,7 +865,6 @@ var tmForms = {
 			}
 
 			tmData.getNumberOfTracks(JSON.stringify(filter), function(data) {
-				console.log('number of tracks with filter', data.numberOfTracks);
 				if (data.numberOfTracks < 1) {
 					$('#filterErrorText').text('No tracks found for these filter settings');
 					$('#filterError').fadeIn('slow');
