@@ -3,8 +3,17 @@
 /* exported tmConfig */
 
 var tmConfig = {
-//	API_BASE_URL: 'https://rikitrakiws-rikitraki.rhcloud.com/api',
-	API_BASE_URL: 'http://192.168.1.17:3000/api',
+	// Devellpment port numbers
+	DEV_WEB_PORT: '9000',
+	DEV_WS_PORT: '3000',
+	// This function assumes that the api and the web page are colocated, if that is not the case it will need to be changed
+	getApiBaseUrl: function () {
+		if (window.location.port === this.DEV_WEB_PORT) {
+			return window.location.protocol + '//' + window.location.hostname + ':' + this.DEV_WS_PORT + '/api';
+		}
+		// Hosted in same nodejs container (local or remote)
+		return window.location.protocol + '//' + window.location.host + '/api';
+	},
 	getTrackId: function () {
 		return tmConfig.getUrlVars().track;
 	},
