@@ -80,7 +80,7 @@ var tmForms = {
 				$('#forgotErrorText').text('Please enter a valid email');
 				$('#forgotError').fadeIn('slow');
 			} else {
-				tmData.requestPasswordResetToken(email, function(data) {
+				tmData.requestPasswordResetToken(email, function() {
 					$('#forgotError').hide();
 					$('#forgot-email').next().removeClass('glyphicon-remove');
 					$('#forgotMessage').fadeIn('slow');
@@ -801,6 +801,7 @@ var tmForms = {
 			var filter = localStorage.getItem('rikitraki-filter');
 			if (filter) {
 				filter = JSON.parse(filter);
+				var i = 0;
 				if (filter.username) {
 					$('#filter-username').val(filter.username);
 				}
@@ -809,13 +810,13 @@ var tmForms = {
 				}
 				if (filter.level) {
 					filter.level = filter.level.split(',');
-					for (var i=0; i<filter.level.length; i++) {
+					for (i=0; i<filter.level.length; i++) {
 						$('#filter-level[value="' + filter.level[i] + '"]').prop('checked', true);						
 					}
 				}
 				if (filter.activity) {
 					filter.activity = filter.activity.split(',');
-					for (var i=0; i<filter.activity.length; i++) {
+					for (i=0; i<filter.activity.length; i++) {
 						$('#filter-activity[value="' + filter.activity[i] + '"]').prop('checked', true);						
 					}
 				}
@@ -836,6 +837,7 @@ var tmForms = {
 		$('#applyFilterButton').click(function() {
 			var filter = {};
 			var username = $('#filter-username').val();
+			var i = 0;
 			if (username.trim()) {
 				filter.username = username.trim();
 			}
@@ -845,13 +847,13 @@ var tmForms = {
 			}
 			var filterLevel = $('#filter-level:checked');
 			if (filterLevel.length < 3) {
-				for (var i=0; i<filterLevel.length; i++) {
+				for (i=0; i<filterLevel.length; i++) {
 					filter.level = (i === 0) ? (filterLevel[i].value) : (filter.level + ',' + filterLevel[i].value);
 				}
 			}
 			var filterActivity = $('#filter-activity:checked');
 			if (filterActivity.length < 4) {
-				for (var i=0; i<filterActivity.length; i++) {
+				for (i=0; i<filterActivity.length; i++) {
 					filter.activity = (i === 0) ? (filterActivity[i].value) : (filter.activity + ',' + filterActivity[i].value);
 				}
 			}
@@ -859,7 +861,7 @@ var tmForms = {
 			if (country) {
 				filter.country = (country === 'United States') ? 'US' : country;
 			}
-			var region = $('#filter-region').val()
+			var region = $('#filter-region').val();
 			if (region) {
 				filter.region = region;
 			}
