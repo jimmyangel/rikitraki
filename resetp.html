@@ -117,7 +117,7 @@
           $('#profileError').show();
         } else {
           $.ajax({
-            url: tmConfig.API_BASE_URL + '/v1/users/' + username,
+            url: tmConfig.getApiBaseUrl() + '/v1/users/' + username,
             type: 'PUT',
             headers: {
               'Authorization': 'JWT ' + token
