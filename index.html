@@ -698,8 +698,11 @@
                       <form class="form-horizontal" role="form">
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-3">By username</label>
-                          <div class="col-sm-9">
-                            <input type="text" maxLength="200" id="filter-username" placeholder="Blank equals all" class="form-control">
+                          <div class="col-sm-2">
+                            <label class="checkbox-inline"><input type="checkbox" id="filter-me" disabled value="me">Me</label>
+                          </div>
+                          <div class="col-sm-7">
+                            <input type="text" maxLength="200" id="filter-username" placeholder="User name" class="form-control">
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                         </div>
@@ -864,6 +867,9 @@
           <div class="leaflet-bar leaflet-control">
             <a class="leaflet-control-zoom-in" href="#" title="Zoom in">+</a>
             <a class="leaflet-control-zoom-out" href="#" title="Zoom out">-</a>
+          </div>
+          <div class="leaflet-control leaflet-bar" id="2Dbutton" style="display: none;">
+            <a id="terrain-control-2d" href="#" style="text-shadow: 2px 2px 2px #666666;" href="#" title="2D Map">2D</a>
           </div>
           <div class="leaflet-control leaflet-bar">
             <a id="globe-control-refresh" href="#" title="Reset view"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>

@@ -830,6 +830,20 @@ var tmForms = {
 				}
 			}
 
+			var me = localStorage.getItem('rikitraki-username');
+			if (me) {
+				$('#filter-me').removeAttr('disabled');
+				$('#filter-me').change(function() {
+					if ($('#filter-me').is(':checked')) {
+						$('#filter-username').attr('disabled', true);
+						$('#filter-username').val(me);
+					} else {
+						$('#filter-username').removeAttr('disabled');
+						$('#filter-username').val('');
+					}
+				});
+			}
+
 			$('#filterModal').modal('show');
 			return false;
 		});
@@ -866,15 +880,20 @@ var tmForms = {
 				filter.region = region;
 			}
 
-			tmData.getNumberOfTracks(JSON.stringify(filter), function(data) {
-				if (data.numberOfTracks < 1) {
-					$('#filterErrorText').text('No tracks found for these filter settings');
-					$('#filterError').fadeIn('slow');
-				} else {
-					localStorage.setItem('rikitraki-filter', JSON.stringify(filter));
-					window.location.reload();					
-				}
-			});
+			if (!$.isEmptyObject(filter)) {
+				tmData.getNumberOfTracks(JSON.stringify(filter), function(data) {
+					if (data.numberOfTracks < 1) {
+						$('#filterErrorText').text('No tracks found for these filter settings');
+						$('#filterError').fadeIn('slow');
+					} else {
+						localStorage.setItem('rikitraki-filter', JSON.stringify(filter));
+						window.location.reload();					
+					}
+				});
+			} else {
+				localStorage.removeItem('rikitraki-filter');
+				window.location.reload();					
+			}
 
 			return false;
 		});
