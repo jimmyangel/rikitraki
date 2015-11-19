@@ -434,7 +434,7 @@ var tmMap = {
 		var trackMarkersLayerGroup = this.setUpMarkersForAllTracks(tracks, track.trackId);
 		layerControl.addOverlay(trackMarkersLayerGroup, 'Show markers for all tracks');
 
-		var trackMetrics;
+		var trackMetrics = [0, 0, 0, 0];
 
 		// If region is US, we use imperial units
 		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
@@ -479,7 +479,7 @@ var tmMap = {
 		    // Bind elevation control via onEachFeature
 		    onEachFeature: function (feature, layer) {
 		    	// Elevation control only understands lines
-	    		if (feature.geometry.type === 'LineString') {
+	    		if (feature.geometry.type === 'LineString' && Array.isArray(feature.geometry.coordinates)) {
 	 				// Save this line to draw the inside of the track
 	 				insideT = layer.toGeoJSON();
 	 				el.addData.bind(el)(feature, layer);
@@ -498,7 +498,10 @@ var tmMap = {
 				layer.bindPopup(layer.feature.properties.name, {maxWidth: 200});
 				// Hey since we are iterating through features, we may as well get the track distance, elevation gain and other track useful info
 				if (layer.feature.geometry.type === 'LineString') {
-					trackMetrics = tmUtils.calculateTrackMetrics(layer.feature);
+					var tm = tmUtils.calculateTrackMetrics(layer.feature);
+					if (tm) {
+						trackMetrics = tm;
+					}
 					// Grab the recorded date, if available
 					if (layer.feature.properties.time) {
 						trackDate = new Date(layer.feature.properties.time).toString();
@@ -719,7 +722,7 @@ var tmMap = {
 		 	viewer.camera.zoomOut(2000);
 			return false;
 		});
-		
+
 		$('#terrain-control-2d').on('click', function () {
 			window.location.href='?track=' + track.trackId;
 			return false;
