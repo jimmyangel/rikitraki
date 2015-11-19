@@ -6,6 +6,10 @@
 
 var tmUtils = {
 	calculateTrackMetrics: function(feature) {
+		if (!Array.isArray(feature.geometry.coordinates)) {
+			// Some gps tracks misbehave, so skip offending part
+			return null;
+		}
 		var distance = 0;
 		var elevation = 0;
 		var maxElevation = 0;
