@@ -130,42 +130,38 @@ var tmForms = {
 			reg.email = $('#inv-email').val();
 
 			// Use mailgun email validation to improve chances of delivery
-			tmData.validateEmail(reg.email, function (data) {
-				if (data.is_valid) {		
-					tmData.addInvitation(reg, function() {
-						$('#invitationError').hide();
-						$('#inv-email').next().removeClass('glyphicon-remove');
-						$('#invitationMessage').fadeIn('slow');
+			if (tmUtils.isValidEmail(reg.email)) {
+				tmData.addInvitation(reg, function() {
+					$('#invitationError').hide();
+					$('#inv-email').next().removeClass('glyphicon-remove');
+					$('#invitationMessage').fadeIn('slow');
+					setTimeout(function () {
+						self.resetLoginDialog();
+					}, 2000);					
+				}, function(jqxhr) {
+					if (jqxhr.status === 422) {
+						$('#inv-email').next().addClass('glyphicon-remove');
+						$('#inv-email').focus();
+						$('#invitationErrorText').text('Invitation already requested for this email address');
+						$('#invitationError').fadeIn('slow');
+					} else {
+						if (jqxhr.status === 429) {
+							$('#invitationErrorText').text('No invitations available');
+						} else {
+							$('#invitationErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+						}
+						$('#invitationError').fadeIn('slow');
 						setTimeout(function () {
 							self.resetLoginDialog();
-						}, 2000);					
-					}, function(jqxhr) {
-						if (jqxhr.status === 422) {
-							$('#inv-email').next().addClass('glyphicon-remove');
-							$('#inv-email').focus();
-							$('#invitationErrorText').text('Invitation already requested for this email address');
-							$('#invitationError').fadeIn('slow');
-						} else {
-							if (jqxhr.status === 429) {
-								$('#invitationErrorText').text('No invitations available');
-							} else {
-								$('#invitationErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
-							}
-							$('#invitationError').fadeIn('slow');
-							setTimeout(function () {
-								self.resetLoginDialog();
-							}, 2000);
-						}
-					});
-				} else {
+						}, 2000);
+					}
+				});
+			} else {
 					$('#inv-email').next().addClass('glyphicon-remove');
 					$('#inv-email').focus();
 					$('#invitationErrorText').text('Please enter a valid email');
 					$('#invitationError').fadeIn('slow');				
-				}
-			}, function(jqxhr) {
-				console.log(jqxhr);
-			});
+			}
 			return false;
 		});
 
