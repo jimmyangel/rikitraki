@@ -519,7 +519,8 @@ var tmForms = {
 				var lon;
 				var doc = parser.parseFromString(fReader.result, 'application/xml');
 				if (doc.documentElement.tagName !== 'gpx') {
-					self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
+					self.displayGPXFormatError('Please select a valid GPX file');
+					// self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
 					return;
 				}
 				try {
@@ -530,11 +531,13 @@ var tmForms = {
 
 					// Make sure we have elevation data available
 					if (!(doc.getElementsByTagName('trkpt')[0].getElementsByTagName('ele')[0])) {
-						self.displayErrorMessage('upload', '#track-file', 'Please select a  GPX file with valid elevation info');
+						self.displayGPXFormatError('Please select a  GPX file with valid elevation info');
+						//self.displayErrorMessage('upload', '#track-file', 'Please select a  GPX file with valid elevation info');
 						return;
 					} 
 				} catch (e) {
-					self.displayErrorMessage('upload', '#track-file', 'Please select a GPX file with valid track info');
+					self.displayGPXFormatError('Please select a GPX file with valid track info');
+					// self.displayErrorMessage('upload', '#track-file', 'Please select a GPX file with valid track info');
 					return;
 				}
 				var track = {};
@@ -620,6 +623,13 @@ var tmForms = {
 				console.log(e);
 			}
 		}		
+	},
+	displayGPXFormatError: function (message) {
+		$('#trackInfoTab').tab('show');
+		$('#uploadingMessage').hide();
+		$('#uploadSpinner').spin(false);
+		$('#uploadButton').removeAttr('disabled');
+		this.displayErrorMessage('upload', '#track-file', message);
 	},
 	makeTrackPhotos: function(callback) {
 		var trackPhotos = [];
