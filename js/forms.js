@@ -202,11 +202,10 @@ var tmForms = {
 					}, function(jqxhr) { // jqxhr, textStatus
 						if (jqxhr.status === 401) {
 							$('#profileErrorText').text('Please enter a valid password');
-							$('#profileError').show();
-						} else { 
-							// Add internal error message here
-							console.log(jqxhr);
+						} else {
+							$('#profileErrorText').text(JSON.parse(jqxhr.responseText).description);
 						}
+						$('#profileError').show();
 					});
 					return false;
 				}
