@@ -1,5 +1,11 @@
 {
-	"layers": [  
+	"layers": [
+		{	  
+			"layerName": "ESRI World Topo",   
+			"layerUrl": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",   
+			"attribution": "Tiles &copy; Esri &mdash; Source: <a href=\"http://www.arcgis.com/home/item.html?id=30e5fe3149c34df1ba922e6f5bbf808f\">ArcGIS World Topographic Map</a>",
+			"maxZoom": 19
+		}, 
 		{		  
 			"layerName": "Thunder Forest Outdoors",  
 			"layerUrl": "https://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png",  

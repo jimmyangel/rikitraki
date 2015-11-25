@@ -544,7 +544,7 @@ var tmForms = {
 				var country = $('#track-country').val();
 				track.trackRegionTags = new Array((country === 'United States') ? 'US' : country, $('#track-region').val());
 				track.trackLevel = $('#track-level:checked').val();
-				track.trackType = $('#track-activity:checked').val();
+				track.trackType = $('#track-activity').val();
 				track.trackFav = $('#track-favorite').is(':checked');
 				track.trackGPX = $('#track-file')[0].files[0].name;
 				track.trackName = $('#track-name').val();
@@ -697,7 +697,6 @@ var tmForms = {
 		var self = this;
 
 		if ((localStorage.getItem('rikitraki-token')) && (track.username === localStorage.getItem('rikitraki-username')))  {
-			// $('#uploadTrackButton').append('<li><a role="button" id="edit-btn" title="Edit track info" href="."><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>');
 			$('#uploadEditContainer').append('<li><a role="button" id="edit-btn" title="Edit track info" href="."><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>');
 		} else {
 			return;
@@ -707,19 +706,17 @@ var tmForms = {
 			// Set current values on the form for editing
 			$('#edit-track-name').val(track.trackName);
 			$('#edit-track-description').val(track.trackDescription);
-			$('#edit-track-activity[value="' + track.trackType + '"]').prop('checked', true);
+			$('#edit-track-activity').val(track.trackType);
 			$('#edit-track-level[value=' + track.trackLevel + ']').prop('checked', true);
 			if (track.trackFav) {
 				$('#edit-track-favorite').prop('checked', true);
 			}
-			// $('#edit-track-region-tags').val(track.trackRegionTags);
 			if (track.trackRegionTags[0]) {			
 				var country = track.trackRegionTags[0];
 				$('#edit-track-country').attr('data-default-value', (country === 'US') ? 'United States' : country);
 				$('#edit-track-country').attr('data-crs-loaded', 'false');
 				window.crs.init();
 				if (track.trackRegionTags[1]) {
-					// $('#edit-track-region').attr('data-default-value', track.trackRegionTags[1]);
 					$('#edit-track-region').val(track.trackRegionTags[1]);
 				} 
 			}
@@ -759,7 +756,7 @@ var tmForms = {
 			t.trackDescription = $('#edit-track-description').val();
 			t.trackFav = $('#edit-track-favorite').is(':checked');
 			t.trackLevel = $('#edit-track-level:checked').val();
-			t.trackType = $('#edit-track-activity:checked').val();
+			t.trackType = $('#edit-track-activity').val();
 			var country = $('#edit-track-country').val();
 			t.trackRegionTags = new Array((country === 'United States') ? 'US' : country, $('#edit-track-region').val());
 
@@ -821,9 +818,7 @@ var tmForms = {
 				}
 				if (filter.activity) {
 					filter.activity = filter.activity.split(',');
-					for (i=0; i<filter.activity.length; i++) {
-						$('#filter-activity[value="' + filter.activity[i] + '"]').prop('checked', true);						
-					}
+					$('#filter-activity').val(filter.activity);
 				}
 				if (filter.country) {
 					$('#filter-country').attr('data-default-value', (filter.country === 'US') ? 'United States' : filter.country);
@@ -870,12 +865,8 @@ var tmForms = {
 					filter.level = (i === 0) ? (filterLevel[i].value) : (filter.level + ',' + filterLevel[i].value);
 				}
 			}
-			var filterActivity = $('#filter-activity:checked');
-			if (filterActivity.length < 4) {
-				for (i=0; i<filterActivity.length; i++) {
-					filter.activity = (i === 0) ? (filterActivity[i].value) : (filter.activity + ',' + filterActivity[i].value);
-				}
-			}
+			var filterActivity = $('#filter-activity').val();
+			filter.activity = filterActivity.join();
 			var country = $('#filter-country').val();
 			if (country) {
 				filter.country = (country === 'United States') ? 'US' : country;
