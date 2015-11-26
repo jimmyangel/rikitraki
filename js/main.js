@@ -10,6 +10,7 @@ var API_BASE_URL = tmConfig.getApiBaseUrl();
 var map;
 var isMobile = tmConfig.getOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 var isWebGlSupported = false;
+$.ajaxSetup({cache: true});
 
 function setUpMap() {
 	isWebGlSupported = tmConfig.getOverride() ? true : tmConfig.getWebGlFlag();
@@ -24,10 +25,14 @@ function setUpMap() {
 
 		// Now figure out what view to set up
 		if (tmConfig.getTerrainFlag() &&isWebGlSupported && (trackId in data.tracks)) {
-			tmMap.setUpSingleTrackTerrainView(data.tracks[trackId]);		
+			$.getScript('components/Cesium/Cesium.js', function () {
+				tmMap.setUpSingleTrackTerrainView(data.tracks[trackId]);		
+			});
 		} else {
 			if (tmConfig.getGlobeFlag() && isWebGlSupported) {
-				tmMap.setUpGlobe(data.tracks, regions);
+				$.getScript('components/Cesium/Cesium.js', function () {
+					tmMap.setUpGlobe(data.tracks, regions);
+				});
 			} else {
 				// Get JSON layer config file and wait before populating map
 				tmConfig.getLayers(function(l) {
