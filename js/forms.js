@@ -866,7 +866,9 @@ var tmForms = {
 				}
 			}
 			var filterActivity = $('#filter-activity').val();
-			filter.activity = filterActivity.join();
+			if (filterActivity) {
+				filter.activity = filterActivity.join();
+			}
 			var country = $('#filter-country').val();
 			if (country) {
 				filter.country = (country === 'United States') ? 'US' : country;
@@ -890,7 +892,6 @@ var tmForms = {
 				localStorage.removeItem('rikitraki-filter');
 				window.location.reload();					
 			}
-
 			return false;
 		});
 
