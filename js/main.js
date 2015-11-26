@@ -5,6 +5,7 @@
 /* exported map, isMobile, API_BASE_URL */
 
 var API_BASE_URL = tmConfig.getApiBaseUrl();
+var CESIUM_BASE_URL = 'components/Cesium/';
 
 // The map is global
 var map;
