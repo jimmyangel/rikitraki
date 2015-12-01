@@ -493,13 +493,16 @@ var tmForms = {
 			for (var i=0; i<Math.min(files.length, 8); i++) {
 				$('#track-photos-container').append
 					(
-						'<div style="float: left;"><div><input type="text" maxLength="200" value="' + 
+						'<div style="float: left;" orig-file-index="' + i + '">' +
+						'<div><input type="text" maxLength="200" value="' + 
 						files[i].name.replace(/\.[^/.]+$/, '') +
 						'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + 
 						URL.createObjectURL(files[i]) + 
 						'"></div></div>'
 					);
 			}
+			// Enable drag and drop sorting
+			$('#track-photos-container').sortable();
 		});
 
 	},
@@ -577,12 +580,16 @@ var tmForms = {
 						// var uploadResizedPictureTasks = [];
 						var resizeToBlobTasks = [];
 						var uploadPictureTasks = [];
-						for (var i=0; i<Math.min(files.length, 8); i++) {
+//						for (var i=0; i<Math.min(files.length, 8); i++) {
+						for (var j=0; j<images.length; j++) {
+							// Grab original file index (in case list was reordered)
+							var i = $('#track-photos-container').children()[j].getAttribute('orig-file-index'); 
+							console.log(j, i);
 							// But first resize the image if it is big
 							if (files[i].size > MAX_IMAGE_SIZE) {
-								resizeToBlobTasks.push(resizeToBlob(i));
+								resizeToBlobTasks.push(resizeToBlob(j));
 							} else {
-								uploadPictureTasks.push(uploadPicture(i, files[i]));
+								uploadPictureTasks.push(uploadPicture(j, files[i]));
 							}
 						}
 						// This is a mess because we have to do a bunch of async tasks of two kinds in a loop
@@ -720,6 +727,23 @@ var tmForms = {
 					$('#edit-track-region').val(track.trackRegionTags[1]);
 				} 
 			}
+
+			$('#edit-track-photos-container').empty();
+			// Grab the thumbnails and captions that are already sitting in the info panel
+			for (var i=0; i<$('.infoThumbs').length; i++) {
+				$('#edit-track-photos-container').append
+					(
+						'<div style="float: left;" orig-photo-index="' + i + '">' + 
+						'<div><input type="text" maxLength="200" value="' + $('.slideShowContainer').children('a')[i].getAttribute('data-title') +
+						'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + 
+						$('.infoThumbs')[i].getAttribute('src') +
+						'"></div></div>'
+					);
+			}
+
+			// Enable drag and drop sorting
+			$('#edit-track-photos-container').sortable();
+
 			$('#editTrackModal').modal('show');
 			return false;
 		});
@@ -769,11 +793,17 @@ var tmForms = {
 					delete t[fields[i]]; // If not changed, remove from API request
 				}
 			}
+
+			// Look at the photos part
+			for (i=0; i<$('#edit-track-photos-container').children().length; i++) {
+				console.log($('#edit-track-photos-container').children()[i].getAttribute('orig-photo-index'));
+			}
+
 			if (trackChanged) {
 				tmData.updateTrack(t, localStorage.getItem('rikitraki-token'), function(data) {
 					$('#editMessage').fadeIn('slow');
 					setTimeout(function () {
-						window.location.href='?track=' + data.trackId;
+						// window.location.href='?track=' + data.trackId;
 					}, 2000);
 				}, function(jqxhr) { // jqxhr, textStatus
 					$('#editErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);

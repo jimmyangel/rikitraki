@@ -567,6 +567,7 @@
                 <div>
                   <ul class="nav nav-tabs">
                     <li class="active"><a class="small" id="editInfoTab" href="#edit-track-info-tab" data-toggle="tab">Info</a></li>
+                    <li><a class="small" id="editPhotosTab" href="#edit-track-photos-tab" data-toggle="tab">Photos</a></li>
                     <li><a class="small" id="removeTrackTab" href="#remove-track-info-tab" data-toggle="tab">Remove track</a></li>
                   </ul>
                 </div>
@@ -628,26 +629,24 @@
                           </div>
                         </div>
 
-                        <form class="form-horizontal" role="form">
-                          <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-9">
-                              <button id="saveButton" href="" class="btn btn-default">Save</button>
-                            </div>
+
+
+                      </form>
+                    </div>
+                    <div class="tab-pane" id="edit-track-photos-tab">
+                      <form class="form-horizontal" role="form" id="tab">
+                        <div class="form-group has-feedback">
+                          <label class="control-label col-sm-3">Up to 8 jpeg images</label>
+                          <div class="col-sm-5">
+                            <input type="file" multiple accept="image/*" id="edit-track-photo-files" class="form-control">
+                            <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
-                        </form>
-
-                        <div class="alert alert-warning" id="editMessage" role="alert" style="display: none">
-                          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                          <span class="sr-only">Info:</span>
-                          Track info saved.
+                          <span class="help-block col-sm-4">Images larger than 1MB will be resized</span>
                         </div>
-
-                        <div class="alert alert-danger" id="editError" role="alert" style="display: none">
-                          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                          <span class="sr-only">Error:</span>
-                          <span id="editErrorText"></span>
-                        </div>
-
+                        <div class="form-group">
+                          <div id="edit-track-photos-container" style="padding-left: 15px;">
+                          </div>
+                        </div>                          
                       </form>
                     </div>
                     <div class="tab-pane" id="remove-track-info-tab">
@@ -677,6 +676,28 @@
                     </div>
                   </div>
                 </div>
+
+
+                <form class="form-horizontal" role="form">
+                  <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                      <button id="saveButton" href="" class="btn btn-default">Save</button>
+                    </div>
+                  </div>
+                </form>
+
+                <div class="alert alert-warning" id="editMessage" role="alert" style="display: none">
+                  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                  <span class="sr-only">Info:</span>
+                  Track info saved.
+                </div>
+
+                <div class="alert alert-danger" id="editError" role="alert" style="display: none">
+                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                  <span class="sr-only">Error:</span>
+                  <span id="editErrorText"></span>
+                </div>
+                
 
             </div>
           </div>
@@ -935,8 +956,10 @@
     <script src="bower_components/lightbox2/dist/js/lightbox.js"></script>
     <script src="bower_components/exif-js/exif.js"></script>
     <script src="bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.js"></script>
+
     <!-- endbower -->
     <script src="bower_components/country-region-selector/dist/jquery.crs.min.js"></script>
+    <script src="bower_components/Sortable/jquery.fn.sortable.min.js"></script>
 
     <!-- build: use this block later with processhtml to prepare dist -->
     <script src="bower_components/spin.js/jquery.spin.js"></script>    
@@ -947,6 +970,7 @@
     <script src="js/mapper.js"></script>
     <script src="js/main.js"></script>
     <!-- endbuild -->
+
 
 </body>
 </html>
