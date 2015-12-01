@@ -2,7 +2,7 @@
 
 // The below is to stop jshint barking at undefined variables
 /* globals tmConfig, tmMap, tmData */
-/* exported map, isMobile, API_BASE_URL */
+/* exported map, isMobile, API_BASE_URL, CESIUM_BASE_URL */
 
 var API_BASE_URL = tmConfig.getApiBaseUrl();
 var CESIUM_BASE_URL = 'components/Cesium/';
