@@ -9,6 +9,7 @@ var IMAGE_RESIZE_WIDTH = 1200;
 var IMAGE_RESIZE_QUALITY = 0.8;
 var THUMB_RESIZE_QUALITY = 0.5;
 var THUMBNAIL_WIDTH = 300;
+var MAX_NUM_IMAGES = 8;
 
 var tmForms = {
 	//---- Handle login, user registration and user profile forms
@@ -490,7 +491,7 @@ var tmForms = {
 		$('#track-photo-files').change(function () {
 			$('#track-photos-container').empty();
 			var files = $('#track-photo-files')[0].files;
-			for (var i=0; i<Math.min(files.length, 8); i++) {
+			for (var i=0; i<Math.min(files.length, MAX_NUM_IMAGES); i++) {
 				$('#track-photos-container').append
 					(
 						'<div style="float: left;" orig-file-index="' + i + '">' +
@@ -580,7 +581,6 @@ var tmForms = {
 						// var uploadResizedPictureTasks = [];
 						var resizeToBlobTasks = [];
 						var uploadPictureTasks = [];
-//						for (var i=0; i<Math.min(files.length, 8); i++) {
 						for (var j=0; j<images.length; j++) {
 							// Grab original file index (in case list was reordered)
 							var i = $('#track-photos-container').children()[j].getAttribute('orig-file-index'); 
@@ -740,12 +740,46 @@ var tmForms = {
 						'"></div></div>'
 					);
 			}
+			if ($('.infoThumbs').length < MAX_NUM_IMAGES) {
+				$('#edit-track-file-selector').show();
+			}
 
 			// Enable drag and drop sorting
-			$('#edit-track-photos-container').sortable();
+			$('#edit-track-photos-container').sortable({
+				group: 'edit-photos'
+			});
+			$('#edit-track-photos-delete-drop-zone').sortable({
+				group: 'edit-photos', 
+				onAdd: function(evt) {evt.item.remove(); $('#edit-track-file-selector').show();}
+			});
 
 			$('#editTrackModal').modal('show');
 			return false;
+		});
+
+		// Replace standard file selector with custom button
+		$('#selectEditPhotos').click(function () {
+			this.blur();
+			$('#edit-track-photo-files').click();
+		});
+
+		$('#edit-track-photo-files').change(function () {
+			var files = $('#edit-track-photo-files')[0].files;
+			$('.newImage').remove();
+			var n = $('#edit-track-photos-container').children().length;
+			for (var i=0; i<Math.min(files.length, MAX_NUM_IMAGES - n); i++) {
+				$('#edit-track-photos-container').append (
+					'<div class="newImage" style="float: left;" orig-photo-index="' + (i+n) + '">' +
+					'<div><input type="text" maxLength="200" value="' + 
+					files[i].name.replace(/\.[^/.]+$/, '') +
+					'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + 
+					URL.createObjectURL(files[i]) + 
+					'"></div></div>'
+				);
+			}
+			if (n+i >= MAX_NUM_IMAGES) {
+				$('#edit-track-file-selector').hide();
+			}
 		});
 
 		$('#saveButton').click(function() {
@@ -761,6 +795,14 @@ var tmForms = {
 			} else {
 		        $('#removeTrackButton').attr('disabled', 'disabled');
 		    }
+		});
+
+		$('#removeTrackTab').click(function() {
+			$('#saveButton').hide();
+		});
+
+		$('#editInfoTab, #editPhotosTab').click(function() {
+			$('#saveButton').show();
 		});
 
 		// Handle the remove track button
