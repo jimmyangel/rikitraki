@@ -165,3 +165,8 @@ body {
 #uploadingMessage {
   position: relative;
 }
+
+#edit-track-photos-delete-drop-zone * :not(span){
+  display: none;
+}
+
