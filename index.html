@@ -67,7 +67,7 @@
           </ul>
           <ul class="nav navbar-nav nav-pills">
             <li>
-              <a data-toggle="collapse" id="filter-btn" role="button" title="Set filter" href="#"><span id="filter-icon" class="glyphicon glyphicon-filter" aria-hidden="true"></a>
+              <a data-toggle="collapse" id="filter-btn" role="button" title="Set filter" href="#"><span id="filter-icon" class="glyphicon glyphicon-filter" aria-hidden="true"></span></a>
             </li>
             <li>
               <a data-toggle="collapse" id="tracks-btn" role="button" title="Find a track" href="#"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a>
@@ -628,17 +628,15 @@
                             </select>
                           </div>
                         </div>
-
-
-
                       </form>
                     </div>
                     <div class="tab-pane" id="edit-track-photos-tab">
                       <form class="form-horizontal" role="form" id="tab">
-                        <div class="form-group has-feedback">
-                          <label class="control-label col-sm-3">Up to 8 jpeg images</label>
-                          <div class="col-sm-5">
-                            <input type="file" multiple accept="image/*" id="edit-track-photo-files" class="form-control">
+                        <div id="edit-track-file-selector" class="form-group has-feedback" style="display: none">
+                          <label class="control-label col-sm-3">Add jpeg images (8 max)</label>
+                          <div class="col-sm-1">
+                            <input type="file" multiple accept="image/*" id="edit-track-photo-files" class="form-control" style="display: none">
+                            <button id="selectEditPhotos" class="btn btn-default" type="button"><span class="glyphicon glyphicon-picture"></span></button>
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                           <span class="help-block col-sm-4">Images larger than 1MB will be resized</span>
@@ -646,7 +644,12 @@
                         <div class="form-group">
                           <div id="edit-track-photos-container" style="padding-left: 15px;">
                           </div>
-                        </div>                          
+                        </div>  
+                        <div class="form-group">
+                          <div id="edit-track-photos-delete-drop-zone" class="col-sm-offset-11 col-sm-1">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                          </div>
+                        </div>                        
                       </form>
                     </div>
                     <div class="tab-pane" id="remove-track-info-tab">
@@ -697,7 +700,7 @@
                   <span class="sr-only">Error:</span>
                   <span id="editErrorText"></span>
                 </div>
-                
+
 
             </div>
           </div>
