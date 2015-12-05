@@ -640,26 +640,6 @@ var tmForms = {
 	makeTrackPhotos: function(callback) {
 		var trackPhotos = [];
 		var images = $('#track-photos-container img');
-
-		// Set up tasks to grab lat, lon from exif
-		function grabLatLon (i) {
-			var d = $.Deferred();
-			EXIF.getData(images[i], function () {
-				var lat = EXIF.getTag(this, 'GPSLatitude');
-				var lon = EXIF.getTag(this, 'GPSLongitude');
-				if (lat) {
-					var latRef = EXIF.getTag(this, 'GPSLatitudeRef') || 'N';
-					lat = (lat[0] + lat[1]/60 + lat[2]/3600) * (latRef === 'N' ? 1 : -1); 
-					if (lon) {
-						var lonRef = EXIF.getTag(this, 'GPSLongitudeRef') || 'W';
-						lon = (lon[0] + lon[1]/60 + lon[2]/3600) * (lonRef === 'W' ? -1 : 1);
-						trackPhotos[i].picLatLng = [lat, lon];
-					}
-				}
-				d.resolve();
-			});
-			return d.promise();
-		}
 		var grabLatLonTasks = [];
 
 		// Loop through images to set up trackPhotos object
@@ -672,7 +652,7 @@ var tmForms = {
 			});
 
 			// Extract geotags
-			grabLatLonTasks.push(grabLatLon(i));			
+			grabLatLonTasks.push(this.grabLatLon(images[i], trackPhotos[i]));			
 			// Keep things clean by releasing the object URLs
 			URL.revokeObjectURL(images[i].src);
 		}
@@ -681,6 +661,24 @@ var tmForms = {
 		$.when.apply(this, grabLatLonTasks).then(function () {
 			callback(trackPhotos);
 		});
+	},
+	grabLatLon: function (img, trackPhotos) {
+		var d = $.Deferred();
+		EXIF.getData(img, function () {
+			var lat = EXIF.getTag(this, 'GPSLatitude');
+			var lon = EXIF.getTag(this, 'GPSLongitude');
+			if (lat) {
+				var latRef = EXIF.getTag(this, 'GPSLatitudeRef') || 'N';
+				lat = (lat[0] + lat[1]/60 + lat[2]/3600) * (latRef === 'N' ? 1 : -1); 
+				if (lon) {
+					var lonRef = EXIF.getTag(this, 'GPSLongitudeRef') || 'W';
+					lon = (lon[0] + lon[1]/60 + lon[2]/3600) * (lonRef === 'W' ? -1 : 1);
+					trackPhotos.picLatLng = [lat, lon];
+				}
+			}
+			d.resolve();
+		});
+		return d.promise();
 	},
 	resizeImage: function (img, width) {
 		var height;
@@ -729,16 +727,13 @@ var tmForms = {
 			}
 
 			$('#edit-track-photos-container').empty();
-			// Grab the thumbnails and captions that are already sitting in the info panel
-			for (var i=0; i<$('.infoThumbs').length; i++) {
-				$('#edit-track-photos-container').append
-					(
-						'<div style="float: left;" orig-photo-index="' + i + '">' + 
-						'<div><input type="text" maxLength="200" value="' + $('.slideShowContainer').children('a')[i].getAttribute('data-title') +
-						'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + 
-						$('.infoThumbs')[i].getAttribute('src') +
-						'"></div></div>'
-					);
+			for (var i=0; i<track.trackPhotos.length; i++) {
+				$('#edit-track-photos-container').append (
+					'<div style="float: left;" orig-photo-index="' + i + '">' + 
+					'<div><input type="text" maxLength="200" value="' + track.trackPhotos[i].picCaption +
+					'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" ' +  
+					'src="data:image/jpeg;base64,' + track.trackPhotos[i].picThumbBlob + '"></div></div>'
+				);
 			}
 			if ($('.infoThumbs').length < MAX_NUM_IMAGES) {
 				$('#edit-track-file-selector').show();
@@ -748,6 +743,7 @@ var tmForms = {
 			$('#edit-track-photos-container').sortable({
 				group: 'edit-photos'
 			});
+			// Enable drag to delete drop zone
 			$('#edit-track-photos-delete-drop-zone').sortable({
 				group: 'edit-photos', 
 				onAdd: function(evt) {evt.item.remove(); $('#edit-track-file-selector').show();}
@@ -763,13 +759,14 @@ var tmForms = {
 			$('#edit-track-photo-files').click();
 		});
 
+		// Add new photos to the container upon file selection change (always replace -- later: add instead)
 		$('#edit-track-photo-files').change(function () {
 			var files = $('#edit-track-photo-files')[0].files;
 			$('.newImage').remove();
 			var n = $('#edit-track-photos-container').children().length;
 			for (var i=0; i<Math.min(files.length, MAX_NUM_IMAGES - n); i++) {
 				$('#edit-track-photos-container').append (
-					'<div class="newImage" style="float: left;" orig-photo-index="' + (i+n) + '">' +
+					'<div class="newImage" style="float: left;" file-index="' + i + '">' +
 					'<div><input type="text" maxLength="200" value="' + 
 					files[i].name.replace(/\.[^/.]+$/, '') +
 					'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" src="' + 
@@ -829,7 +826,7 @@ var tmForms = {
 
 			// Just keep the fields that have changed
 			for (var i=0; i<fields.length; i++) {
-				if (t[fields[i]].toString() !== ((track[fields[i]]) ? track[fields[i]].toString() : '')) {
+				if (t[fields[i]].toString() !== ((track[fields[i]]) !== undefined ? track[fields[i]].toString() : '')) {
 					trackChanged = true;
 				} else {
 					delete t[fields[i]]; // If not changed, remove from API request
@@ -837,11 +834,62 @@ var tmForms = {
 			}
 
 			// Look at the photos part
-			for (i=0; i<$('#edit-track-photos-container').children().length; i++) {
-				console.log($('#edit-track-photos-container').children()[i].getAttribute('orig-photo-index'));
+			var photosChanged = false;
+			t.trackPhotos = [];
+			var photosToDelete = [];
+			if (track.trackPhotos) {
+				photosToDelete = track.trackPhotos.map(function() {return true});
+			}
+			$('#edit-track-photos-container').children().each(function(index) {
+				t.trackPhotos.push({
+					picName: index.toString(),
+					picThumb: index.toString(),
+					picCaption: $(this).find('input').val()
+				});
+				if ($(this).hasClass('newImage')) {
+					console.log(index, 'new image');
+					photosChanged = true;
+					trackChanged = true;
+					t.trackPhotos[index].picIndex = Date.now() + index;
+					console.log($(this).find('img')[0]);
+					t.trackPhotos[index].picThumbDataUrl = self.resizeImage($(this).find('img')[0], THUMBNAIL_WIDTH).toDataURL('image/jpeg', THUMB_RESIZE_QUALITY);
+				} else {
+					console.log(index, 'old image');
+					var oI = parseInt($(this).attr('orig-photo-index'));
+					photosToDelete[oI] = false; // Photo is a keeper
+					t.trackPhotos[index].picLatLng = track.trackPhotos[oI].picLatLng;
+					t.trackPhotos[index].picThumbDataUrl = 'data:image/jpeg;base64,' + track.trackPhotos[oI].picThumbBlob;
+					if (index !== oI) {
+						// If pics is reordered, make sure we replace implied picIndex with explicit one
+						if (track.trackPhotos[oI].picIndex === undefined) {
+							t.trackPhotos[index].picIndex = oI;
+						}
+					}		
+					if ((index !== oI) || (t.trackPhotos[index].picCaption !== track.trackPhotos[oI].picCaption)) {
+						photosChanged = true;
+						trackChanged = true;
+						console.log('photos changed');
+					}
+				}
+			});
+			
+			// Schedule delete photos task
+			var deletePictureTasks = [];
+			function deletePicture (picIndex) {
+				return tmData.deleteTrackPic(track.trackId, picIndex, localStorage.getItem('rikitraki-token'));
+			}
+			if ($.inArray(true, photosToDelete) >= 0) {
+				photosChanged = true;
+				trackChanged = true;
+				for (i=0; i<photosToDelete.length; i++) {
+					if (photosToDelete[i]) {
+						deletePictureTasks.push(deletePicture((track.trackPhotos[i].picIndex === undefined ? i : track.trackPhotos[i].picIndex)));
+					}
+				}
 			}
 
-			if (trackChanged) {
+			// Make this a function since we have to call it from different places
+			function updateTrack(t) {
 				tmData.updateTrack(t, localStorage.getItem('rikitraki-token'), function(data) {
 					$('#editMessage').fadeIn('slow');
 					setTimeout(function () {
@@ -851,7 +899,23 @@ var tmForms = {
 					$('#editErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 					$('#editError').fadeIn('slow');					
 					console.log(jqxhr);
-				});
+				});				
+			}
+			if (!photosChanged) {
+				delete t.trackPhotos;
+			}
+			console.log('photos to delete? ', $.inArray(true, photosToDelete));
+			if (trackChanged) {
+				console.log(t);
+				if (deletePictureTasks.length > 0) {
+					$.when.apply(this, deletePictureTasks).then(function () {
+						updateTrack(t);
+					});
+				} else {
+					updateTrack(t);
+				}
+			} else {
+				console.log('no changes detected');
 			}
 		}
 	},

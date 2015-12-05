@@ -145,5 +145,15 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
+	},
+	deleteTrackPic: function (tId, picIndex, token) {
+		return $.ajax({
+			url: API_BASE_URL + '/v1/tracks/' + tId + '/' + 'picture/' + picIndex,
+			type: 'DELETE',
+			headers: {
+				'Authorization': 'JWT ' + token
+			 },
+			success: function() {}
+		});		
 	}
 };
