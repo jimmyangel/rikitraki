@@ -563,25 +563,27 @@ var tmMap = {
 					lightbox.option({'wrapAround': true, 'alwaysShowNavOnTouchDevices': true});
 					// Go get the geo tags and then put the pics on the map
 					tmData.getGeoTags(track.trackId, function(data) {
+						track.trackPhotos = data.geoTags.trackPhotos; // Add trackPhotos structure to track to allow editing
 						var haveGeoTags = false;	 
 						var photoLayerGroup = L.layerGroup();
 						slideShowContainer.innerHTML = '<hr>';
 
 						for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
 							// Tell lightbox that this is a slideshow
-							slideShowContainer.innerHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' + k +
+							slideShowContainer.innerHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' + 
+												  (data.geoTags.trackPhotos[k].picIndex === undefined ? k : data.geoTags.trackPhotos[k].picIndex) +
 												  '" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
 												  '><img  nopin="nopin" class="infoThumbs" geoTagXRef="' + k + 
-												  '" src="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/thumbnail/' + k + '" /></a>';
+												  '" src="data:image/jpeg;base64,' + data.geoTags.trackPhotos[k].picThumbBlob + '" /></a>';
 
 							// If we have geotags, go ahead and place them on thumbnail photo markers and don't do a slideshow, just single image
 							if (data.geoTags.trackPhotos[k].picLatLng) {
 								haveGeoTags = true;
-								var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' + k + 
+								var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' + 
+										 (data.geoTags.trackPhotos[k].picIndex === undefined ? k : data.geoTags.trackPhotos[k].picIndex) + 
 										 '" data-lightbox="picture' + '" data-title="' + data.geoTags.trackPhotos[k].picCaption +
 										 '" ><img geoTagRef="' + k + '"picLatLng="' + data.geoTags.trackPhotos[k].picLatLng.toString() + 
-										 '" src="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + 
-										 '/thumbnail/' + k + '" width="40" height="40"/></a>';
+										 '" src="data:image/jpeg;base64,' + data.geoTags.trackPhotos[k].picThumbBlob + '" width="40" height="40"/></a>';
 								var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
 									clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
 									icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
