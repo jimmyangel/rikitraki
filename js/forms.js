@@ -563,22 +563,6 @@ var tmForms = {
 					tmData.addTrack(track, localStorage.getItem('rikitraki-token'), function(data) {
 						var files = $('#track-photo-files')[0].files;
 						var images = $('#track-photos-container img');
-						// This function is a task to upload a single image
-						function uploadPicture(i, blob) {
-							return tmData.uploadTrackPic(blob, data.trackId, i, localStorage.getItem('rikitraki-token'));
-						}
-						// This function makes a canvas.toBlob task for converting a resized image to jpeg for uploading
-						function resizeToBlob (i) {
-							var d = $.Deferred();
-							self.resizeImage(images[i], IMAGE_RESIZE_WIDTH).toBlob(function (blob) {
-									uploadPictureTasks.push(uploadPicture(i, blob));
-									d.resolve();
-							},
-							'image/jpeg', IMAGE_RESIZE_QUALITY);
-							return d.promise();
-						}
-						// Set up upload image tasks
-						// var uploadResizedPictureTasks = [];
 						var resizeToBlobTasks = [];
 						var uploadPictureTasks = [];
 						for (var j=0; j<images.length; j++) {
@@ -587,25 +571,12 @@ var tmForms = {
 							console.log(j, i);
 							// But first resize the image if it is big
 							if (files[i].size > MAX_IMAGE_SIZE) {
-								resizeToBlobTasks.push(resizeToBlob(j));
+								resizeToBlobTasks.push(self.resizeToBlob(data.trackId, images[j], j, uploadPictureTasks));
 							} else {
-								uploadPictureTasks.push(uploadPicture(j, files[i]));
+								uploadPictureTasks.push(self.uploadPicture(data.trackId, j, files[i]));
 							}
 						}
-						// This is a mess because we have to do a bunch of async tasks of two kinds in a loop
-						if (resizeToBlobTasks.length > 0) {
-							$.when.apply(this, resizeToBlobTasks).then(function () {
-								$.when.apply(this, uploadPictureTasks).then(function () {
-									$('#uploadingMessage').hide();
-									$('#uploadMessage').fadeIn('slow');
-									setTimeout(function () {
-										window.location.href='?track=' + data.trackId;
-									}, 2000);
-								}, function (jqxhr) {
-									console.log(jqxhr);
-								});
-							});
-						} else {
+						$.when.apply(this, resizeToBlobTasks).then(function () {
 							$.when.apply(this, uploadPictureTasks).then(function () {
 								$('#uploadingMessage').hide();
 								$('#uploadMessage').fadeIn('slow');
@@ -615,7 +586,8 @@ var tmForms = {
 							}, function (jqxhr) {
 								console.log(jqxhr);
 							});
-						}
+						});
+
 					}, function(jqxhr) { // jqxhr, textStatus
 						// Add internal error message here
 						console.log(jqxhr);
@@ -680,6 +652,20 @@ var tmForms = {
 		});
 		return d.promise();
 	},
+	uploadPicture: function (trackId, picIndex, blob) {
+		return tmData.uploadTrackPic(blob, trackId, picIndex, localStorage.getItem('rikitraki-token'));
+	},
+	resizeToBlob: function (trackId, img, picIndex, uploadPictureTasks) {
+		// This function makes a canvas.toBlob task for converting a resized image to jpeg for uploading
+		self = this;
+		var d = $.Deferred();
+		self.resizeImage(img, IMAGE_RESIZE_WIDTH).toBlob(function (blob) {
+				uploadPictureTasks.push(self.uploadPicture(trackId, picIndex, blob));
+				d.resolve();
+		},
+		'image/jpeg', IMAGE_RESIZE_QUALITY);
+		return d.promise();
+	},
 	resizeImage: function (img, width) {
 		var height;
 		if ((width <= 0) || (img.naturalWidth <= width)) {
@@ -727,13 +713,15 @@ var tmForms = {
 			}
 
 			$('#edit-track-photos-container').empty();
-			for (var i=0; i<track.trackPhotos.length; i++) {
-				$('#edit-track-photos-container').append (
-					'<div style="float: left;" orig-photo-index="' + i + '">' + 
-					'<div><input type="text" maxLength="200" value="' + track.trackPhotos[i].picCaption +
-					'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" ' +  
-					'src="data:image/jpeg;base64,' + track.trackPhotos[i].picThumbBlob + '"></div></div>'
-				);
+			if (track.trackPhotos) {
+				for (var i=0; i<track.trackPhotos.length; i++) {
+					$('#edit-track-photos-container').append (
+						'<div style="float: left;" orig-photo-index="' + i + '">' + 
+						'<div><input type="text" maxLength="200" value="' + track.trackPhotos[i].picCaption +
+						'"' + ' class="trackUploadThumbCaption form-control"></div><div><img class="img-responsive trackUploadThumbs" ' +  
+						'src="data:image/jpeg;base64,' + track.trackPhotos[i].picThumbBlob + '"></div></div>'
+					);
+				}
 			}
 			if ($('.infoThumbs').length < MAX_NUM_IMAGES) {
 				$('#edit-track-file-selector').show();
@@ -811,6 +799,10 @@ var tmForms = {
 	saveEditedTrackInfo: function(track) {
 		var self = this;
 		if (self.isValidForm('edit')) {
+			$('#savingMessage').fadeIn('slow');
+			$('#saveSpinner').spin({left: '90%'});
+			$('#saveButton').attr('disabled', 'disabled');
+
 			var trackChanged = false;
 			var fields = ['trackName', 'trackDescription', 'trackFav', 'trackLevel', 'trackType', 'trackRegionTags'];
 			var t = {};
@@ -837,6 +829,9 @@ var tmForms = {
 			var photosChanged = false;
 			t.trackPhotos = [];
 			var photosToDelete = [];
+			var grabLatLonTasks = [];
+			var uploadPictureTasks = [];
+			var resizeToBlobTasks = [];
 			if (track.trackPhotos) {
 				photosToDelete = track.trackPhotos.map(function() {return true});
 			}
@@ -847,17 +842,27 @@ var tmForms = {
 					picCaption: $(this).find('input').val()
 				});
 				if ($(this).hasClass('newImage')) {
-					console.log(index, 'new image');
 					photosChanged = true;
 					trackChanged = true;
 					t.trackPhotos[index].picIndex = Date.now() + index;
-					console.log($(this).find('img')[0]);
-					t.trackPhotos[index].picThumbDataUrl = self.resizeImage($(this).find('img')[0], THUMBNAIL_WIDTH).toDataURL('image/jpeg', THUMB_RESIZE_QUALITY);
+					var img = $(this).find('img')[0];
+					t.trackPhotos[index].picThumbDataUrl = self.resizeImage(img, THUMBNAIL_WIDTH).toDataURL('image/jpeg', THUMB_RESIZE_QUALITY);
+					grabLatLonTasks.push(self.grabLatLon(img, t.trackPhotos[index]));
+					URL.revokeObjectURL($(this).find('img')[0].src);
+					var file = $('#edit-track-photo-files')[0].files[parseInt($(this).attr('file-index'))];
+
+					if (file.size > MAX_IMAGE_SIZE) {
+						resizeToBlobTasks.push(self.resizeToBlob(track.trackId, img, t.trackPhotos[index].picIndex, uploadPictureTasks));
+					} else {
+						uploadPictureTasks.push(self.uploadPicture(track.trackId, t.trackPhotos[index].picIndex, file));
+					}
 				} else {
-					console.log(index, 'old image');
 					var oI = parseInt($(this).attr('orig-photo-index'));
 					photosToDelete[oI] = false; // Photo is a keeper
 					t.trackPhotos[index].picLatLng = track.trackPhotos[oI].picLatLng;
+					if ((track.trackPhotos[oI].picIndex) !== undefined) {
+						t.trackPhotos[index].picIndex = track.trackPhotos[oI].picIndex;
+					}
 					t.trackPhotos[index].picThumbDataUrl = 'data:image/jpeg;base64,' + track.trackPhotos[oI].picThumbBlob;
 					if (index !== oI) {
 						// If pics is reordered, make sure we replace implied picIndex with explicit one
@@ -868,7 +873,6 @@ var tmForms = {
 					if ((index !== oI) || (t.trackPhotos[index].picCaption !== track.trackPhotos[oI].picCaption)) {
 						photosChanged = true;
 						trackChanged = true;
-						console.log('photos changed');
 					}
 				}
 			});
@@ -888,12 +892,12 @@ var tmForms = {
 				}
 			}
 
-			// Make this a function since we have to call it from different places
 			function updateTrack(t) {
 				tmData.updateTrack(t, localStorage.getItem('rikitraki-token'), function(data) {
+					$('#savingMessage').hide();
 					$('#editMessage').fadeIn('slow');
 					setTimeout(function () {
-						// window.location.href='?track=' + data.trackId;
+						window.location.href='?track=' + data.trackId;
 					}, 2000);
 				}, function(jqxhr) { // jqxhr, textStatus
 					$('#editErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
@@ -901,22 +905,24 @@ var tmForms = {
 					console.log(jqxhr);
 				});				
 			}
+
+			t.hasPhotos = (t.trackPhotos.length === 0) ? t.hasPhotos = false : t.hasPhotos = true;
+
 			if (!photosChanged) {
 				delete t.trackPhotos;
 			}
-			console.log('photos to delete? ', $.inArray(true, photosToDelete));
+
 			if (trackChanged) {
-				console.log(t);
-				if (deletePictureTasks.length > 0) {
-					$.when.apply(this, deletePictureTasks).then(function () {
-						updateTrack(t);
+				$.when.apply(this, resizeToBlobTasks).then(function () {
+					$.when.apply(this, uploadPictureTasks).then(function () {
+						$.when.apply(this, grabLatLonTasks).then(function () {
+							$.when.apply(this, deletePictureTasks).then(function () {
+								updateTrack(t);
+							});
+						});
 					});
-				} else {
-					updateTrack(t);
-				}
-			} else {
-				console.log('no changes detected');
-			}
+				});
+			} 
 		}
 	},
 	removeTrack: function(trackId) {

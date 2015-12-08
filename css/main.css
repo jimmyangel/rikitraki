@@ -162,7 +162,7 @@ body {
     color: #FFFFFF;
 }
 
-#uploadingMessage {
+.msg-with-spinner {
   position: relative;
 }
 
