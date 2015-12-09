@@ -10,8 +10,8 @@
      <!-- End of domain verification, do not remove -->
 
     <title>RikiTraki</title>
-    <meta name="description" content="Welcome to RikiTraki, a personal hiking log. Feel free to use the slippy map to explore our hiking experiences and learn more about their locations.">
-    <meta name="keywords" content="maps,hiking,travel,leaflet,gps,gpx">
+    <meta name="description" content="Welcome to RikiTraki, a GPS track sharing site. Feel free to use the slippy map to explore our hiking experiences and learn more about their locations.">
+    <meta name="keywords" content="maps,hiking,biking,travel,leaflet,cesiumjs,gps,gpx">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta property="og:image" content="http://rikitraki.com/images/hikinglg.png" />
     <link rel="shortcut icon" href="/favicon.ico">
@@ -494,7 +494,7 @@
                             </select>
                           </div>
                           <div class="col-sm-5">
-                            <select class="form-control" data-default-value="" data-show-default-option="false" id="track-region">
+                            <select class="form-control" id="track-region">
                             </select>
                           </div>
 
@@ -847,7 +847,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 class="modal-title">RikiTraki</h3><b>v0.5.0<sup>Beta</sup> by Ricardo Morin</b>
+            <h3 class="modal-title">RikiTraki</h3><b>v0.5.1<sup>Beta</sup> by Ricardo Morin</b>
           </div>
           <div class="modal-body">
             <h4>About this site</h4>
@@ -887,6 +887,7 @@
                   <li><a href="http://joequery.github.io/Stupid-Table-Plugin/" target="_blank">Stupid-table-plugin</a> super simple table sort plug-in</li>
                   <li><a href="https://github.com/blueimp/JavaScript-Canvas-to-Blob/" target="_blank">JavaScript Canvas to Blob</a> polyfill for standard canvas.toBlob method</li>
                   <li><a href="https://github.com/benkeen/country-region-selector/" target="_blank">Country-Region-Selector</a> utility for selecting coordinated country/region</li>
+                  <li><a href="https://github.com/RubaXa/Sortable" target="_blank">RubaXa Sortable</a> library for drag n'drop support</li>
                   <li><a href="http://publicdomainvectors.org/" target="_blank">publicdomainvectors.org</a> public domain icons</li>
                </ul>
               <b>Base maps:</b>
@@ -951,21 +952,19 @@
    </div>
 
     <!-- bower:js -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/leaflet/dist/leaflet.js"></script>
-    <script src="bower_components/leaflet/dist/leaflet-src.js"></script>
-    <script src="bower_components/leaflet-omnivore/leaflet-omnivore.js"></script>
-    <script src="bower_components/d3/d3.js"></script>
+    <script src="bower_components/leaflet-omnivore/leaflet-omnivore.min.js"></script>
+    <script src="bower_components/d3/d3.min.js"></script>
     <script src="bower_components/leaflet.elevation/dist/Leaflet.Elevation-0.0.4.min.js"></script>
-    <script src="bower_components/leaflet.elevation/dist/Leaflet.Elevation-0.0.4.src.js"></script>
     <script src="bower_components/Leaflet.MakiMarkers/Leaflet.MakiMarkers.js"></script>
-    <script src="bower_components/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+    <script src="bower_components/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
     <script src="bower_components/spin.js/spin.js"></script>
     <script src="bower_components/jquery-stupid-table/stupidtable.min.js"></script>
-    <script src="bower_components/lightbox2/dist/js/lightbox.js"></script>
+    <script src="bower_components/lightbox2/dist/js/lightbox.min.js"></script>
     <script src="bower_components/exif-js/exif.js"></script>
-    <script src="bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.js"></script>
+    <script src="bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.min.js"></script>
 
     <!-- endbower -->
     <script src="bower_components/country-region-selector/dist/jquery.crs.min.js"></script>
