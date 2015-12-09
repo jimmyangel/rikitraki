@@ -51,18 +51,6 @@ var tmData = {
 			error: errorCallback
 		});
 	},
-	validateEmail: function (email, successCallback, errorCallback) {
-		$.ajax({
-			url: 'https://api.mailgun.net/v3/address/validate',
-			type: 'GET',
-			data: {address: email},
-			username: 'api',
-			password: 'pubkey-006969454903b02211a68c07550724b2',
-			dataType: 'jsonp',
-			success: successCallback,
-			error: errorCallback
-		});		
-	},
 	updateUserProfile: function (reg, username, password, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/users/me',

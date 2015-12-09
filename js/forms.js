@@ -130,7 +130,6 @@ var tmForms = {
 			var reg = {};
 			reg.email = $('#inv-email').val();
 
-			// Use mailgun email validation to improve chances of delivery
 			if (tmUtils.isValidEmail(reg.email)) {
 				tmData.addInvitation(reg, function() {
 					$('#invitationError').hide();
@@ -471,6 +470,10 @@ var tmForms = {
 		// $('#uploadTrackButton').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
 		$('#uploadEditContainer').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
 		$('#upload-btn').click(function() {
+			// Needed to fix crs annoying issue
+			$('#track-country').attr('data-crs-loaded', 'false');
+			window.crs.init();
+
 			$('#uploadTrackModal').modal('show');
 			return false;
 		});
@@ -505,7 +508,6 @@ var tmForms = {
 			// Enable drag and drop sorting
 			$('#track-photos-container').sortable();
 		});
-
 	},
 	uploadTrack: function () {
 		var self = this;
@@ -568,7 +570,6 @@ var tmForms = {
 						for (var j=0; j<images.length; j++) {
 							// Grab original file index (in case list was reordered)
 							var i = $('#track-photos-container').children()[j].getAttribute('orig-file-index'); 
-							console.log(j, i);
 							// But first resize the image if it is big
 							if (files[i].size > MAX_IMAGE_SIZE) {
 								resizeToBlobTasks.push(self.resizeToBlob(data.trackId, images[j], j, uploadPictureTasks));
@@ -697,7 +698,7 @@ var tmForms = {
 			// Set current values on the form for editing
 			$('#edit-track-name').val(track.trackName);
 			$('#edit-track-description').val(track.trackDescription);
-			$('#edit-track-activity').val(track.trackType);
+			$('#edit-track-activity').val(track.trackType ? track.trackType : 'Hiking'); // For compatibility with old data
 			$('#edit-track-level[value=' + track.trackLevel + ']').prop('checked', true);
 			if (track.trackFav) {
 				$('#edit-track-favorite').prop('checked', true);
@@ -705,8 +706,11 @@ var tmForms = {
 			if (track.trackRegionTags[0]) {			
 				var country = track.trackRegionTags[0];
 				$('#edit-track-country').attr('data-default-value', (country === 'US') ? 'United States' : country);
+
+				// Needed to fix crs annoying issue
 				$('#edit-track-country').attr('data-crs-loaded', 'false');
 				window.crs.init();
+
 				if (track.trackRegionTags[1]) {
 					$('#edit-track-region').val(track.trackRegionTags[1]);
 				} 
@@ -737,6 +741,7 @@ var tmForms = {
 				onAdd: function(evt) {evt.item.remove(); $('#edit-track-file-selector').show();}
 			});
 
+			$('#saveButton').removeAttr('disabled');
 			$('#editTrackModal').modal('show');
 			return false;
 		});
@@ -798,6 +803,25 @@ var tmForms = {
 	},
 	saveEditedTrackInfo: function(track) {
 		var self = this;
+		// A couple of private functions
+		function deletePicture (picIndex) {
+			return tmData.deleteTrackPic(track.trackId, picIndex, localStorage.getItem('rikitraki-token'));
+		}
+
+		function updateTrack(t) {
+			tmData.updateTrack(t, localStorage.getItem('rikitraki-token'), function(data) {
+				$('#savingMessage').hide();
+				$('#editMessage').fadeIn('slow');
+				setTimeout(function () {
+					window.location.href='?track=' + data.trackId;
+				}, 2000);
+			}, function(jqxhr) { // jqxhr, textStatus
+				$('#editErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+				$('#editError').fadeIn('slow');					
+				console.log(jqxhr);
+			});				
+		}
+
 		if (self.isValidForm('edit')) {
 			$('#savingMessage').fadeIn('slow');
 			$('#saveSpinner').spin({left: '90%'});
@@ -879,9 +903,7 @@ var tmForms = {
 			
 			// Schedule delete photos task
 			var deletePictureTasks = [];
-			function deletePicture (picIndex) {
-				return tmData.deleteTrackPic(track.trackId, picIndex, localStorage.getItem('rikitraki-token'));
-			}
+
 			if ($.inArray(true, photosToDelete) >= 0) {
 				photosChanged = true;
 				trackChanged = true;
@@ -890,20 +912,6 @@ var tmForms = {
 						deletePictureTasks.push(deletePicture((track.trackPhotos[i].picIndex === undefined ? i : track.trackPhotos[i].picIndex)));
 					}
 				}
-			}
-
-			function updateTrack(t) {
-				tmData.updateTrack(t, localStorage.getItem('rikitraki-token'), function(data) {
-					$('#savingMessage').hide();
-					$('#editMessage').fadeIn('slow');
-					setTimeout(function () {
-						window.location.href='?track=' + data.trackId;
-					}, 2000);
-				}, function(jqxhr) { // jqxhr, textStatus
-					$('#editErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
-					$('#editError').fadeIn('slow');					
-					console.log(jqxhr);
-				});				
 			}
 
 			t.hasPhotos = (t.trackPhotos.length === 0) ? t.hasPhotos = false : t.hasPhotos = true;
@@ -922,7 +930,11 @@ var tmForms = {
 						});
 					});
 				});
-			} 
+			} else {
+				$('#editTrackModal').modal('hide');
+				$('#saveSpinner').spin(false);
+				this.cleanupErrorMarks();
+			}
 		}
 	},
 	removeTrack: function(trackId) {
@@ -942,6 +954,8 @@ var tmForms = {
 		$('#filter-btn').click(function() {
 			self.cleanupErrorMarks();
 			$('#filterModal').find('form').trigger('reset');
+
+
 			var filter = localStorage.getItem('rikitraki-filter');
 			if (filter) {
 				filter = JSON.parse(filter);
@@ -964,13 +978,22 @@ var tmForms = {
 				}
 				if (filter.country) {
 					$('#filter-country').attr('data-default-value', (filter.country === 'US') ? 'United States' : filter.country);
+
+					// Needed to fix crs annoying issue
 					$('#filter-country').attr('data-crs-loaded', 'false');
 					window.crs.init();
 				}
 				if (filter.region) {
 					$('#filter-region').val(filter.region);
 				}
+			} else {
+				// Needed to fix crs annoying issue
+				$('#filter-country').attr('data-crs-loaded', 'false');
+				window.crs.init();
 			}
+
+			// Below needed to fix annoying crs issue
+
 
 			var me = localStorage.getItem('rikitraki-username');
 			if (me) {
