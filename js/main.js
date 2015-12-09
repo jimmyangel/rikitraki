@@ -11,7 +11,9 @@ var CESIUM_BASE_URL = 'components/Cesium/';
 var map;
 var isMobile = tmConfig.getOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 var isWebGlSupported = false;
-$.ajaxSetup({cache: true});
+
+// Turn off ajax caching for IE
+$.ajaxSetup({cache: !(/MSIE|Trident|Edge/i.test(navigator.userAgent))});
 
 function setUpMap() {
 	isWebGlSupported = tmConfig.getOverride() ? true : tmConfig.getWebGlFlag();

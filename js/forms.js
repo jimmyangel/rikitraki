@@ -467,8 +467,11 @@ var tmForms = {
 	},
 	enableUploadButton: function () {
 		var self = this;
-		// $('#uploadTrackButton').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
 		$('#uploadEditContainer').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
+
+		self.cleanupErrorMarks();
+		$('#uploadTrackModal').find('form').trigger('reset');
+
 		$('#upload-btn').click(function() {
 			// Needed to fix crs annoying issue
 			$('#track-country').attr('data-crs-loaded', 'false');
@@ -522,7 +525,12 @@ var tmForms = {
 				var parser = new DOMParser();
 				var lat;
 				var lon;
-				var doc = parser.parseFromString(fReader.result, 'application/xml');
+				try {
+					var doc = parser.parseFromString(fReader.result, 'application/xml');
+				} catch (e) {
+					self.displayGPXFormatError('Please select an XML formatted GPX file');
+					return;
+				}
 				if (doc.documentElement.tagName !== 'gpx') {
 					self.displayGPXFormatError('Please select a valid GPX file');
 					// self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
