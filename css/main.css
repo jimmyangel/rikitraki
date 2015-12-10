@@ -170,3 +170,6 @@ body {
   display: none;
 }
 
+input[type=text]::-ms-clear {
+  display: none;
+}
