@@ -554,7 +554,7 @@ var tmMap = {
 									' <b>Max Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[2] * 3.28084)) + 'ft') : (trackMetrics[2] + 'm')) + 
 									' <b>Min Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[3] * 3.28084)) + 'ft') : (trackMetrics[3] + 'm')) +
 									'<br><b>Region:</b> ' + track.trackRegionTags + '<br><b>Date Recorded:</b> ' + trackDate +  
-									'<hr>' + track.trackDescription + '<br><br><b>By: </b>' + track.username + '<hr>' +
+									'<hr>' + track.trackDescription.replace(/$/mg,'<br>') + '<br><br><b>By: </b>' + track.username + '<hr>' +
 									'<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX' + '" download>Download GPS track</a>'; 
 				
 				// Populate photos
