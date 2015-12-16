@@ -1,7 +1,7 @@
 'use strict';
 // The below is to stop jshint barking at defined but never used variables
 /* exported tmForms */
-/* globals tmData, tmUtils, EXIF */
+/* globals tmData, omnivore, tmUtils, EXIF */
 /* jshint camelcase: false */
 
 var MAX_IMAGE_SIZE = 1000000;
@@ -514,47 +514,39 @@ var tmForms = {
 	},
 	uploadTrack: function () {
 		var self = this;
-
+		var badGpxMsg = 'Please select a "good" GPX file (valid format with at least a track segment with elevation data)';
 		if (self.isValidForm('upload')) {
-			$('#uploadingMessage').fadeIn('slow');
-			$('#uploadSpinner').spin({left: '90%'});
-			$('#uploadButton').attr('disabled', 'disabled');
-
 			var fReader = new FileReader();
 			fReader.onload = function() {
-				var parser = new DOMParser();
-				var lat;
-				var lon;
+				// We try to parse using omnivore to make sure a GPX file can be viewed later
+				var layer;
+				var i;
 				try {
-					var doc = parser.parseFromString(fReader.result, 'application/xml');
+					layer = omnivore.gpx.parse(fReader.result);
 				} catch (e) {
-					self.displayGPXFormatError('Please select an XML formatted GPX file');
-					return;
+					self.displayGPXFormatError(badGpxMsg);
+					return;					
 				}
-				if (doc.documentElement.tagName !== 'gpx') {
-					self.displayGPXFormatError('Please select a valid GPX file');
-					// self.displayErrorMessage('upload', '#track-file', 'Please select a valid GPX file');
+				var trackGeoJSON = layer.toGeoJSON();
+				// Must have at least one feature
+				if (trackGeoJSON.features.length <= 0) {
+					self.displayGPXFormatError(badGpxMsg);
 					return;
-				}
-				try {
-					// TODO: parse the gpx with omnivore to make sure it can be fully supported by the viewer
-					// Get lat, long for first track point
-					lat = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lat'));
-					lon = Number(doc.getElementsByTagName('trkpt')[0].getAttribute('lon'));
-
-					// Make sure we have elevation data available
-					if (!(doc.getElementsByTagName('trkpt')[0].getElementsByTagName('ele')[0])) {
-						self.displayGPXFormatError('Please select a  GPX file with valid elevation info');
-						//self.displayErrorMessage('upload', '#track-file', 'Please select a  GPX file with valid elevation info');
+				} else {
+					// Must have at least one LineString feature with elevation data
+					for (i=0; i<trackGeoJSON.features.length && trackGeoJSON.features[i].geometry.type !== 'LineString'; i++) {}
+					if ((i >= trackGeoJSON.features.length) || (trackGeoJSON.features[0].geometry.coordinates[0].length < 3)) {
+						self.displayGPXFormatError(badGpxMsg);
 						return;
-					} 
-				} catch (e) {
-					self.displayGPXFormatError('Please select a GPX file with valid track info');
-					// self.displayErrorMessage('upload', '#track-file', 'Please select a GPX file with valid track info');
-					return;
+					}
 				}
+				// Ok, looks like we have a valid GPX from here on and index i carries the LineString feature
+
+				$('#uploadingMessage').fadeIn('slow');
+				$('#uploadSpinner').spin({left: '90%'});
+				$('#uploadButton').attr('disabled', 'disabled');
 				var track = {};
-				track.trackLatLng = [lat, lon];
+				track.trackLatLng = [trackGeoJSON.features[i].geometry.coordinates[0][1], trackGeoJSON.features[i].geometry.coordinates[0][0]];
 				var country = $('#track-country').val();
 				track.trackRegionTags = new Array((country === 'United States') ? 'US' : country, $('#track-region').val());
 				track.trackLevel = $('#track-level:checked').val();
@@ -565,7 +557,7 @@ var tmForms = {
 				track.trackDescription = $('#track-description').val();
 				track.trackGPXBlob = fReader.result;
 				track.hasPhotos = false;
-				self.makeTrackPhotos (function(trackPhotos) {
+				self.makeTrackPhotos (trackGeoJSON.features[i], function(trackPhotos) {
 					if (trackPhotos.length > 0) {
 						track.trackPhotos = trackPhotos;
 						track.hasPhotos = true;
@@ -596,13 +588,12 @@ var tmForms = {
 								console.log(jqxhr);
 							});
 						});
-
 					}, function(jqxhr) { // jqxhr, textStatus
 						// Add internal error message here
 						console.log(jqxhr);
 					});
 				});
-
+				console.log(trackGeoJSON);
 			};
 			try {
 				fReader.readAsText($('#track-file')[0].files[0]);
@@ -618,7 +609,7 @@ var tmForms = {
 		$('#uploadButton').removeAttr('disabled');
 		this.displayErrorMessage('upload', '#track-file', message);
 	},
-	makeTrackPhotos: function(callback) {
+	makeTrackPhotos: function(trackLineString, callback) {
 		var trackPhotos = [];
 		var images = $('#track-photos-container img');
 		var grabLatLonTasks = [];
@@ -633,7 +624,7 @@ var tmForms = {
 			});
 
 			// Extract geotags
-			grabLatLonTasks.push(this.grabLatLon(images[i], trackPhotos[i]));			
+			grabLatLonTasks.push(this.grabLatLon(trackLineString, images[i], trackPhotos[i]));			
 			// Keep things clean by releasing the object URLs
 			URL.revokeObjectURL(images[i].src);
 		}
@@ -643,18 +634,39 @@ var tmForms = {
 			callback(trackPhotos);
 		});
 	},
-	grabLatLon: function (img, trackPhotos) {
+	grabLatLon: function (trackLineString, img, trackPhotos) {
 		var d = $.Deferred();
 		EXIF.getData(img, function () {
 			var lat = EXIF.getTag(this, 'GPSLatitude');
 			var lon = EXIF.getTag(this, 'GPSLongitude');
-			if (lat) {
+
+			// If we have lat and lon, grab them, we are done
+			if (lat && lon) {
 				var latRef = EXIF.getTag(this, 'GPSLatitudeRef') || 'N';
 				lat = (lat[0] + lat[1]/60 + lat[2]/3600) * (latRef === 'N' ? 1 : -1); 
-				if (lon) {
-					var lonRef = EXIF.getTag(this, 'GPSLongitudeRef') || 'W';
-					lon = (lon[0] + lon[1]/60 + lon[2]/3600) * (lonRef === 'W' ? -1 : 1);
-					trackPhotos.picLatLng = [lat, lon];
+				var lonRef = EXIF.getTag(this, 'GPSLongitudeRef') || 'W';
+				lon = (lon[0] + lon[1]/60 + lon[2]/3600) * (lonRef === 'W' ? -1 : 1);
+				trackPhotos.picLatLng = [lat, lon];
+			} else {
+				// No GPS info in EXIF, let try with the timestamp method (TODO: see if interpolation is worth it)
+				if (trackLineString.properties.coordTimes) {
+					var t1 = (new Date(trackLineString.properties.coordTimes[0])).getTime();
+					var t2 = (new Date(trackLineString.properties.coordTimes[trackLineString.properties.coordTimes.length -1])).getTime();
+					var pDateTime = EXIF.getTag(this, 'DateTimeOriginal');
+					// Date has to exist and needs to be the correct format
+					if (pDateTime && /^[0-9]{4}:[0-9][0-9]:[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/.test(pDateTime)) {
+						var pDT = pDateTime.split(/ |:/);
+						var tX = (new Date(pDT[0], parseInt(pDT[1])-1, pDT[2], pDT[3], pDT[4], pDT[5])).getTime();
+						if ((tX >= t1) && (tX <= t2)) {
+							console.log('within range');
+							for (var i=0; i<trackLineString.properties.coordTimes.length; i++) {
+								if (tX <= (new Date(trackLineString.properties.coordTimes[i])).getTime()) {
+									trackPhotos.picLatLng = [trackLineString.geometry.coordinates[i][1], trackLineString.geometry.coordinates[i][0]];
+									break;
+								}
+							}
+						}
+					}
 				}
 			}
 			d.resolve();
@@ -666,7 +678,7 @@ var tmForms = {
 	},
 	resizeToBlob: function (trackId, img, picIndex, uploadPictureTasks) {
 		// This function makes a canvas.toBlob task for converting a resized image to jpeg for uploading
-		self = this;
+		var self = this;
 		var d = $.Deferred();
 		self.resizeImage(img, IMAGE_RESIZE_WIDTH).toBlob(function (blob) {
 				uploadPictureTasks.push(self.uploadPicture(trackId, picIndex, blob));
@@ -865,7 +877,7 @@ var tmForms = {
 			var uploadPictureTasks = [];
 			var resizeToBlobTasks = [];
 			if (track.trackPhotos) {
-				photosToDelete = track.trackPhotos.map(function() {return true});
+				photosToDelete = track.trackPhotos.map(function() {return true;});
 			}
 			$('#edit-track-photos-container').children().each(function(index) {
 				t.trackPhotos.push({
