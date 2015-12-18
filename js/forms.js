@@ -391,6 +391,17 @@ var tmForms = {
 			 		return ($(this.fieldId).val() === '') ? false : true;
 			 		// return !($(this.fieldId).val() === '');
 				}
+			},
+			{
+				fieldId: '#track-time-offset',
+				errorMsg: 'Please enter a valid number',
+			 	isValid: function () {
+			 		if (/^(\-|\+)?([0-9]{0,5}(\.[0-9]{0,5})?)$/.test($(this.fieldId).val())) {
+			 			return !isNaN(parseFloat($(this.fieldId).val()));
+			 		} else {
+			 			return false;
+			 		}
+				}
 			}
 		],
 		edit: [
@@ -406,6 +417,17 @@ var tmForms = {
 				errorMsg: 'Please enter a description for this track',
 			 	isValid: function () {
 			 		return ($(this.fieldId).val() === '') ? false : true;
+				}
+			},
+			{
+				fieldId: '#edit-track-time-offset',
+				errorMsg: 'Please enter a valid number',
+			 	isValid: function () {
+			 		if (/^(\-|\+)?([0-9]{0,5}(\.[0-9]{0,5})?)$/.test($(this.fieldId).val())) {
+			 			return !isNaN(parseFloat($(this.fieldId).val()));
+			 		} else {
+			 			return false;
+			 		}
 				}
 			}
 		]
@@ -481,6 +503,12 @@ var tmForms = {
 			return false;
 		});
 
+		// Replace standard file selector with custom button
+		$('#selectUploadPhotos').click(function () {
+			this.blur();
+			$('#track-photo-files').click();
+		});
+
 		$('#phototsTab').click(function() {
 			if (self.isValidForm('upload')) {
 				return true;
@@ -524,24 +552,23 @@ var tmForms = {
 				try {
 					layer = omnivore.gpx.parse(fReader.result);
 				} catch (e) {
-					self.displayGPXFormatError(badGpxMsg);
+					self.displayUploadError(badGpxMsg);
 					return;					
 				}
 				var trackGeoJSON = layer.toGeoJSON();
 				// Must have at least one feature
 				if (trackGeoJSON.features.length <= 0) {
-					self.displayGPXFormatError(badGpxMsg);
+					self.displayUploadError(badGpxMsg);
 					return;
 				} else {
 					// Must have at least one LineString feature with elevation data
 					for (i=0; i<trackGeoJSON.features.length && trackGeoJSON.features[i].geometry.type !== 'LineString'; i++) {}
 					if ((i >= trackGeoJSON.features.length) || (trackGeoJSON.features[0].geometry.coordinates[0].length < 3)) {
-						self.displayGPXFormatError(badGpxMsg);
+						self.displayUploadError(badGpxMsg);
 						return;
 					}
 				}
 				// Ok, looks like we have a valid GPX from here on and index i carries the LineString feature
-
 				$('#uploadingMessage').fadeIn('slow');
 				$('#uploadSpinner').spin({left: '90%'});
 				$('#uploadButton').attr('disabled', 'disabled');
@@ -585,15 +612,15 @@ var tmForms = {
 									window.location.href='?track=' + data.trackId;
 								}, 2000);
 							}, function (jqxhr) {
+								self.displayUploadError('Upload image error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 								console.log(jqxhr);
 							});
 						});
 					}, function(jqxhr) { // jqxhr, textStatus
-						// Add internal error message here
+						self.displayUploadError('Upload track error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 						console.log(jqxhr);
 					});
 				});
-				console.log(trackGeoJSON);
 			};
 			try {
 				fReader.readAsText($('#track-file')[0].files[0]);
@@ -602,7 +629,7 @@ var tmForms = {
 			}
 		}		
 	},
-	displayGPXFormatError: function (message) {
+	displayUploadError: function (message) {
 		$('#trackInfoTab').tab('show');
 		$('#uploadingMessage').hide();
 		$('#uploadSpinner').spin(false);
@@ -613,7 +640,7 @@ var tmForms = {
 		var trackPhotos = [];
 		var images = $('#track-photos-container img');
 		var grabLatLonTasks = [];
-
+		var timeOffset = parseFloat($('#track-time-offset').val());
 		// Loop through images to set up trackPhotos object
 		for (var i=0; i<images.length; i++) {
 			trackPhotos.push({
@@ -624,7 +651,7 @@ var tmForms = {
 			});
 
 			// Extract geotags
-			grabLatLonTasks.push(this.grabLatLon(trackLineString, images[i], trackPhotos[i]));			
+			grabLatLonTasks.push(this.grabLatLon(trackLineString, timeOffset, images[i], trackPhotos[i]));			
 			// Keep things clean by releasing the object URLs
 			URL.revokeObjectURL(images[i].src);
 		}
@@ -634,7 +661,7 @@ var tmForms = {
 			callback(trackPhotos);
 		});
 	},
-	grabLatLon: function (trackLineString, img, trackPhotos) {
+	grabLatLon: function (trackLineString, timeOffset, img, trackPhotos) {
 		var d = $.Deferred();
 		EXIF.getData(img, function () {
 			var lat = EXIF.getTag(this, 'GPSLatitude');
@@ -656,9 +683,8 @@ var tmForms = {
 					// Date has to exist and needs to be the correct format
 					if (pDateTime && /^[0-9]{4}:[0-9][0-9]:[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/.test(pDateTime)) {
 						var pDT = pDateTime.split(/ |:/);
-						var tX = (new Date(pDT[0], parseInt(pDT[1])-1, pDT[2], pDT[3], pDT[4], pDT[5])).getTime();
+						var tX = (timeOffset * 60 * 60 * 1000) + (new Date(pDT[0], parseInt(pDT[1])-1, pDT[2], pDT[3], pDT[4], pDT[5])).getTime();
 						if ((tX >= t1) && (tX <= t2)) {
-							console.log('within range');
 							for (var i=0; i<trackLineString.properties.coordTimes.length; i++) {
 								if (tX <= (new Date(trackLineString.properties.coordTimes[i])).getTime()) {
 									trackPhotos.picLatLng = [trackLineString.geometry.coordinates[i][1], trackLineString.geometry.coordinates[i][0]];
@@ -705,7 +731,7 @@ var tmForms = {
 		// Return canvas with resized image
 		return canvas;
 	},
-	enableEditButton: function(track) {
+	enableEditButton: function(track, tl) {
 		var self = this;
 
 		if ((localStorage.getItem('rikitraki-token')) && (track.username === localStorage.getItem('rikitraki-username')))  {
@@ -713,6 +739,8 @@ var tmForms = {
 		} else {
 			return;
 		}
+
+		var trackGeoJSON = tl.toGeoJSON();
 
 		$('#edit-btn').click(function() {
 			// Set current values on the form for editing
@@ -793,7 +821,7 @@ var tmForms = {
 		});
 
 		$('#saveButton').click(function() {
-			self.saveEditedTrackInfo(track);
+			self.saveEditedTrackInfo(track, trackGeoJSON);
 			return false;
 		});
 
@@ -821,8 +849,16 @@ var tmForms = {
 			return false;
 		});
 	},
-	saveEditedTrackInfo: function(track) {
+	saveEditedTrackInfo: function(track, trackGeoJSON) {
 		var self = this;
+		// Pick up the LineString feature
+		var trackLineString;
+		for (var i=0; i<trackGeoJSON.features.length && trackGeoJSON.features[i].geometry.type !== 'LineString'; i++) {}
+		// The below should always be true, but let's be defensive
+		if (i<trackGeoJSON.features.length) {
+			trackLineString = trackGeoJSON.features[i];
+		}
+
 		// A couple of private functions
 		function deletePicture (picIndex) {
 			return tmData.deleteTrackPic(track.trackId, picIndex, localStorage.getItem('rikitraki-token'));
@@ -836,8 +872,7 @@ var tmForms = {
 					window.location.href='?track=' + data.trackId;
 				}, 2000);
 			}, function(jqxhr) { // jqxhr, textStatus
-				$('#editErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
-				$('#editError').fadeIn('slow');					
+				self.displaySaveError('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 				console.log(jqxhr);
 			});				
 		}
@@ -847,6 +882,7 @@ var tmForms = {
 			$('#saveSpinner').spin({left: '90%'});
 			$('#saveButton').attr('disabled', 'disabled');
 
+			var timeOffset = parseFloat($('#edit-track-time-offset').val());
 			var trackChanged = false;
 			var fields = ['trackName', 'trackDescription', 'trackFav', 'trackLevel', 'trackType', 'trackRegionTags'];
 			var t = {};
@@ -891,7 +927,8 @@ var tmForms = {
 					t.trackPhotos[index].picIndex = Date.now() + index;
 					var img = $(this).find('img')[0];
 					t.trackPhotos[index].picThumbDataUrl = self.resizeImage(img, THUMBNAIL_WIDTH).toDataURL('image/jpeg', THUMB_RESIZE_QUALITY);
-					grabLatLonTasks.push(self.grabLatLon(img, t.trackPhotos[index]));
+
+					grabLatLonTasks.push(self.grabLatLon(trackLineString, timeOffset, img, t.trackPhotos[index]));
 					URL.revokeObjectURL($(this).find('img')[0].src);
 					var file = $('#edit-track-photo-files')[0].files[parseInt($(this).attr('file-index'))];
 
@@ -946,8 +983,12 @@ var tmForms = {
 						$.when.apply(this, grabLatLonTasks).then(function () {
 							$.when.apply(this, deletePictureTasks).then(function () {
 								updateTrack(t);
+							}, function (jqxhr) {
+								self.displaySaveError('Delete picture error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 							});
 						});
+					}, function (jqxhr) {
+						self.displaySaveError('Upload picture error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 					});
 				});
 			} else {
@@ -956,6 +997,13 @@ var tmForms = {
 				this.cleanupErrorMarks();
 			}
 		}
+	},
+	displaySaveError: function (message) {
+		$('#editInfoTab').tab('show');
+		$('#savingMessage').hide();
+		$('#saveSpinner').spin(false);
+		$('#saveButton').removeAttr('disabled');
+		this.displayErrorMessage('edit', '#edit-track-name', message);
 	},
 	removeTrack: function(trackId) {
 		tmData.removeTrack(trackId, localStorage.getItem('rikitraki-token'), function() {
