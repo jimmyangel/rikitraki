@@ -513,11 +513,16 @@
                       <form class="form-horizontal" role="form" id="tab">
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-3">Up to 8 jpeg images</label>
-                          <div class="col-sm-5">
-                            <input type="file" multiple accept="image/*" id="track-photo-files" class="form-control">
+                          <div class="col-sm-1">
+                            <input type="file" multiple accept="image/*" id="track-photo-files" class="form-control" style="display: none">
+                            <button id="selectUploadPhotos" class="btn btn-default" type="button"><span class="glyphicon glyphicon-picture"></span></button>
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                           <span class="help-block col-sm-4">Images larger than 1MB will be resized</span>
+                          <label class="control-label col-sm-2" title="Use this for geotagging if your photos don't have location info and your camera's clock is shifted (e.g., due to wrong time zone)">Time offset (hrs)</label>
+                          <div class="col-sm-2">
+                            <input class="form-control" id="track-time-offset" type="number" value="0" max="+14" min="-14" step=".5">
+                          </div>
                         </div>
                         <div class="form-group">
                           <div id="track-photos-container" style="padding-left: 15px;">
@@ -640,6 +645,10 @@
                             <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                           </div>
                           <span class="help-block col-sm-4">Images larger than 1MB will be resized</span>
+                          <label class="control-label col-sm-2" title="Use this for geotagging if your photos don't have location info and your camera's clock is shifted (e.g., due to wrong time zone)">Time offset (hrs)</label>
+                          <div class="col-sm-2">
+                            <input class="form-control" id="edit-track-time-offset" type="number" value="0" max="+14" min="-14" step=".5">
+                          </div>
                         </div>
                         <div class="form-group">
                           <div id="edit-track-photos-container" style="padding-left: 15px;">
@@ -845,7 +854,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 class="modal-title">RikiTraki</h3><b>v0.5.1<sup>Beta</sup> by Ricardo Morin</b>
+            <h3 class="modal-title">RikiTraki</h3><b>v0.5.2<sup>Beta</sup> by Ricardo Morin</b>
           </div>
           <div class="modal-body">
             <h4>About this site</h4>
