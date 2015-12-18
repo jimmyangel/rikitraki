@@ -429,7 +429,6 @@ var tmMap = {
 	setUpSingleTrackView: function(track, tracks, layerControl) {
 		var self = this;
 
-		tmForms.enableEditButton(track); // If the user is logged in and owns the track then allow editing
 
 		var trackMarkersLayerGroup = this.setUpMarkersForAllTracks(tracks, track.trackId);
 		layerControl.addOverlay(trackMarkersLayerGroup, 'Show markers for all tracks');
@@ -489,6 +488,8 @@ var tmMap = {
 
 		// Get gpx track data and put it on the map
 		var tl = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null, customLayer).on('ready', function() {
+			// If the user is logged in and owns the track then allow editing, passing track layer, in case we need to geotag pics
+			tmForms.enableEditButton(track, tl); 
 			// Change the default icon for waypoints
 	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: WAYPOINT_COLOR, size: 's'});
 	        var trackDate = 'Not Available'; // By default
