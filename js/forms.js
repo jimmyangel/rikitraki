@@ -853,7 +853,8 @@ var tmForms = {
 		var self = this;
 		// Pick up the LineString feature
 		var trackLineString;
-		for (var i=0; i<trackGeoJSON.features.length && trackGeoJSON.features[i].geometry.type !== 'LineString'; i++) {}
+		var i = 0;
+		for (i=0; i<trackGeoJSON.features.length && trackGeoJSON.features[i].geometry.type !== 'LineString'; i++) {}
 		// The below should always be true, but let's be defensive
 		if (i<trackGeoJSON.features.length) {
 			trackLineString = trackGeoJSON.features[i];
@@ -897,7 +898,7 @@ var tmForms = {
 
 
 			// Just keep the fields that have changed
-			for (var i=0; i<fields.length; i++) {
+			for (i=0; i<fields.length; i++) {
 				if (t[fields[i]].toString() !== ((track[fields[i]]) !== undefined ? track[fields[i]].toString() : '')) {
 					trackChanged = true;
 				} else {
