@@ -4,20 +4,19 @@
 /* globals tmData, omnivore, tmUtils, EXIF */
 /* jshint camelcase: false */
 
-var MAX_IMAGE_SIZE = 1000000;
-var IMAGE_RESIZE_WIDTH = 1200;
-var IMAGE_RESIZE_QUALITY = 0.8;
-var THUMB_RESIZE_QUALITY = 0.5;
-var THUMBNAIL_WIDTH = 300;
-var MAX_NUM_IMAGES = 8;
+var tmForms = (function () {
 
-var tmForms = {
+	var MAX_IMAGE_SIZE = 1000000;
+	var IMAGE_RESIZE_WIDTH = 1200;
+	var IMAGE_RESIZE_QUALITY = 0.8;
+	var THUMB_RESIZE_QUALITY = 0.5;
+	var THUMBNAIL_WIDTH = 300;
+	var MAX_NUM_IMAGES = 8;
+
 	//---- Handle login, user registration and user profile forms
-	setUpUserForms: function () {
-		var self = this;
-
+	var setUpUserForms = function () {
 		// Enable filter button
-		this.enableFilterButton();
+		enableFilterButton();
 
 		// Handle the user button (if token present, then user profile, otherwise login)
 		if (localStorage.getItem('rikitraki-token')) {
@@ -27,7 +26,7 @@ var tmForms = {
 				return false;
 			});
 			// If user is logged in, then upload button needs to be be enabled
-			this.enableUploadButton();
+			enableUploadButton();
 		} else {
 			$('#user-btn').click(function() {
 				$('#loginModal').modal('show');
@@ -57,14 +56,14 @@ var tmForms = {
 				tmData.getJWTToken(username, password, function(data) {
 					localStorage.setItem('rikitraki-token', data);
 					localStorage.setItem('rikitraki-username', username);
-					self.resetLoginDialog();
+					resetLoginDialog();
 					$('#user-btn').off();
 					$('#hi-username').text(localStorage.getItem('rikitraki-username'));
 					$('#user-btn').click(function() {
 						$('#userModal').modal('show');
 						return false;
 					});
-					self.enableUploadButton();
+					enableUploadButton();
 				}, function() { // jqxhr, textStatus
 					$('#loginError').show();
 				});
@@ -86,7 +85,7 @@ var tmForms = {
 					$('#forgot-email').next().removeClass('glyphicon-remove');
 					$('#forgotMessage').fadeIn('slow');
 					setTimeout(function () {
-						self.resetLoginDialog();
+						resetLoginDialog();
 					}, 2000);
 				}, function() { // jqxhr, textStatus
 					$('#forgotErrorText').text('No record found for this email address');
@@ -99,20 +98,20 @@ var tmForms = {
 		// Register button handler
 		$('#registerButton').click(function() {
 
-			// if (self.isValidRegistration()) {
-			if (self.isValidForm('registration')) {
+			// if (isValidRegistration()) {
+			if (isValidForm('registration')) {
 				var reg = {username: $('#reg-username').val(), email: $('#reg-email').val(), password: $('#reg-password').val(), invitationCode: $('#reg-invitation').val()};
 				tmData.registerUser(reg, function(data) {
 					localStorage.setItem('rikitraki-token', data);
 					localStorage.setItem('rikitraki-username', reg.username);
-					self.resetLoginDialog();
+					resetLoginDialog();
 					$('#user-btn').off();
 					$('#hi-username').text(reg.username);
 					$('#user-btn').click(function() {
 						$('#userModal').modal('show');
 						return false;
 					});
-					self.enableUploadButton();
+					enableUploadButton();
 				}, function(jqxhr) { // jqxhr, textStatus
 					$('#reg-invitation').next().addClass('glyphicon-remove');
 					$('#reg-invitation').focus();
@@ -136,7 +135,7 @@ var tmForms = {
 					$('#inv-email').next().removeClass('glyphicon-remove');
 					$('#invitationMessage').fadeIn('slow');
 					setTimeout(function () {
-						self.resetLoginDialog();
+						resetLoginDialog();
 					}, 2000);					
 				}, function(jqxhr) {
 					if (jqxhr.status === 422) {
@@ -152,7 +151,7 @@ var tmForms = {
 						}
 						$('#invitationError').fadeIn('slow');
 						setTimeout(function () {
-							self.resetLoginDialog();
+							resetLoginDialog();
 						}, 2000);
 					}
 				});
@@ -167,7 +166,7 @@ var tmForms = {
 
 		// Logoff link handler
 		$('#logoffLink').click(function () {
-			self.logoff();
+			logoff();
 		});
 
 		// Update profile button handler
@@ -179,12 +178,12 @@ var tmForms = {
 
 		// Clear profile form upon closing
 		$('#userModal').on('hidden.bs.modal', function () {
-			self.resetUserDialog();
+			resetUserDialog();
 		});
 
 		$('#updateProfileButton').click(function() {
-			if (!self.isEmptyForm('profile')) {
-				if (self.isValidForm('profile')) {
+			if (!isEmptyForm('profile')) {
+				if (isValidForm('profile')) {
 					var reg = {};
 					var email = $('#usr-email').val();
 					var password = $('#usr-password').val();
@@ -229,7 +228,7 @@ var tmForms = {
 				$('#removeMessage').fadeIn('slow');
 				setTimeout(function () {
 					$('#userModal').modal('hide');
-					self.logoff();
+					logoff();
 				}, 2000);
 				return false;
 			}, function(jqxhr) { // jqxhr, textStatus
@@ -243,8 +242,9 @@ var tmForms = {
 			});
 			return false;
 		});
-	},
-	formValidation: {
+	}; 
+
+	var formValidation = {
 		registration: [
 			{
 				fieldId: '#reg-username',
@@ -431,67 +431,75 @@ var tmForms = {
 				}
 			}
 		]
-	},
-	isValidForm: function (formName) {
-		this.cleanupErrorMarks();
-		for (var i = 0; i<this.formValidation[formName].length; i++) {
-			if (!this.formValidation[formName][i].isValid()) {
-				this.displayErrorMessage(formName, this.formValidation[formName][i].fieldId, this.formValidation[formName][i].errorMsg);
+	};
+
+	var isValidForm = function (formName) {
+		cleanupErrorMarks();
+		for (var i = 0; i<formValidation[formName].length; i++) {
+			if (!formValidation[formName][i].isValid()) {
+				displayErrorMessage(formName, formValidation[formName][i].fieldId, formValidation[formName][i].errorMsg);
 				return false;
 			}
 		}
 		return true;
-	},
-	isEmptyForm: function (formName) {
-		for (var i = 0; i<this.formValidation[formName].length; i++) {
-			if ($(this.formValidation[formName][i].fieldId).val() !== '') {
+	};
+
+	var isEmptyForm = function (formName) {
+		for (var i = 0; i<formValidation[formName].length; i++) {
+			if ($(formValidation[formName][i].fieldId).val() !== '') {
 				return false;
 			}
 		}
 		return true;
-	},
-	displayErrorMessage: function (formName, fieldId, errorMessage) {
+	};
+
+	var displayErrorMessage = function (formName, fieldId, errorMessage) {
 		$(fieldId).next().addClass('glyphicon-remove');
 		$(fieldId).focus();
 		$('#' + formName + 'ErrorText').text(errorMessage);
 		$('#' + formName + 'Error').fadeIn('slow');
-	},
-	resetLoginDialog: function () {
+	};
+
+	var resetLoginDialog = function () {
 		$('#loginModal').modal('hide');
 		$('#loginModal').find('form').trigger('reset');
-		this.cleanupErrorMarks();
+		cleanupErrorMarks();
 		$('#invitationMessage').hide();
 		$('#forgotMessage').hide();
 		$('#loginTab').tab('show');
 		$('#noInvitationPanel').collapse('hide');
 		$('#forgotPanel').collapse('hide');
 
-	},
-	resetUserDialog: function () {
+	};
+
+	var resetUserDialog = function () {
 		// $('#userModal').modal('hide');
 		$('#userModal').find('form').trigger('reset');
-		this.cleanupErrorMarks();
+		cleanupErrorMarks();
 		$('#profileMessage').hide();
 		$('#removeMessage').hide();		
 		$('#updateProfileTab').tab('show');
 		$('#updateProfileButton').attr('disabled', 'disabled');
-	},
-	cleanupErrorMarks: function () {
+	};
+
+	var cleanupErrorMarks = function () {
 		$('.alert').hide();
 		$('.form-control').next().removeClass('glyphicon-remove');
-	},
-	logoff: function () {
+	};
+
+	var logoff = function () {
 		// Remove token...
 		localStorage.removeItem('rikitraki-token');
 		localStorage.removeItem('rikitraki-username');
 		// ...and reload the page
 		window.location.href='';
-	},
-	enableUploadButton: function () {
+	};
+
+	var enableUploadButton = function () {
 		var self = this;
 		$('#uploadEditContainer').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
 
-		self.cleanupErrorMarks();
+		cleanupErrorMarks();
 		$('#uploadTrackModal').find('form').trigger('reset');
 
 		$('#upload-btn').click(function() {
@@ -510,7 +518,7 @@ var tmForms = {
 		});
 
 		$('#phototsTab').click(function() {
-			if (self.isValidForm('upload')) {
+			if (isValidForm('upload')) {
 				return true;
 			} else {
 				return false;
@@ -518,7 +526,7 @@ var tmForms = {
 		});
 
 		$('#uploadButton').click(function() {
-			self.uploadTrack();
+			uploadTrack();
 			return false;
 		});
 
@@ -539,11 +547,11 @@ var tmForms = {
 			// Enable drag and drop sorting
 			$('#track-photos-container').sortable();
 		});
-	},
-	uploadTrack: function () {
-		var self = this;
+	};
+
+	var uploadTrack = function () {
 		var badGpxMsg = 'Please select a "good" GPX file (valid format with at least a track segment with elevation data)';
-		if (self.isValidForm('upload')) {
+		if (isValidForm('upload')) {
 			var fReader = new FileReader();
 			fReader.onload = function() {
 				// We try to parse using omnivore to make sure a GPX file can be viewed later
@@ -552,19 +560,19 @@ var tmForms = {
 				try {
 					layer = omnivore.gpx.parse(fReader.result);
 				} catch (e) {
-					self.displayUploadError(badGpxMsg);
+					displayUploadError(badGpxMsg);
 					return;					
 				}
 				var trackGeoJSON = layer.toGeoJSON();
 				// Must have at least one feature
 				if (trackGeoJSON.features.length <= 0) {
-					self.displayUploadError(badGpxMsg);
+					displayUploadError(badGpxMsg);
 					return;
 				} else {
 					// Must have at least one LineString feature with elevation data
 					for (i=0; i<trackGeoJSON.features.length && trackGeoJSON.features[i].geometry.type !== 'LineString'; i++) {}
 					if ((i >= trackGeoJSON.features.length) || (trackGeoJSON.features[0].geometry.coordinates[0].length < 3)) {
-						self.displayUploadError(badGpxMsg);
+						displayUploadError(badGpxMsg);
 						return;
 					}
 				}
@@ -584,7 +592,7 @@ var tmForms = {
 				track.trackDescription = $('#track-description').val();
 				track.trackGPXBlob = fReader.result;
 				track.hasPhotos = false;
-				self.makeTrackPhotos (trackGeoJSON.features[i], function(trackPhotos) {
+				makeTrackPhotos (trackGeoJSON.features[i], function(trackPhotos) {
 					if (trackPhotos.length > 0) {
 						track.trackPhotos = trackPhotos;
 						track.hasPhotos = true;
@@ -599,9 +607,9 @@ var tmForms = {
 							var i = $('#track-photos-container').children()[j].getAttribute('orig-file-index'); 
 							// But first resize the image if it is big
 							if (files[i].size > MAX_IMAGE_SIZE) {
-								resizeToBlobTasks.push(self.resizeToBlob(data.trackId, images[j], j, uploadPictureTasks));
+								resizeToBlobTasks.push(resizeToBlob(data.trackId, images[j], j, uploadPictureTasks));
 							} else {
-								uploadPictureTasks.push(self.uploadPicture(data.trackId, j, files[i]));
+								uploadPictureTasks.push(uploadPicture(data.trackId, j, files[i]));
 							}
 						}
 						$.when.apply(this, resizeToBlobTasks).then(function () {
@@ -612,12 +620,12 @@ var tmForms = {
 									window.location.href='?track=' + data.trackId;
 								}, 2000);
 							}, function (jqxhr) {
-								self.displayUploadError('Upload image error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+								displayUploadError('Upload image error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 								console.log(jqxhr);
 							});
 						});
 					}, function(jqxhr) { // jqxhr, textStatus
-						self.displayUploadError('Upload track error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+						displayUploadError('Upload track error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 						console.log(jqxhr);
 					});
 				});
@@ -628,15 +636,17 @@ var tmForms = {
 				console.log(e);
 			}
 		}		
-	},
-	displayUploadError: function (message) {
+	};
+
+	var displayUploadError = function (message) {
 		$('#trackInfoTab').tab('show');
 		$('#uploadingMessage').hide();
 		$('#uploadSpinner').spin(false);
 		$('#uploadButton').removeAttr('disabled');
-		this.displayErrorMessage('upload', '#track-file', message);
-	},
-	makeTrackPhotos: function(trackLineString, callback) {
+		displayErrorMessage('upload', '#track-file', message);
+	};
+
+	var makeTrackPhotos = function(trackLineString, callback) {
 		var trackPhotos = [];
 		var images = $('#track-photos-container img');
 		var grabLatLonTasks = [];
@@ -647,11 +657,11 @@ var tmForms = {
 				picName: i.toString(),
 				picThumb: i.toString(), 
 				picCaption: $('#track-photos-container input')[i].value,
-				picThumbDataUrl: this.resizeImage(images[i], THUMBNAIL_WIDTH).toDataURL('image/jpeg', THUMB_RESIZE_QUALITY)
+				picThumbDataUrl: resizeImage(images[i], THUMBNAIL_WIDTH).toDataURL('image/jpeg', THUMB_RESIZE_QUALITY)
 			});
 
 			// Extract geotags
-			grabLatLonTasks.push(this.grabLatLon(trackLineString, timeOffset, images[i], trackPhotos[i]));			
+			grabLatLonTasks.push(grabLatLon(trackLineString, timeOffset, images[i], trackPhotos[i]));			
 			// Keep things clean by releasing the object URLs
 			URL.revokeObjectURL(images[i].src);
 		}
@@ -660,8 +670,9 @@ var tmForms = {
 		$.when.apply(this, grabLatLonTasks).then(function () {
 			callback(trackPhotos);
 		});
-	},
-	grabLatLon: function (trackLineString, timeOffset, img, trackPhotos) {
+	};
+
+	var grabLatLon = function (trackLineString, timeOffset, img, trackPhotos) {
 		var d = $.Deferred();
 		EXIF.getData(img, function () {
 			var lat = EXIF.getTag(this, 'GPSLatitude');
@@ -698,22 +709,25 @@ var tmForms = {
 			d.resolve();
 		});
 		return d.promise();
-	},
-	uploadPicture: function (trackId, picIndex, blob) {
+	};
+
+	var uploadPicture = function (trackId, picIndex, blob) {
 		return tmData.uploadTrackPic(blob, trackId, picIndex, localStorage.getItem('rikitraki-token'));
-	},
-	resizeToBlob: function (trackId, img, picIndex, uploadPictureTasks) {
+	};
+
+	var resizeToBlob = function (trackId, img, picIndex, uploadPictureTasks) {
 		// This function makes a canvas.toBlob task for converting a resized image to jpeg for uploading
 		var self = this;
 		var d = $.Deferred();
-		self.resizeImage(img, IMAGE_RESIZE_WIDTH).toBlob(function (blob) {
-				uploadPictureTasks.push(self.uploadPicture(trackId, picIndex, blob));
+		resizeImage(img, IMAGE_RESIZE_WIDTH).toBlob(function (blob) {
+				uploadPictureTasks.push(uploadPicture(trackId, picIndex, blob));
 				d.resolve();
 		},
 		'image/jpeg', IMAGE_RESIZE_QUALITY);
 		return d.promise();
-	},
-	resizeImage: function (img, width) {
+	};
+
+	var resizeImage = function (img, width) {
 		var height;
 		if ((width <= 0) || (img.naturalWidth <= width)) {
 			// Do not resize if the image is already small
@@ -730,9 +744,9 @@ var tmForms = {
 
 		// Return canvas with resized image
 		return canvas;
-	},
-	enableEditButton: function(track, tl) {
-		var self = this;
+	};
+
+	var enableEditButton = function(track, tl) {
 
 		if ((localStorage.getItem('rikitraki-token')) && (track.username === localStorage.getItem('rikitraki-username')))  {
 			$('#uploadEditContainer').append('<li><a role="button" id="edit-btn" title="Edit track info" href="."><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>');
@@ -821,7 +835,7 @@ var tmForms = {
 		});
 
 		$('#saveButton').click(function() {
-			self.saveEditedTrackInfo(track, trackGeoJSON);
+			saveEditedTrackInfo(track, trackGeoJSON);
 			return false;
 		});
 
@@ -845,12 +859,12 @@ var tmForms = {
 
 		// Handle the remove track button
 		$('#removeTrackButton').click(function() {
-			self.removeTrack(track.trackId);
+			removeTrack(track.trackId);
 			return false;
 		});
-	},
-	saveEditedTrackInfo: function(track, trackGeoJSON) {
-		var self = this;
+	};
+
+	var saveEditedTrackInfo = function(track, trackGeoJSON) {
 		// Pick up the LineString feature
 		var trackLineString;
 		var i = 0;
@@ -873,12 +887,12 @@ var tmForms = {
 					window.location.href='?track=' + data.trackId;
 				}, 2000);
 			}, function(jqxhr) { // jqxhr, textStatus
-				self.displaySaveError('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+				displaySaveError('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 				console.log(jqxhr);
 			});				
 		}
 
-		if (self.isValidForm('edit')) {
+		if (isValidForm('edit')) {
 			$('#savingMessage').fadeIn('slow');
 			$('#saveSpinner').spin({left: '90%'});
 			$('#saveButton').attr('disabled', 'disabled');
@@ -927,16 +941,16 @@ var tmForms = {
 					trackChanged = true;
 					t.trackPhotos[index].picIndex = Date.now() + index;
 					var img = $(this).find('img')[0];
-					t.trackPhotos[index].picThumbDataUrl = self.resizeImage(img, THUMBNAIL_WIDTH).toDataURL('image/jpeg', THUMB_RESIZE_QUALITY);
+					t.trackPhotos[index].picThumbDataUrl = resizeImage(img, THUMBNAIL_WIDTH).toDataURL('image/jpeg', THUMB_RESIZE_QUALITY);
 
-					grabLatLonTasks.push(self.grabLatLon(trackLineString, timeOffset, img, t.trackPhotos[index]));
+					grabLatLonTasks.push(grabLatLon(trackLineString, timeOffset, img, t.trackPhotos[index]));
 					URL.revokeObjectURL($(this).find('img')[0].src);
 					var file = $('#edit-track-photo-files')[0].files[parseInt($(this).attr('file-index'))];
 
 					if (file.size > MAX_IMAGE_SIZE) {
-						resizeToBlobTasks.push(self.resizeToBlob(track.trackId, img, t.trackPhotos[index].picIndex, uploadPictureTasks));
+						resizeToBlobTasks.push(resizeToBlob(track.trackId, img, t.trackPhotos[index].picIndex, uploadPictureTasks));
 					} else {
-						uploadPictureTasks.push(self.uploadPicture(track.trackId, t.trackPhotos[index].picIndex, file));
+						uploadPictureTasks.push(uploadPicture(track.trackId, t.trackPhotos[index].picIndex, file));
 					}
 				} else {
 					var oI = parseInt($(this).attr('orig-photo-index'));
@@ -985,28 +999,30 @@ var tmForms = {
 							$.when.apply(this, deletePictureTasks).then(function () {
 								updateTrack(t);
 							}, function (jqxhr) {
-								self.displaySaveError('Delete picture error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+								displaySaveError('Delete picture error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 							});
 						});
 					}, function (jqxhr) {
-						self.displaySaveError('Upload picture error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+						displaySaveError('Upload picture error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
 					});
 				});
 			} else {
 				$('#editTrackModal').modal('hide');
 				$('#saveSpinner').spin(false);
-				this.cleanupErrorMarks();
+				cleanupErrorMarks();
 			}
 		}
-	},
-	displaySaveError: function (message) {
+	};
+
+	var displaySaveError = function (message) {
 		$('#editInfoTab').tab('show');
 		$('#savingMessage').hide();
 		$('#saveSpinner').spin(false);
 		$('#saveButton').removeAttr('disabled');
-		this.displayErrorMessage('edit', '#edit-track-name', message);
-	},
-	removeTrack: function(trackId) {
+		displayErrorMessage('edit', '#edit-track-name', message);
+	};
+
+	var removeTrack = function(trackId) {
 		tmData.removeTrack(trackId, localStorage.getItem('rikitraki-token'), function() {
 			$('#removeTrackMessage').fadeIn('slow');
 			setTimeout(function () {
@@ -1017,11 +1033,11 @@ var tmForms = {
 			$('#removeTrackError').fadeIn('slow');					
 			console.log(jqxhr);
 		});
-	},
-	enableFilterButton: function() {
-		var self = this;
+	};
+
+	var enableFilterButton = function() {
 		$('#filter-btn').click(function() {
-			self.cleanupErrorMarks();
+			cleanupErrorMarks();
 			$('#filterModal').find('form').trigger('reset');
 
 
@@ -1136,4 +1152,11 @@ var tmForms = {
 			return false;
 		});
 	}
-};
+
+	// Public tmForms API
+	return {
+		setUpUserForms: setUpUserForms,
+		enableEditButton: enableEditButton
+	}
+
+})();
