@@ -1,5 +1,4 @@
 'use strict';
-// The below is to stop jshint barking at defined but never used variables
 /* exported tmMap */
 /* globals L, omnivore, tmForms, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
 
