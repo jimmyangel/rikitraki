@@ -844,7 +844,7 @@ var tmMap = (function () {
 			}, function(){});
 		  return false;
 		});
-	}
+	};
 
 	return {
 		setUpCommon: setUpCommon,
@@ -853,5 +853,5 @@ var tmMap = (function () {
 		setUpAllTracksView,
 		setUpSingleTrackView: setUpSingleTrackView,
 		setUpSingleTrackTerrainView: setUpSingleTrackTerrainView
-	}
+	};
 })();
