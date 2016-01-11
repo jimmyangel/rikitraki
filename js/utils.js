@@ -1,11 +1,9 @@
 'use strict';
-// The below is to stop jshint barking at defined but never used variables
 /* exported tmUtils */
 /* globals L */
 
-
-var tmUtils = {
-	calculateTrackMetrics: function(feature) {
+var tmUtils = (function () {
+	var calculateTrackMetrics = function(feature) {
 		if (!Array.isArray(feature.geometry.coordinates)) {
 			// Some gps tracks misbehave, so skip offending part
 			return null;
@@ -15,7 +13,7 @@ var tmUtils = {
 		var maxElevation = 0;
 		var minElevation = feature.geometry.coordinates[0][2];
 		// Let smooth out the elevation data using a moving average
-		var smoothElevation = this.smoothElevationData(feature);
+		var smoothElevation = smoothElevationData(feature);
 		for (var i=0; i<feature.geometry.coordinates.length-1; i++) {
 			distance +=  L.latLng(feature.geometry.coordinates[i][1], feature.geometry.coordinates[i][0]).
 							distanceTo(L.latLng(feature.geometry.coordinates[i+1][1], feature.geometry.coordinates[i+1][0]));
@@ -38,9 +36,10 @@ var tmUtils = {
 			minElevation = feature.geometry.coordinates[i][2];
 		}	
 		return [(distance/1000).toFixed(2), elevation.toFixed(2), maxElevation.toFixed(2), minElevation.toFixed(2)];
-	},
-	// This function attemps to reduce elevation data noise and elevation gain exageration by running a (WINDOW size) moving average
-	smoothElevationData: function(feature) {
+	};
+
+	// This private function attemps to reduce elevation data noise and elevation gain exageration by running a (WINDOW size) moving average
+	var smoothElevationData = function(feature) {
 		var WINDOW = 5;
 		var smoothElevation = new Array(feature.geometry.coordinates.length);
 		for (var i=0; i<feature.geometry.coordinates.length-1; i++) {
@@ -52,9 +51,15 @@ var tmUtils = {
 			smoothElevation[i] = smoothElevation[i] / w;
 		}
 		return smoothElevation;
-	},
-	isValidEmail: function (email) {
+	};
+
+	var isValidEmail = function (email) {
  		var re = /\S+@\S+\.\S+/;
 		return re.test(email);
-	}
-};
+	};
+
+	return {
+		calculateTrackMetrics: calculateTrackMetrics,
+		isValidEmail: isValidEmail
+	};
+})();
