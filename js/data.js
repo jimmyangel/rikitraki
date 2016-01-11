@@ -176,6 +176,6 @@ var tmData = (function () {
 		updateTrack: updateTrack,
 		removeTrack: removeTrack,
 		deleteTrackPic: deleteTrackPic
-	}
+	};
 
 })();

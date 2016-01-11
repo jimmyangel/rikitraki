@@ -1,5 +1,4 @@
 'use strict';
-// The below is to stop jshint barking at defined but never used variables
 /* exported tmForms */
 /* globals tmData, omnivore, tmUtils, EXIF */
 /* jshint camelcase: false */
@@ -496,7 +495,6 @@ var tmForms = (function () {
 	};
 
 	var enableUploadButton = function () {
-		var self = this;
 		$('#uploadEditContainer').append('<li><a role="button" id="upload-btn" title="Upload track" href="."><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></a></li>');
 
 		cleanupErrorMarks();
@@ -717,7 +715,6 @@ var tmForms = (function () {
 
 	var resizeToBlob = function (trackId, img, picIndex, uploadPictureTasks) {
 		// This function makes a canvas.toBlob task for converting a resized image to jpeg for uploading
-		var self = this;
 		var d = $.Deferred();
 		resizeImage(img, IMAGE_RESIZE_WIDTH).toBlob(function (blob) {
 				uploadPictureTasks.push(uploadPicture(trackId, picIndex, blob));
@@ -1151,12 +1148,12 @@ var tmForms = (function () {
 			window.location.reload();
 			return false;
 		});
-	}
+	};
 
 	// Public tmForms API
 	return {
 		setUpUserForms: setUpUserForms,
 		enableEditButton: enableEditButton
-	}
+	};
 
 })();
