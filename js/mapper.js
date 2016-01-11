@@ -3,18 +3,20 @@
 /* exported tmMap */
 /* globals L, omnivore, tmForms, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
 
-var TRAIL_MARKER_COLOR = '7A5C1E';
-var WAYPOINT_COLOR = '#3887BE';
-var TRACK_COLOR = '#8D6E27';
-var INSIDE_TRACK_COLOR = '#EBEB00';
-var SELECTED_THUMBNAIL_COLOR = '#00FF00';
-var FAVORITE = '&#10029;';
-var KEYCODE_ESC = 27;
-var KEYCODE_SPACE = 32;
-var CAMERA_OFFSET = 6000;
 
-var tmMap = {
-	setUpCommon: function (tracks) {
+var tmMap = (function () {
+
+	var TRAIL_MARKER_COLOR = '7A5C1E';
+	var WAYPOINT_COLOR = '#3887BE';
+	var TRACK_COLOR = '#8D6E27';
+	var INSIDE_TRACK_COLOR = '#EBEB00';
+	var SELECTED_THUMBNAIL_COLOR = '#00FF00';
+	var FAVORITE = '&#10029;';
+	var KEYCODE_ESC = 27;
+	var KEYCODE_SPACE = 32;
+	var CAMERA_OFFSET = 6000;
+
+	var setUpCommon = function (tracks) {
 
 		tmForms.setUpUserForms();
 		$('#filter-btn').append('</span><span class="badge">' + Object.keys(tracks).length + '</span>');
@@ -37,13 +39,13 @@ var tmMap = {
 		});
 
 		// Set up bootstrap menus (Go to and Tracks)
-		this.setUpTracksMenu(tracks);
-		return this.setUpGotoMenu(tracks);
-	},
-	setUpGlobe: function (tracks, regions) {
+		setUpTracksMenu(tracks);
+		return setUpGotoMenu(tracks);
+	};
+
+	var setUpGlobe = function (tracks, regions) {
 		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
 
-		var self = this;
 		$('#map').hide();
 		var drillPickLimit = isMobile ? 1 : undefined;
 		var viewer = new Cesium.Viewer('globe', {
@@ -138,12 +140,12 @@ var tmMap = {
 			}
 			if (popUpCreated) {
 				$('#trackPopUp').show();
-				self.positionPopUp(c); // Initial position at the place item picked
+				positionPopUp(c); // Initial position at the place item picked
 				var removeHandler = viewer.scene.postRender.addEventListener(function () {
 					var changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, entity.position.getValue(Cesium.JulianDate.now()));
 					// If things moved, move the popUp too
 					if ((c.x !== changedC.x) || (c.y !== changedC.y)) {
-						self.positionPopUp(changedC);
+						positionPopUp(changedC);
 						c = changedC;
 					}
 				}); 
@@ -157,7 +159,7 @@ var tmMap = {
 			}		
 		});
 
-		this.setUpMotdInfoBox(tracks, false);
+		setUpMotdInfoBox(tracks, false);
 
 		// Set up zoom control click events
 		var dest = new Cesium.Cartesian3();
@@ -187,22 +189,24 @@ var tmMap = {
 			$('#mapGlobeButton').empty();
 			$('#fb-btn').off();
 		 	viewer.destroy();
-		 	self.setUpGlobe(tracks, regions);
+		 	setUpGlobe(tracks, regions);
 			return false;
 		});
 
 		// Set up twitter and facebook links
-		this.setUpSocialButtons('Check out hiking trails on the RikiTraki globe');
-	},
-	positionPopUp: function (c) {
+		setUpSocialButtons('Check out hiking trails on the RikiTraki globe');
+	};
+
+	var positionPopUp = function (c) {
 		var x = c.x - ($('#trackPopUpContent').width()) / 2;
 		var y = c.y - ($('#trackPopUpContent').height());
 		/* $('#trackPopUpContent').css('left', x + 'px');
 		$('#trackPopUpContent').css('top', y + 'px'); */
 		$('#trackPopUpContent').css('transform', 'translate3d(' + x + 'px, ' + y + 'px, 0)');
 
-	},
-	setUpMap: function (l) {
+	};
+
+	var setUpMap = function (l) {
 		$('#globe').hide();
 
 		if (isWebGlSupported) {
@@ -260,8 +264,9 @@ var tmMap = {
 		L.control.scale({position: 'bottomleft'}).addTo(map);
 		return layerControl; // We will need this later
 
-	},
-	setUpTracksMenu: function (tracks) {
+	};
+
+	var setUpTracksMenu = function (tracks) {
 		// Populate tracks dialog box
 		for (var tId in tracks) {
 			$('#tracksTable').append('<tr><td>' + (tracks[tId].trackFav ? FAVORITE : '') + 
@@ -305,27 +310,28 @@ var tmMap = {
 		  $('#tracksModal').modal('show');
 		  return false;
 		});
-	},
-	setUpAllTracksView: function(tracks, region, layerControl) {
+	};
+
+	var setUpAllTracksView = function(tracks, region, layerControl) {
 
 		layerControl.addTo(map);
-		var trackMarkersLayerGroup = this.setUpMarkersForAllTracks(tracks);
+		var trackMarkersLayerGroup = setUpMarkersForAllTracks(tracks);
 
 		if (region) {
 			map.fitBounds([region.sw, region.ne], {maxZoom: 9});
 		} else {
 			// map.fitBounds(trackMarkersLayerGroup.getBounds());
 			// Set up motd box (What's new)
-			this.setUpMotdInfoBox(tracks, true);
+			setUpMotdInfoBox(tracks, true);
 			map.fitBounds(trackMarkersLayerGroup.getBounds(), {paddingBottomRight: [$(window).width() < 1000 ? 0 : 240, 0]}); 
 		}
 		// Set up twitter and facebook links
-		this.setUpSocialButtons('Check out hiking trails on RikiTraki');
-	},
-	setUpMotdInfoBox: function (tracks, isLeaflet) {
-		var self = this;
+		setUpSocialButtons('Check out hiking trails on RikiTraki');
+	};
+
+	var setUpMotdInfoBox = function (tracks, isLeaflet) {
 		tmData.getMotd(function(data) {
-			var infoPanelContainer = self.buildMotdInfoBoxDOMElement(tracks, data);
+			var infoPanelContainer = buildMotdInfoBoxDOMElement(tracks, data);
 			if (isLeaflet) {
 				var infoPanel = L.control({position: 'topright'});
 				infoPanel.onAdd = function () {
@@ -336,9 +342,9 @@ var tmMap = {
 				// Not leaflet, but we still use leaflet's styles
 				infoPanelContainer.className += ' leaflet-control'; 
 				$('#infoPanel').append(infoPanelContainer);
-				self.setUpInfoPanelEventHandling();
+				setUpInfoPanelEventHandling();
 			}
-			self.setUpInfoPanelEventHandling();
+			setUpInfoPanelEventHandling();
 			// Handle row click
 			$('#motdTable tr').click(function() {
 				var t = $(this).find('td').eq(2).html();
@@ -351,8 +357,9 @@ var tmMap = {
 				}
 			});
 		});
-	},
-	buildMotdInfoBoxDOMElement: function (tracks, data) {
+	};
+
+	var buildMotdInfoBoxDOMElement = function (tracks, data) {
 		var infoPanelContainer = L.DomUtil.create('div', 'info motd infoPanelContainer');
 		var infoPanelTitle = L.DomUtil.create('div', 'infoPanelTitle', infoPanelContainer);
 		var infoPanelBody = L.DomUtil.create('div', 'infoPanelBody', infoPanelContainer);
@@ -370,8 +377,9 @@ var tmMap = {
 		motdHTML += '</tbody></table>';
 		infoPanelDescription.innerHTML = motdHTML;
 		return infoPanelContainer;
-	},
-	setUpMarkersForAllTracks: function(tracks, trackId) {
+	};
+
+	var setUpMarkersForAllTracks = function(tracks, trackId) {
 		var trackMarkersLayerGroup = L.markerClusterGroup();
 		for (var tId in tracks) {
 			if (tId !== trackId) {
@@ -382,8 +390,9 @@ var tmMap = {
 		}
 		trackMarkersLayerGroup.addTo(map);
 		return trackMarkersLayerGroup;
-	},
-	setUpGotoMenu: function(tracks) {
+	};
+
+	var setUpGotoMenu = function(tracks) {
 		// Set up data structure to hold bounding boxes and number of tracks per region
 		var regions = [];
 		var nWorld = 0;
@@ -425,12 +434,11 @@ var tmMap = {
 									 sortedRegions[i].substr(0, 30) + '<span class="badge pull-right">' + regions[sortedRegions[i]].n +'</span></a></li>');
 		}
 		return regions;
-	},
-	setUpSingleTrackView: function(track, tracks, layerControl) {
-		var self = this;
+	};
 
+	var setUpSingleTrackView = function(track, tracks, layerControl) {
 
-		var trackMarkersLayerGroup = this.setUpMarkersForAllTracks(tracks, track.trackId);
+		var trackMarkersLayerGroup = setUpMarkersForAllTracks(tracks, track.trackId);
 		layerControl.addOverlay(trackMarkersLayerGroup, 'Show markers for all tracks');
 
 		var trackMetrics = [0, 0, 0, 0];
@@ -620,15 +628,16 @@ var tmMap = {
 
 			// Fit th map to the trail boundaries leaving 50% room for the info panel
 	    	map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]}); 
-	    	self.setUpInfoPanelEventHandling();
+	    	setUpInfoPanelEventHandling();
 
 	
 		}).addTo(map);
 
 		// Set up twitter and facebook links and such
-		this.setUpSocialButtons(track.trackName);
-	},
-	setUpSingleTrackTerrainView: function(track) {
+		setUpSocialButtons(track.trackName);
+	};
+
+	var setUpSingleTrackTerrainView = function(track) {
 		$('#map').hide();
 		$('.help3d').show();
 		$('#2Dbutton').show();
@@ -740,11 +749,11 @@ var tmMap = {
 		});
 
 		// Set up twitter and facebook links and such
-		this.setUpSocialButtons(track.trackName);
+		setUpSocialButtons(track.trackName);
 
-	},
-	setUpInfoPanelEventHandling: function () {
-		var self = this;
+	};
+
+	var setUpInfoPanelEventHandling = function () {
 		// Enable proper info panel scrolling by adjusting max-height dynamically intially and on window resize
 		var windowSlack = $('#navigationBar').outerHeight(true) + $('.leaflet-control-attribution').outerHeight(true);
 		$('.info').css('max-height', $(window).height() - windowSlack);
@@ -773,7 +782,7 @@ var tmMap = {
 		$('.infoPanelContainer').on('keyup', function(e) {
 			// Collapse info box on ESC or SPACE
 			if ((e.keyCode === KEYCODE_ESC) || (e.keyCode === KEYCODE_SPACE)) {
-				showToggle = self.collapseInfoPanel(showToggle, e);
+				showToggle = collapseInfoPanel(showToggle, e);
 			} else {
 				// Let the info panel handle the other keys (like arrows and page-up/page-down), so stop propagation to the map
 				e.stopPropagation();
@@ -781,11 +790,11 @@ var tmMap = {
 		});
 		// Expand on title click
 		$('.infoPanelTitle').on('click', function(e) {
-			showToggle = self.expandInfoPanel(showToggle, e);
+			showToggle = expandInfoPanel(showToggle, e);
 		});
 		// Collapse on close button
 		$('.infoPanelTitle button').on('click', function(e) {
-			showToggle = self.collapseInfoPanel(showToggle, e);
+			showToggle = collapseInfoPanel(showToggle, e);
 		});
 		// Ignore clicks on description to allow for copy and paste
 		$('.infoPanelDescription').on('click', function(e) {
@@ -793,13 +802,14 @@ var tmMap = {
 		});
 		// Close the info panel if clicked (or key pressed) on the map (cannot stop propagation because it breaks lightbox)
 		$('#map').on('click keyup', function(e) {
-			showToggle = self.collapseInfoPanel(showToggle, e, true);
+			showToggle = collapseInfoPanel(showToggle, e, true);
 		});
 		$('#globe').on('click keyup touchstart', function(e) {
-			showToggle = self.collapseInfoPanel(showToggle, e, true);
+			showToggle = collapseInfoPanel(showToggle, e, true);
 		});		
-	},
-	expandInfoPanel: function (toggle, e) {
+	};
+
+	var expandInfoPanel = function (toggle, e) {
 		e.stopPropagation();
 		if (!toggle) {
 			$('.infoPanelBody').show();
@@ -808,8 +818,9 @@ var tmMap = {
 			toggle = true;
 		}
 		return toggle;
-	},
-	collapseInfoPanel: function (toggle, e, propagate) {
+	};
+
+	var collapseInfoPanel = function (toggle, e, propagate) {
 		if (!propagate) {
 			e.stopPropagation();
 		}
@@ -820,8 +831,9 @@ var tmMap = {
 			toggle = false;
 		}
 		return toggle;
-	},
-	setUpSocialButtons: function (text) {
+	};
+
+	var setUpSocialButtons = function (text) {
 		// Twitter
 		$('.btn-twitter').attr('href', 'https://twitter.com/intent/tweet?text=' + text + '&url=' + encodeURIComponent(window.location.href) + '&via=jimmieangel' + '&hashtags=rikitraki');
 		// Facebook
@@ -834,4 +846,13 @@ var tmMap = {
 		  return false;
 		});
 	}
-};
+
+	return {
+		setUpCommon: setUpCommon,
+		setUpGlobe: setUpGlobe,
+		setUpMap: setUpMap,
+		setUpAllTracksView,
+		setUpSingleTrackView: setUpSingleTrackView,
+		setUpSingleTrackTerrainView: setUpSingleTrackTerrainView
+	}
+})();
