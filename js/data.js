@@ -1,26 +1,30 @@
 'use strict';
-// The below is to stop jshint barking at defined but never used variables
 /* exported tmData */
 /* globals API_BASE_URL */
 
-var tmData = {
-	getTrackInfo: function (successCallback) {
+var tmData = (function () {
+
+	var getTrackInfo = function (successCallback) {
 		var filter = localStorage.getItem('rikitraki-filter');
 		filter = (filter) ? ('/?filter=' + filter) : ('');
 		$.getJSON(API_BASE_URL + '/v1/tracks' + filter, successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
-	},
-	getNumberOfTracks: function (filter, successCallback) {
+	};
+
+	var getNumberOfTracks = function (filter, successCallback) {
 		// var filter = localStorage.getItem('rikitraki-filter');
 		filter = (filter) ? ('/?filter=' + filter) : ('');
 		$.getJSON(API_BASE_URL + '/v1/tracks/number' + filter, successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
-	},
-	getGeoTags: function (tId, successCallback, errorCallback) {
+	};
+
+	var getGeoTags = function (tId, successCallback, errorCallback) {
 		$.getJSON(API_BASE_URL + '/v1/tracks/' + tId + '/geotags/', successCallback).fail(errorCallback);
-	},
-	getMotd: function (successCallback) {
+	};
+
+	var getMotd = function (successCallback) {
 		$.getJSON(API_BASE_URL + '/v1/motd', successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
-	},
-	getJWTToken: function (username, password, successCallback, errorCallback) {
+	};
+
+	var getJWTToken = function (username, password, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/token',
 			type: 'GET',
@@ -30,8 +34,9 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
-	},
-	registerUser: function (reg, successCallback, errorCallback) {
+	};
+
+	var registerUser = function (reg, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/users',
 			type: 'POST',
@@ -40,8 +45,9 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
-	},
-	addInvitation: function (reg, successCallback, errorCallback) {
+	};
+
+	var addInvitation = function (reg, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/invitation',
 			type: 'POST',
@@ -50,8 +56,9 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
-	},
-	updateUserProfile: function (reg, username, password, successCallback, errorCallback) {
+	};
+
+	var updateUserProfile = function (reg, username, password, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/users/me',
 			type: 'PUT',
@@ -63,8 +70,9 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
-	},
-	requestPasswordResetToken: function (email, successCallback, errorCallback) {
+	};
+
+	var requestPasswordResetToken = function (email, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/resettoken',
 			type: 'GET',
@@ -72,8 +80,9 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
-	},
-	removeUserProfile: function (username, password, successCallback, errorCallback) {
+	};
+
+	var removeUserProfile = function (username, password, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/users/me',
 			type: 'DELETE',
@@ -83,8 +92,9 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
-	},
-	addTrack: function (trk, token, successCallback, errorCallback) {
+	};
+
+	var addTrack = function (trk, token, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/tracks',
 			type: 'POST',
@@ -96,8 +106,9 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
-	},
-	uploadTrackPic: function (file, tId, picIndex, token) {
+	};
+
+	var uploadTrackPic = function (file, tId, picIndex, token) {
 		return $.ajax({
 			url: API_BASE_URL + '/v1/tracks/' + tId + '/' + 'picture/' + picIndex,
 			type: 'POST',
@@ -109,8 +120,9 @@ var tmData = {
 			contentType: 'image/jpeg',
 			success: function() {}
 		});
-	},
-	updateTrack: function (trk, token, successCallback, errorCallback) {
+	};
+
+	var updateTrack = function (trk, token, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/tracks/' + trk.trackId,
 			type: 'PUT',
@@ -122,8 +134,9 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
-	},
-	removeTrack: function (trackId, token, successCallback, errorCallback) {
+	};
+
+	var removeTrack = function (trackId, token, successCallback, errorCallback) {
 		$.ajax({
 			url: API_BASE_URL + '/v1/tracks/' + trackId,
 			type: 'DELETE',
@@ -133,8 +146,9 @@ var tmData = {
 			success: successCallback,
 			error: errorCallback
 		});
-	},
-	deleteTrackPic: function (tId, picIndex, token) {
+	};
+
+	var deleteTrackPic = function (tId, picIndex, token) {
 		return $.ajax({
 			url: API_BASE_URL + '/v1/tracks/' + tId + '/' + 'picture/' + picIndex,
 			type: 'DELETE',
@@ -143,5 +157,25 @@ var tmData = {
 			 },
 			success: function() {}
 		});		
+	};
+
+	// tmData public API
+	return {
+		getTrackInfo: getTrackInfo,
+		getNumberOfTracks: getNumberOfTracks,
+		getGeoTags: getGeoTags,
+		getMotd: getMotd,
+		getJWTToken: getJWTToken,
+		registerUser: registerUser,
+		addInvitation: addInvitation,
+		updateUserProfile: updateUserProfile,
+		requestPasswordResetToken: requestPasswordResetToken,
+		removeUserProfile: removeUserProfile,
+		addTrack: addTrack,
+		uploadTrackPic: uploadTrackPic,
+		updateTrack: updateTrack,
+		removeTrack: removeTrack,
+		deleteTrackPic: deleteTrackPic
 	}
-};
+
+})();
