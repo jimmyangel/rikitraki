@@ -4,11 +4,10 @@
 /* globals tmConfig, tmMap, tmData */
 /* exported map, isMobile, API_BASE_URL, CESIUM_BASE_URL */
 
+// Globals
 var API_BASE_URL = tmConfig.getApiBaseUrl();
 var CESIUM_BASE_URL = 'components/Cesium/';
 
-// The map is global
-var map;
 var isMobile = tmConfig.getOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 var isWebGlSupported = false;
 

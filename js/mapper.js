@@ -1,7 +1,6 @@
 'use strict';
 /* exported tmMap */
-/* globals L, omnivore, tmForms, tmData, tmUtils, map:true, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
-
+/* globals L, omnivore, tmForms, tmData, tmUtils, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
 
 var tmMap = (function () {
 
@@ -14,6 +13,8 @@ var tmMap = (function () {
 	var KEYCODE_ESC = 27;
 	var KEYCODE_SPACE = 32;
 	var CAMERA_OFFSET = 6000;
+
+	var map; // For leaflet
 
 	var setUpCommon = function (tracks) {
 
