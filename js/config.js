@@ -1,39 +1,46 @@
 'use strict';
-// The below is to stop jshint barking at defined but never used variables
 /* exported tmConfig */
 
-var tmConfig = {
-	// Devellpment port numbers
-	DEV_WEB_PORT: '9000',
-	DEV_WS_PORT: '3000',
+var tmConfig = (function () {
+	// Development port numbers
+	var DEV_WEB_PORT = '9000';
+	var DEV_WS_PORT = '3000';
+
 	// This function assumes that the api and the web page are colocated, if that is not the case it will need to be changed
-	getApiBaseUrl: function () {
-		if (window.location.port === this.DEV_WEB_PORT) {
-			return window.location.protocol + '//' + window.location.hostname + ':' + this.DEV_WS_PORT + '/api';
+	var getApiBaseUrl = function () {
+		if (window.location.port === DEV_WEB_PORT) {
+			return window.location.protocol + '//' + window.location.hostname + ':' + DEV_WS_PORT + '/api';
 		}
 		// Hosted in same nodejs container (local or remote)
 		return window.location.protocol + '//' + window.location.host + '/api';
-	},
-	getTrackId: function () {
-		return tmConfig.getUrlVars().track;
-	},
-	getRegion: function () {
-		return decodeURIComponent((tmConfig.getUrlVars().region));
-	},
-	getGlobeFlag: function () {
-		return tmConfig.getUrlVars().globe === 'yes' ? true : false;
-	},
-	getOverride: function () {
-		return tmConfig.getUrlVars().override === 'yes' ? true : false;		
-	},
-	getTerrainFlag: function () {
-		return tmConfig.getUrlVars().terrain === 'yes' ? true : false;
-	},
-	getLayers: function (f) {
+	};
+
+	var getTrackId = function () {
+		return getUrlVars().track;
+	};
+
+	var getRegion = function () {
+		return decodeURIComponent((getUrlVars().region));
+	};
+
+	var getGlobeFlag = function () {
+		return getUrlVars().globe === 'yes' ? true : false;
+	};
+
+	var getOverride = function () {
+		return getUrlVars().override === 'yes' ? true : false;		
+	};
+
+	var getTerrainFlag = function () {
+		return getUrlVars().terrain === 'yes' ? true : false;
+	};
+
+	var getLayers = function (f) {
 		$.getJSON('config/layers.json', f).fail(function(jqxhr, textStatus, error) {throw error;});
 		return f; //f is the function that is invoked when the data is ready
-	},
-	getUrlVars: function () {
+	};
+
+	var getUrlVars = function () {
 		var urlVars = [];
 		var varArray = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
 		for (var i = 0; i < varArray.length; i++) {
@@ -41,8 +48,9 @@ var tmConfig = {
 			urlVars[urlVar[0]] = urlVar[1];
 		}
 		return urlVars;
-	},
-	getWebGlFlag: function () {
+	};
+
+	var getWebGlFlag = function () {
 		// Basic test
 		if (!window.WebGLRenderingContext) {
 			return false;
@@ -64,5 +72,18 @@ var tmConfig = {
 		}
 		// If I got here, it WebGL "should" be supported
 		return true; 
-	}
-};
+	};
+
+	// tmConfig public API
+	return {
+		getApiBaseUrl: getApiBaseUrl,
+		getTrackId: getTrackId,
+		getRegion: getRegion,
+		getGlobeFlag: getGlobeFlag,
+		getOverride: getOverride,
+		getTerrainFlag: getTerrainFlag,
+		getLayers: getLayers,
+		getUrlVars: getUrlVars,
+		getWebGlFlag: getWebGlFlag
+	};
+})();
