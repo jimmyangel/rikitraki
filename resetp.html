@@ -1,11 +1,11 @@
 <!doctype html>
-<html class="no-js">
+<html>
   <head>
     <meta charset="utf-8">
 
     <title>RikiTraki</title>
     <link rel="shortcut icon" href="/favicon.ico">
-    
+
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <!-- endbower -->
@@ -105,7 +105,7 @@
       $('#update .form-control').on('input', function () {
         if ($(this).val() !== '') {
           $('#updateProfileButton').removeAttr('disabled');
-        } 
+        }
       });
 
       $('#updateProfileButton').click(function() {
@@ -113,7 +113,7 @@
         var password = $('#usr-password').val();
         var repassword = $('#usr-repassword').val();
         if ((password.length < 6) || (repassword.lengh > 18) || (password !== repassword)){
-          $('#profileErrorText').text('Password must be 6 to 18 characters long, both fields must match');        
+          $('#profileErrorText').text('Password must be 6 to 18 characters long, both fields must match');
           $('#profileError').show();
         } else {
           $.ajax({

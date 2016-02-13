@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js">
+<html>
   <head>
     <meta charset="utf-8">
     <!-- Google site verification, do not remove -->
@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta property="og:image" content="http://rikitraki.com/images/hikinglg.png" />
     <link rel="shortcut icon" href="/favicon.ico">
-    
+
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css" />
@@ -174,13 +174,13 @@
                             <div class="alert alert-danger" id="loginError" role="alert" style="display: none">
                               <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                               <span class="sr-only">Error:</span>
-                              Please enter valid username and password
-                            </div>                            
+                              <span id="loginErrorText"></span>
+                            </div>
                             <hr>
                             <div class="form-group">
                               <div class="col-sm-offset-2 col-sm-10">
                                 <a id="forgotPasswordLink" data-toggle="collapse" href="#forgotPanel" aria-expanded="false">Forgot password and/or username?</a>
-                              </div> 
+                              </div>
                             </div>
                             <div id="forgotPanel" class="collapse">
                               <div class="form-group has-feedback">
@@ -225,6 +225,10 @@
                               <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                             </div>
                           </div>
+                          <div class="form-group">
+                            <p class="col-sm-offset-4 col-sm-8">We will not send you spam nor share your email address.</p>
+                          </div>
+
                           <div class="form-group has-feedback">
                             <label class="control-label col-sm-4">Password</label>
                             <div class="col-sm-8">
@@ -239,16 +243,9 @@
                               <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                            </div>
                           </div>
-
-                          <div class="form-group has-feedback">
-                            <label class="control-label col-sm-4">Invitation code</label>
-                            <div class="col-sm-8">
-                              <input type="text" id="reg-invitation" placeholder="Invitation code (must be valid)" class="form-control">
-                              <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                            </div>
-                          </div>
+                          <hr>
                           <div class="form-group">
-                            <p class="col-sm-offset-4 col-sm-8">By registering you agree to upload only GPX files and photos that you own, and you agree to release all the content you  
+                            <p class="col-sm-offset-4 col-sm-8">By registering you agree to upload only GPX files and photos that you own, and you agree to release all the content you
                             upload to the <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">public domain</a>.</p>
                           </div>
 
@@ -257,43 +254,17 @@
                               <button id="registerButton" class="btn btn-default">Register</button>
                             </div>
                           </div>
+
+                          <div class="alert alert-warning" id="registrationMessage" role="alert" style="display: none">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Info:</span>
+                            Welcome to RikiTraki! Please check your email to activate your account.
+                          </div>
+
                           <div class="alert alert-danger" id="registrationError" role="alert" style="display: none">
                             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                             <span class="sr-only">Error:</span>
                             <span id="registrationErrorText"></span>
-                          </div>
-                          <hr>
-                          <div class="form-group">
-                            <div class="col-sm-offset-4 col-sm-8">
-                              <a id="noInvitationLink" data-toggle="collapse" href="#noInvitationPanel" aria-expanded="false">No invitation code?</a>
-                            </div> 
-                          </div>
-                          <div id="noInvitationPanel" class="collapse">
-                            <div class="form-group has-feedback">
-                              <label class="control-label col-sm-4">Email</label>
-                               <div class="col-sm-8">
-                                <input type="email" id="inv-email" placeholder="Email" class="form-control">
-                                <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
-                              </div> 
-                            </div>
-                            <div class="form-group">
-                              <p class="col-sm-offset-4 col-sm-8">We will not send you spam nor share your email address.</p>
-                            </div>
-                            <div class="form-group">                          
-                              <div class="col-sm-offset-4 col-sm-8">
-                                 <button id="invitationButton" class="btn btn-default">Request invitation</button>
-                              </div>
-                            </div>
-                            <div class="alert alert-warning" id="invitationMessage" role="alert" style="display: none">
-                              <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                              <span class="sr-only">Info:</span>
-                              Your request has been recorded. Thank you.
-                            </div>
-                            <div class="alert alert-danger" id="invitationError" role="alert" style="display: none">
-                              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                              <span class="sr-only">Error:</span>
-                              <span id="invitationErrorText"></span>
-                            </div>
                           </div>
                         </form>
                       </div>
@@ -392,7 +363,7 @@
                               </div>
                             </div>
                         </div>
-                        <div class="form-group">                          
+                        <div class="form-group">
                           <div class="col-sm-offset-5 col-sm-7">
                              <button class="btn btn-default" id="removeProfileButton" disabled="disabled">Proceed</button>
                           </div>
@@ -529,7 +500,7 @@
                         <div class="form-group">
                           <div id="track-photos-container" style="padding-left: 15px;">
                           </div>
-                        </div>                          
+                        </div>
                       </form>
                     </div>
                   </div>
@@ -657,12 +628,12 @@
                         <div class="form-group">
                           <div id="edit-track-photos-container" style="padding-left: 15px;">
                           </div>
-                        </div>  
+                        </div>
                         <div class="form-group">
                           <div id="edit-track-photos-delete-drop-zone" class="col-sm-offset-11 col-sm-1">
                             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                           </div>
-                        </div>                        
+                        </div>
                       </form>
                     </div>
                     <div class="tab-pane" id="remove-track-info-tab">
@@ -673,7 +644,7 @@
                               <label><input type="checkbox" id="confirmTrackRemoval" value="">Check to confirm. This action cannot be undone.</label>
                             </div>
                         </div>
-                        <div class="form-group">                          
+                        <div class="form-group">
                           <div class="col-sm-offset-4 col-sm-8">
                              <button class="btn btn-default" id="removeTrackButton" disabled="disabled">Proceed</button>
                           </div>
@@ -860,7 +831,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 class="modal-title">RikiTraki</h3><b>v0.5.2<sup>Beta</sup> by Ricardo Morin</b>
+            <h3 class="modal-title">RikiTraki</h3><b>v0.6<sup>Beta</sup> by Ricardo Morin</b>
           </div>
           <div class="modal-body">
             <h4>About this site</h4>
@@ -984,7 +955,7 @@
     <script src="bower_components/Sortable/jquery.fn.sortable.min.js"></script>
 
     <!-- build: use this block later with processhtml to prepare dist -->
-    <script src="bower_components/spin.js/jquery.spin.js"></script>    
+    <script src="bower_components/spin.js/jquery.spin.js"></script>
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/forms.js"></script>
