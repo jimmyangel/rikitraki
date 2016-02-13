@@ -37,6 +37,7 @@ var tmData = (function () {
 	};
 
 	var registerUser = function (reg, successCallback, errorCallback) {
+		reg.rturl = location.href.split('?')[0];
 		$.ajax({
 			url: API_BASE_URL + '/v1/users',
 			type: 'POST',
@@ -156,7 +157,7 @@ var tmData = (function () {
 				'Authorization': 'JWT ' + token
 			 },
 			success: function() {}
-		});		
+		});
 	};
 
 	// tmData public API
