@@ -107,27 +107,15 @@ var tmForms = (function () {
 		// Register button handler
 		$('#registerButton').click(function() {
 
-			// if (isValidRegistration()) {
 			if (isValidForm('registration')) {
 				var reg = {username: $('#reg-username').val(), email: $('#reg-email').val(), password: $('#reg-password').val()};
 				tmData.registerUser(reg, function(data) {
-					// localStorage.setItem('rikitraki-token', data);
-					// localStorage.setItem('rikitraki-username', reg.username);
 					$('#registrationError').hide();
 					$('#registrationMessage').fadeIn('slow');
 					setTimeout(function () {
 						resetLoginDialog();
 					}, 2000);
-					/* $('#user-btn').off();
-					$('#hi-username').text(reg.username);
-					$('#user-btn').click(function() {
-						$('#userModal').modal('show');
-						return false;
-					}); */
-					// enableUploadButton();
 				}, function(jqxhr) { // jqxhr, textStatus
-					// $('#reg-invitation').next().addClass('glyphicon-remove');
-					// $('#reg-invitation').focus();
 					if (jqxhr.status === 422) {
 						$('#registrationErrorText').text('Username or email already exist');
 					} else {
