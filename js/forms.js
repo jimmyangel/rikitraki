@@ -1,6 +1,6 @@
 'use strict';
 /* exported tmForms */
-/* globals tmData, omnivore, tmUtils, EXIF */
+/* globals tmData, omnivore, tmUtils, tmMessages, EXIF */
 /* jshint camelcase: false */
 
 var tmForms = (function () {
@@ -66,12 +66,13 @@ var tmForms = (function () {
 				}, function(jqxhr) { // jqxhr, textStatus
 					console.log(jqxhr.status);
 					if (jqxhr.status === 401) {
-						$('#loginErrorText').text('Please enter valid username and password');
+						// $('#loginErrorText').text('Please enter valid username and password');
+						$('#loginErrorText').text(tmMessages.VALID_USERNAME_PASSWORD);
 					} else {
 						if (jqxhr.status === 403) {
-							$('#loginErrorText').text('Account must be activated before use. Please check your email');
+							$('#loginErrorText').text(tmMessages.ACCOUNT_MUST_BE_ACTIVATED);
 						} else {
-							$('#loginErrorText').text('Oops! An unexpected error occurred. Please try again later');
+							$('#loginErrorText').text(tmMessages.UNEXPECTED_ERROR);
 						}
 					}
 					$('#loginError').show();
@@ -86,7 +87,7 @@ var tmForms = (function () {
 			if (!tmUtils.isValidEmail(email)) {
 				$('#forgot-email').next().addClass('glyphicon-remove');
 				$('#forgot-email').focus();
-				$('#forgotErrorText').text('Please enter a valid email');
+				$('#forgotErrorText').text(tmMessages.ENTER_EMAIL);
 				$('#forgotError').fadeIn('slow');
 			} else {
 				tmData.requestPasswordResetToken(email, function() {
@@ -97,7 +98,7 @@ var tmForms = (function () {
 						resetLoginDialog();
 					}, 2000);
 				}, function() { // jqxhr, textStatus
-					$('#forgotErrorText').text('No record found for this email address');
+					$('#forgotErrorText').text(tmMessages.NO_EMAIL_FOUND);
 					$('#forgotError').fadeIn('slow');
 				});
 			}
@@ -109,7 +110,7 @@ var tmForms = (function () {
 
 			if (isValidForm('registration')) {
 				var reg = {username: $('#reg-username').val(), email: $('#reg-email').val(), password: $('#reg-password').val()};
-				tmData.registerUser(reg, function(data) {
+				tmData.registerUser(reg, function() {
 					$('#registrationError').hide();
 					$('#registrationMessage').fadeIn('slow');
 					setTimeout(function () {
@@ -117,54 +118,14 @@ var tmForms = (function () {
 					}, 2000);
 				}, function(jqxhr) { // jqxhr, textStatus
 					if (jqxhr.status === 422) {
-						$('#registrationErrorText').text('Username or email already exist');
+						$('#registrationErrorText').text(tmMessages.USERNAME_EMAIL_EXIST);
 					} else {
-						$('#registrationErrorText').text('Oops! An unexpected error occurred. Please try again later');
+						$('#registrationErrorText').text(tmMessages.UNEXPECTED_ERROR);
 					}
 					$('#registrationError').fadeIn('slow');
 					console.log(jqxhr);
 				});
 				return false;
-			}
-			return false;
-		});
-
-		// Request invitation button handler
-		$('#invitationButton').click(function() {
-			var reg = {};
-			reg.email = $('#inv-email').val();
-
-			if (tmUtils.isValidEmail(reg.email)) {
-				tmData.addInvitation(reg, function() {
-					$('#invitationError').hide();
-					$('#inv-email').next().removeClass('glyphicon-remove');
-					$('#invitationMessage').fadeIn('slow');
-					setTimeout(function () {
-						resetLoginDialog();
-					}, 2000);
-				}, function(jqxhr) {
-					if (jqxhr.status === 422) {
-						$('#inv-email').next().addClass('glyphicon-remove');
-						$('#inv-email').focus();
-						$('#invitationErrorText').text('Invitation already requested for this email address');
-						$('#invitationError').fadeIn('slow');
-					} else {
-						if (jqxhr.status === 429) {
-							$('#invitationErrorText').text('No invitations available');
-						} else {
-							$('#invitationErrorText').text('Save error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
-						}
-						$('#invitationError').fadeIn('slow');
-						setTimeout(function () {
-							resetLoginDialog();
-						}, 2000);
-					}
-				});
-			} else {
-					$('#inv-email').next().addClass('glyphicon-remove');
-					$('#inv-email').focus();
-					$('#invitationErrorText').text('Please enter a valid email');
-					$('#invitationError').fadeIn('slow');
 			}
 			return false;
 		});
@@ -253,7 +214,7 @@ var tmForms = (function () {
 		registration: [
 			{
 				fieldId: '#reg-username',
-				errorMsg: 'Username must be 6 to 40 characters and have no special characters',
+				errorMsg: tmMessages.VALID_USERNAME,
 			 	isValid: function () {
 			 		var re = new RegExp('^[^~,;%\\`\'\"<>{}()\\[\\]/]*$'); // No special characters allowed
 					if (($(this.fieldId).val().length < 6) || ($(this.fieldId).val().length > 40) || !re.test($(this.fieldId).val())) {
@@ -265,14 +226,14 @@ var tmForms = (function () {
 			},
 			{
 				fieldId: '#reg-email',
-				errorMsg: 'Please enter a valid email',
+				errorMsg: tmMessages.ENTER_EMAIL,
 			 	isValid: function () {
 			 		return tmUtils.isValidEmail($(this.fieldId).val());
 				}
 			},
 			{
 				fieldId: '#reg-password',
-				errorMsg: 'Password must be between 6 and 18 characters long',
+				errorMsg: tmMessages.VALID_PASSWORD,
 			 	isValid: function () {
 					if (($(this.fieldId).val().length < 6) || ($(this.fieldId).val().length > 18)) {
 						return false;
@@ -283,7 +244,7 @@ var tmForms = (function () {
 			},
 			{
 				fieldId: '#reg-repassword',
-				errorMsg: 'Re-entered password must match password',
+				errorMsg: tmMessages.REPASSWORD_MATCH,
 			 	isValid: function () {
 					if (($(this.fieldId).val().length < 6) || ($(this.fieldId).val() !== $('#reg-password').val())) {
 						return false;
@@ -296,7 +257,7 @@ var tmForms = (function () {
 		profile: [
 			{
 				fieldId: '#usr-email',
-				errorMsg: 'Please enter a valid email',
+				errorMsg: tmMessages.ENTER_EMAIL,
 			 	isValid: function () {
 			 		if ($(this.fieldId).val() === '') {
 						return true;
@@ -307,7 +268,7 @@ var tmForms = (function () {
 			},
 			{
 				fieldId: '#usr-oldpassword',
-				errorMsg: 'Please enter a valid password',
+				errorMsg: tmMessages.VALID_PASSWORD,
 			 	isValid: function () {
 					if (($(this.fieldId).val().length < 6) || ($(this.fieldId).val().length > 18)) {
 						return false;
@@ -318,7 +279,7 @@ var tmForms = (function () {
 			},
 			{
 				fieldId: '#usr-password',
-				errorMsg: 'Password must be between 6 and 18 characters long',
+				errorMsg: tmMessages.VALID_PASSWORD,
 			 	isValid: function () {
 			 		if (($(this.fieldId).val() === '')) {
 						return true;
@@ -333,7 +294,7 @@ var tmForms = (function () {
 			},
 			{
 				fieldId: '#usr-repassword',
-				errorMsg: 'Re-entered password must match password',
+				errorMsg: tmMessages.REPASSWORD_MATCH,
 			 	isValid: function () {
 			 		if (($(this.fieldId).val() === '') && ($('#usr-password').val() === '')) {
 						return true;
@@ -350,7 +311,7 @@ var tmForms = (function () {
 		upload: [
 			{
 				fieldId: '#track-file',
-				errorMsg: 'Please select a GPX file for this track (up to 4MB size)',
+				errorMsg: tmMessages.SELECT_GPX,
 			 	isValid: function () {
 			 		if ($('#track-file')[0].files[0]) {
 			 			if ($('#track-file')[0].files[0].size > 4000000) {
@@ -364,7 +325,7 @@ var tmForms = (function () {
 			},
 			{
 				fieldId: '#track-name',
-				errorMsg: 'Please enter a name for this track',
+				errorMsg: tmMessages.ENTER_TRACK_NAME,
 			 	isValid: function () {
 			 		return ($(this.fieldId).val() === '') ? false : true;
 			 		// return (!($(this.fieldId).val() === ''));
@@ -372,7 +333,7 @@ var tmForms = (function () {
 			},
 			{
 				fieldId: '#track-description',
-				errorMsg: 'Please enter a description for this track',
+				errorMsg: tmMessages.ENTER_TRACK_DESCRIPTION,
 			 	isValid: function () {
 			 		return ($(this.fieldId).val() === '') ? false : true;
 			 		// return !($(this.fieldId).val() === '');
@@ -380,7 +341,7 @@ var tmForms = (function () {
 			},
 			{
 				fieldId: '#track-region',
-				errorMsg: 'Please select a region for this track',
+				errorMsg: tmMessages.SELECT_REGION,
 			 	isValid: function () {
 			 		return ($(this.fieldId).val() === '') ? false : true;
 			 		// return !($(this.fieldId).val() === '');
@@ -388,7 +349,7 @@ var tmForms = (function () {
 			},
 			{
 				fieldId: '#track-time-offset',
-				errorMsg: 'Please enter a valid number',
+				errorMsg: tmMessages.VALID_NUMBER,
 			 	isValid: function () {
 			 		if (/^(\-|\+)?([0-9]{0,5}(\.[0-9]{0,5})?)$/.test($(this.fieldId).val())) {
 			 			return !isNaN(parseFloat($(this.fieldId).val()));
@@ -401,21 +362,21 @@ var tmForms = (function () {
 		edit: [
 			{
 				fieldId: '#edit-track-name',
-				errorMsg: 'Please enter a name for this track',
+				errorMsg: tmMessages.ENTER_TRACK_NAME,
 			 	isValid: function () {
 			 		return ($(this.fieldId).val() === '') ? false : true;
 				}
 			},
 			{
 				fieldId: '#edit-track-description',
-				errorMsg: 'Please enter a description for this track',
+				errorMsg: tmMessages.ENTER_TRACK_DESCRIPTION,
 			 	isValid: function () {
 			 		return ($(this.fieldId).val() === '') ? false : true;
 				}
 			},
 			{
 				fieldId: '#edit-track-time-offset',
-				errorMsg: 'Please enter a valid number',
+				errorMsg: tmMessages.VALID_NUMBER,
 			 	isValid: function () {
 			 		if (/^(\-|\+)?([0-9]{0,5}(\.[0-9]{0,5})?)$/.test($(this.fieldId).val())) {
 			 			return !isNaN(parseFloat($(this.fieldId).val()));
@@ -458,10 +419,8 @@ var tmForms = (function () {
 		$('#loginModal').modal('hide');
 		$('#loginModal').find('form').trigger('reset');
 		cleanupErrorMarks();
-		$('#invitationMessage').hide();
 		$('#forgotMessage').hide();
 		$('#loginTab').tab('show');
-		$('#noInvitationPanel').collapse('hide');
 		$('#forgotPanel').collapse('hide');
 
 	};
@@ -543,7 +502,7 @@ var tmForms = (function () {
 	};
 
 	var uploadTrack = function () {
-		var badGpxMsg = 'Please select a "good" GPX file (valid format with at least a track segment with elevation data)';
+		var badGpxMsg = tmMessages.SELECT_GOOD_GPX;
 		if (isValidForm('upload')) {
 			var fReader = new FileReader();
 			fReader.onload = function() {
@@ -991,11 +950,11 @@ var tmForms = (function () {
 							$.when.apply(this, deletePictureTasks).then(function () {
 								updateTrack(t);
 							}, function (jqxhr) {
-								displaySaveError('Delete picture error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+								displaySaveError(tmMessages.DELETE_PIC_ERROR + jqxhr.status + ' - ' + jqxhr.responseText);
 							});
 						});
 					}, function (jqxhr) {
-						displaySaveError('Upload picture error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+						displaySaveError(tmMessages.UPLOAD_PIC_ERROR + jqxhr.status + ' - ' + jqxhr.responseText);
 					});
 				});
 			} else {
@@ -1021,7 +980,7 @@ var tmForms = (function () {
 				window.location.href='/';
 			}, 2000);
 		}, function(jqxhr) { // jqxhr, textStatus
-			$('#removeTrackErrorText').text('Remove error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
+			$('#removeTrackErrorText').text(tmMessages.REMOVE_ERROR + jqxhr.status + ' - ' + jqxhr.responseText);
 			$('#removeTrackError').fadeIn('slow');
 			console.log(jqxhr);
 		});
