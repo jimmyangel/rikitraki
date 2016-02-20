@@ -34,8 +34,8 @@ var tmMap = (function () {
 		$.getScript('//connect.facebook.net/en_US/sdk.js', function() {
 		    FB.init({
 		      appId: '111118879223414',
-		      version: 'v2.3' 
-		    });     
+		      version: 'v2.3'
+		    });
 		});
 
 		// Set up bootstrap menus (Go to and Tracks)
@@ -49,7 +49,7 @@ var tmMap = (function () {
 		$('#map').hide();
 		var drillPickLimit = isMobile ? 1 : undefined;
 		var viewer = new Cesium.Viewer('globe', {
-							// scene3DOnly: true, 
+							// scene3DOnly: true,
 							baseLayerPicker: false,
 							imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
 								url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
@@ -113,7 +113,7 @@ var tmMap = (function () {
 		// On click open pop up
 		$('#globe').on('click touchstart', function (e) {
 			var c;
-			if (e.type === 'touchstart'){ 
+			if (e.type === 'touchstart'){
 				c = new Cesium.Cartesian2(e.originalEvent.touches[0].clientX, e.originalEvent.touches[0].clientY - 50);
 			} else {
 				c = new Cesium.Cartesian2(e.offsetX, e.offsetY);
@@ -121,7 +121,7 @@ var tmMap = (function () {
 			var popUpCreated = false;
 			var pArray = viewer.scene.drillPick(c, drillPickLimit);
 			var pArrayLength = pArray.length;
-			for (var i=0; i<pArrayLength; i++) { 
+			for (var i=0; i<pArrayLength; i++) {
 				if (Cesium.defined(pArray[i])) {
 					var entity = pArray[i].id;
 					if (entity instanceof Cesium.Entity) {
@@ -129,14 +129,14 @@ var tmMap = (function () {
 						if (Cesium.defined(entity.point)) {
 							if (!popUpCreated) {
 								$('#trackPopUpLink').empty();
-								popUpCreated = true;	
+								popUpCreated = true;
 							} else {
 								br = '<br>';
 							}
 							$('#trackPopUpLink').append('<a href="?track=' + entity.name + '">' + br + tracks[entity.name].trackName + '</a>');
 						}
 					}
-				} 
+				}
 			}
 			if (popUpCreated) {
 				$('#trackPopUp').show();
@@ -148,15 +148,15 @@ var tmMap = (function () {
 						positionPopUp(changedC);
 						c = changedC;
 					}
-				}); 
+				});
 				// PopUp close button event handler
 				$('.leaflet-popup-close-button').on('click', function () {
 					$('#trackPopUp').hide();
 					$('#trackPopUpLink').empty();
 					removeHandler.call();
 					return false;
-				});	
-			}		
+				});
+			}
 		});
 
 		setUpMotdInfoBox(tracks, false);
@@ -177,7 +177,7 @@ var tmMap = (function () {
 		 	viewer.camera.setView({heading: 0.0});
 			return false;
 		});
-		// Refresh destroys everyting and starts over 
+		// Refresh destroys everyting and starts over
 		$('#globe-control-refresh').click(function() {
 			$('.leaflet-control-zoom-in').off();
 			$('.leaflet-control-zoom-out').off();
@@ -234,8 +234,8 @@ var tmMap = (function () {
 				$('.spinnerControlContainer').spin();
 			} else {
 				$('.spinnerControlContainer').spin(false);
-			}	
-		}; 
+			}
+		};
 		// Set up zoom check handler (so that we do not end up with more zoom than what is available)
 		var baseLayerChangeHandler = function () {
 			var maxZoom = map.getMaxZoom();
@@ -269,10 +269,10 @@ var tmMap = (function () {
 	var setUpTracksMenu = function (tracks) {
 		// Populate tracks dialog box
 		for (var tId in tracks) {
-			$('#tracksTable').append('<tr><td>' + (tracks[tId].trackFav ? FAVORITE : '') + 
-									'</td><td>' + tracks[tId].trackName + 
-									'</td><td>' + tracks[tId].trackLevel + 
-									'</td><td>' + tracks[tId].trackRegionTags + 
+			$('#tracksTable').append('<tr><td>' + (tracks[tId].trackFav ? FAVORITE : '') +
+									'</td><td>' + tracks[tId].trackName +
+									'</td><td>' + tracks[tId].trackLevel +
+									'</td><td>' + tracks[tId].trackRegionTags +
 									'</td><td style="display:none">' + tId +
 									'</td></tr>');
 		}
@@ -286,10 +286,10 @@ var tmMap = (function () {
 				if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1) {
 					$(this).hide();
 				} else {
-					$(this).show();                
+					$(this).show();
 				}
 			});
-		});	
+		});
 
 		// Stupid table sort
 		var $table = $('#tracksTable').stupidtable();
@@ -323,7 +323,7 @@ var tmMap = (function () {
 			// map.fitBounds(trackMarkersLayerGroup.getBounds());
 			// Set up motd box (What's new)
 			setUpMotdInfoBox(tracks, true);
-			map.fitBounds(trackMarkersLayerGroup.getBounds(), {paddingBottomRight: [$(window).width() < 1000 ? 0 : 240, 0]}); 
+			map.fitBounds(trackMarkersLayerGroup.getBounds(), {paddingBottomRight: [$(window).width() < 1000 ? 0 : 240, 0]});
 		}
 		// Set up twitter and facebook links
 		setUpSocialButtons('Check out hiking trails on RikiTraki');
@@ -340,7 +340,7 @@ var tmMap = (function () {
 				infoPanel.addTo(map);
 			} else {
 				// Not leaflet, but we still use leaflet's styles
-				infoPanelContainer.className += ' leaflet-control'; 
+				infoPanelContainer.className += ' leaflet-control';
 				$('#infoPanel').append(infoPanelContainer);
 				setUpInfoPanelEventHandling();
 			}
@@ -366,12 +366,12 @@ var tmMap = (function () {
 		var infoPanelDescription = L.DomUtil.create('div', 'motdDescription infoPanelDescription', infoPanelBody);
 		infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button><b>What\'s New...</b>';
 		var motdHTML = '<table id="motdTable" class="table table-condensed table-hover"><tbody>';
-		for (var i=0; i<data.motd.motdTracks.length; i++) {			
-			motdHTML += '<tr><td><img class="motdThumbs" src=' + API_BASE_URL + '/v1/tracks/' + data.motd.motdTracks[i][0] + '/thumbnail/' + data.motd.motdTracks[i][1] + 
+		for (var i=0; i<data.motd.motdTracks.length; i++) {
+			motdHTML += '<tr><td><img class="motdThumbs" src=' + API_BASE_URL + '/v1/tracks/' + data.motd.motdTracks[i][0] + '/thumbnail/' + data.motd.motdTracks[i][1] +
 						// '></td><td>' +
 						'></td><td>' +
 						data.motd.motdTracks[i][2] +
-						'</td><td style="display:none">' + 
+						'</td><td style="display:none">' +
 						data.motd.motdTracks[i][0] + '</td></tr>';
 		}
 		motdHTML += '</tbody></table>';
@@ -446,7 +446,7 @@ var tmMap = (function () {
 		// If region is US, we use imperial units
 		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
 
-		// Create the elevation control first	
+		// Create the elevation control first
 		var el = L.control.elevation({
 			position: 'bottomleft',
 			theme: 'blackwhite-theme',
@@ -455,7 +455,7 @@ var tmMap = (function () {
 			collapsed: true,
 			imperial: imperial
 		});
-		el.addTo(map);	
+		el.addTo(map);
 
 		// Set up terrain button (but only if WebGL is supported)
 		if (isWebGlSupported) {
@@ -497,7 +497,7 @@ var tmMap = (function () {
 		// Get gpx track data and put it on the map
 		var tl = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null, customLayer).on('ready', function() {
 			// If the user is logged in and owns the track then allow editing, passing track layer, in case we need to geotag pics
-			tmForms.enableEditButton(track, tl); 
+			tmForms.enableEditButton(track, tl);
 			// Change the default icon for waypoints
 	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: WAYPOINT_COLOR, size: 's'});
 	        var trackDate = 'Not Available'; // By default
@@ -528,8 +528,8 @@ var tmMap = (function () {
 		    	}
 			});
 			// Fit th map to the trail boundaries leaving 50% room for the info panel
-	    	// map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]}); 
-	    	// map.fitBounds(tl.getBounds(), {maxZoom: map.getBoundsZoom(tl.getBounds())-1, paddingBottomRight: [($('#map').width())*.5, 0]}); 
+	    	// map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
+	    	// map.fitBounds(tl.getBounds(), {maxZoom: map.getBoundsZoom(tl.getBounds())-1, paddingBottomRight: [($('#map').width())*.5, 0]});
 	    	// map.setZoom(map.getBoundsZoom(tl.getBounds())-1); // For some reason this has a glitch on iPad
 
 	    	// Go ahead and draw the inside line (thinner and bright color like white)
@@ -546,7 +546,7 @@ var tmMap = (function () {
 	        // Google directions hyperlink
 	        marker.bindPopup('<a href="https://www.google.com/maps/dir//' + tLatLngs[0].lat + ',' + tLatLngs[0].lng + '/" target="_blank">' + 'Google Maps<br>Directions to Trailhead' + '</a>');
 
-			// Set up info panel control 
+			// Set up info panel control
 			var infoPanelContainer = L.DomUtil.create('div', 'info infoPanelContainer');
 			var infoPanelTitle = L.DomUtil.create('div', 'infoPanelTitle', infoPanelContainer);
 			var infoPanelBody = L.DomUtil.create('div', 'infoPanelBody', infoPanelContainer);
@@ -555,17 +555,17 @@ var tmMap = (function () {
 
 			var infoPanel = L.control({position: 'topright'});
 			infoPanel.onAdd = function () {
-				infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button>' + 
+				infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button>' +
 											'<b>' + track.trackName + ' ' + (track.trackFav ? FAVORITE : '' + '</b>');
-				infoPanelDescription.innerHTML = '<hr><b>' + track.trackLevel + '</b><br>' + 
+				infoPanelDescription.innerHTML = '<hr><b>' + track.trackLevel + '</b><br>' +
 									' <b>Length:</b> ' + (imperial ? ((Math.round(trackMetrics[0] * 62.1371) / 100) + 'mi') : (trackMetrics[0] + 'km')) +
-									' - <b>Elevation Gain:</b> ' + (imperial ? ((Math.round(trackMetrics[1] * 3.28084)) + 'ft') : (trackMetrics[1] + 'm')) + 
-									' <b>Max Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[2] * 3.28084)) + 'ft') : (trackMetrics[2] + 'm')) + 
+									' - <b>Elevation Gain:</b> ' + (imperial ? ((Math.round(trackMetrics[1] * 3.28084)) + 'ft') : (trackMetrics[1] + 'm')) +
+									' <b>Max Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[2] * 3.28084)) + 'ft') : (trackMetrics[2] + 'm')) +
 									' <b>Min Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[3] * 3.28084)) + 'ft') : (trackMetrics[3] + 'm')) +
-									'<br><b>Region:</b> ' + track.trackRegionTags + '<br><b>Date Recorded:</b> ' + trackDate +  
+									'<br><b>Region:</b> ' + track.trackRegionTags + '<br><b>Date Recorded:</b> ' + trackDate +
 									'<hr>' + track.trackDescription.replace(/$/mg,'<br>') + '<br><br><b>By: </b>' + track.username + '<hr>' +
-									'<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX' + '" download>Download GPS track</a>'; 
-				
+									'<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX' + '" download>Download GPS track</a>';
+
 				// Populate photos
 				if (track.hasPhotos) {
 					// Tell lightbox to do a wraparound album and to show nav on touch devices
@@ -573,25 +573,25 @@ var tmMap = (function () {
 					// Go get the geo tags and then put the pics on the map
 					tmData.getGeoTags(track.trackId, function(data) {
 						track.trackPhotos = data.geoTags.trackPhotos; // Add trackPhotos structure to track to allow editing
-						var haveGeoTags = false;	 
+						var haveGeoTags = false;
 						var photoLayerGroup = L.layerGroup();
 						slideShowContainer.innerHTML = '<hr>';
 
 						for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
 							// Tell lightbox that this is a slideshow
-							slideShowContainer.innerHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' + 
+							slideShowContainer.innerHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
 												  (data.geoTags.trackPhotos[k].picIndex === undefined ? k : data.geoTags.trackPhotos[k].picIndex) +
 												  '" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
-												  '><img  nopin="nopin" class="infoThumbs" geoTagXRef="' + k + 
+												  '><img  nopin="nopin" class="infoThumbs" geoTagXRef="' + k +
 												  '" src="data:image/jpeg;base64,' + data.geoTags.trackPhotos[k].picThumbBlob + '" /></a>';
 
 							// If we have geotags, go ahead and place them on thumbnail photo markers and don't do a slideshow, just single image
 							if (data.geoTags.trackPhotos[k].picLatLng) {
 								haveGeoTags = true;
-								var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' + 
-										 (data.geoTags.trackPhotos[k].picIndex === undefined ? k : data.geoTags.trackPhotos[k].picIndex) + 
+								var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
+										 (data.geoTags.trackPhotos[k].picIndex === undefined ? k : data.geoTags.trackPhotos[k].picIndex) +
 										 '" data-lightbox="picture' + '" data-title="' + data.geoTags.trackPhotos[k].picCaption +
-										 '" ><img geoTagRef="' + k + '"picLatLng="' + data.geoTags.trackPhotos[k].picLatLng.toString() + 
+										 '" ><img geoTagRef="' + k + '"picLatLng="' + data.geoTags.trackPhotos[k].picLatLng.toString() +
 										 '" src="data:image/jpeg;base64,' + data.geoTags.trackPhotos[k].picThumbBlob + '" width="40" height="40"/></a>';
 								var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
 									clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
@@ -615,7 +615,7 @@ var tmMap = (function () {
 									$(this).css('border-color', '#fff');
 									$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', '#fff');
 								}
-							);				
+							);
 						}
 
 
@@ -627,10 +627,10 @@ var tmMap = (function () {
 			infoPanel.addTo(map);
 
 			// Fit th map to the trail boundaries leaving 50% room for the info panel
-	    	map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]}); 
+	    	map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
 	    	setUpInfoPanelEventHandling();
 
-	
+
 		}).addTo(map);
 
 		// Set up twitter and facebook links and such
@@ -645,7 +645,7 @@ var tmMap = (function () {
 		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
 
 		var viewer = new Cesium.Viewer('globe', {
-							// scene3DOnly: true, 
+							// scene3DOnly: true,
 							baseLayerPicker: false,
 							imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
 								url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
@@ -670,26 +670,28 @@ var tmMap = (function () {
 			url : 'https://assets.agi.com/stk-terrain/world',
 			requestWaterMask : false,
 			requestVertexNormals : true
-		}); 
+		});
 		viewer.terrainProvider = terrainProvider;
 
 		// Should use fly to bounding sphere instead
+		var trailHeadHeight;
 		omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
 			// First grab the GeoJSON data from omnivore
 			var trackGeoJSON = this.toGeoJSON();
+			trailHeadHeight = trackGeoJSON.features[0].geometry.coordinates[0][2];
 
 			viewer.camera.flyTo({
 				destination : Cesium.Cartesian3.fromDegrees(
-								this.getBounds().getCenter().lng, 
-								this.getBounds().getCenter().lat - 0.09, 
-								trackGeoJSON.features[0].geometry.coordinates[0][2] + CAMERA_OFFSET),
+								this.getBounds().getCenter().lng,
+								this.getBounds().getCenter().lat - 0.09,
+								trailHeadHeight + CAMERA_OFFSET),
 				duration: 0,
 				orientation : {
 					heading : Cesium.Math.toRadians(0.0),
 					pitch : Cesium.Math.toRadians(-35.0),
 					roll : 0.0
 				}
-			}); 
+			});
 
 			// Remove all features except LineString (for now)
 			var i = trackGeoJSON.features.length;
@@ -706,14 +708,14 @@ var tmMap = (function () {
 			viewer.entities.add({
 				name: track.trackId,
 				position : Cesium.Cartesian3.fromDegrees(
-								trackGeoJSON.features[0].geometry.coordinates[0][0], 
-								trackGeoJSON.features[0].geometry.coordinates[0][1], 
+								trackGeoJSON.features[0].geometry.coordinates[0][0],
+								trackGeoJSON.features[0].geometry.coordinates[0][1],
 								trackGeoJSON.features[0].geometry.coordinates[0][2]),
 				billboard : {
 					image : 'images/' + thIconName + '.png',
 					verticalOrigin : Cesium.VerticalOrigin.BOTTOM
 				}
-			}); 
+			});
 
 		});
 
@@ -723,26 +725,43 @@ var tmMap = (function () {
 		$('#infoPanel').on('click', function () {
 			window.location.href='?track=' + track.trackId;
 			return false;
-		});		
+		});
+
+		// Smooth zoom in/out
+		function zoomInOut(isZoomIn) {
+			var cameraHeight = viewer.scene.globe.ellipsoid.cartesianToCartographic(viewer.camera.position).height;
+			var moveIncrement = Math.abs((cameraHeight - trailHeadHeight)) / 200;
+			var iterations = 0;
+			var intrvl = setInterval(function () {
+				if (isZoomIn) {
+					viewer.camera.zoomIn(moveIncrement);
+				} else {
+					viewer.camera.zoomOut(moveIncrement);
+				}
+				if (iterations++ > 99) {
+					clearInterval(intrvl);
+				}
+			}, 1);
+		}
 
 		// Set up zoom control click events
 		$('.leaflet-control-zoom-in').click(function() {
-		 	viewer.camera.zoomIn(2000);
+			zoomInOut(true);
 		 	return false;
 		});
 		$('.leaflet-control-zoom-out').click(function() {
-		 	viewer.camera.zoomOut(2000);
+			zoomInOut(false);
 			return false;
 		});
 
 		$('#terrain-control-2d').on('click', function () {
 			window.location.href='?track=' + track.trackId;
 			return false;
-		});		
+		});
 
 		$('#globe-control-north').hide();
 
-		// Refresh destroys everyting and starts over 
+		// Refresh destroys everyting and starts over
 		$('#globe-control-refresh').click(function() {
 			location.reload();
 			return false;
@@ -768,7 +787,7 @@ var tmMap = (function () {
 		// Stop propagation of some events that the info box needs to handle
 		$('.infoPanelContainer').on('mousedown wheel scrollstart touchstart mousewheel DOMMouseScroll MozMousePixelScroll', function(e) {
 			e.stopPropagation();
-		}); 
+		});
 		// L.DomEvent.disableClickPropagation(infoPanelContainer);
 
 		// By default, info panel is collapsed so close button should be hidden
@@ -806,7 +825,7 @@ var tmMap = (function () {
 		});
 		$('#globe').on('click keyup touchstart', function(e) {
 			showToggle = collapseInfoPanel(showToggle, e, true);
-		});		
+		});
 	};
 
 	var expandInfoPanel = function (toggle, e) {
@@ -825,7 +844,7 @@ var tmMap = (function () {
 			e.stopPropagation();
 		}
 		if (toggle) {
-			$('.infoPanelTitle button').hide();				
+			$('.infoPanelTitle button').hide();
 			$('.infoPanelBody').hide();
 			$('.infoPanelTitle b').css('cursor', 'pointer');
 			toggle = false;
