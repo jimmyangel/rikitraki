@@ -1,5 +1,5 @@
 'use strict';
-/* exported tmConfig */
+/* exported tmConfig, tmMessages */
 
 var tmConfig = (function () {
 	// Development port numbers
@@ -28,7 +28,7 @@ var tmConfig = (function () {
 	};
 
 	var getOverride = function () {
-		return getUrlVars().override === 'yes' ? true : false;		
+		return getUrlVars().override === 'yes' ? true : false;
 	};
 
 	var getTerrainFlag = function () {
@@ -56,22 +56,22 @@ var tmConfig = (function () {
 			return false;
 		}
 		// Ok basic test passed, but can WebGL be initialized?
-		var c = document.createElement('canvas'); 
-		var webglOptions = { 
-			alpha : false, 
-			stencil : false, 
+		var c = document.createElement('canvas');
+		var webglOptions = {
+			alpha : false,
+			stencil : false,
 			failIfMajorPerformanceCaveat : true
 		};
-		var gl = c.getContext('webgl', webglOptions) || c.getContext('experimental-webgl', webglOptions) || undefined; 
-		if (!gl) { 
-			return false; 
-		} 
+		var gl = c.getContext('webgl', webglOptions) || c.getContext('experimental-webgl', webglOptions) || undefined;
+		if (!gl) {
+			return false;
+		}
 		// This will catch some really crappy versions like IE on virtualized environment
 		if (gl.getSupportedExtensions().indexOf('OES_standard_derivatives') < 0) {
 			return false;
 		}
 		// If I got here, it WebGL "should" be supported
-		return true; 
+		return true;
 	};
 
 	// tmConfig public API
@@ -87,3 +87,25 @@ var tmConfig = (function () {
 		getWebGlFlag: getWebGlFlag
 	};
 })();
+
+var tmMessages = {
+    VALID_USERNAME_PASSWORD: 'Please enter valid username and password',
+    ACCOUNT_MUST_BE_ACTIVATED: 'Account must be activated before use. Please check your email',
+    UNEXPECTED_ERROR: 'Oops! An unexpected error occurred. Please try again later',
+    ENTER_EMAIL: 'Please enter a valid email',
+    NO_EMAIL_FOUND: 'No record found for this email address',
+    USERNAME_EMAIL_EXIST: 'Username or email already exist',
+    VALID_USERNAME: 'Username must be 6 to 40 characters and have no special characters',
+    VALID_PASSWORD: 'Password must be between 6 and 18 characters long',
+    REPASSWORD_MATCH: 'Re-entered password must match password',
+    SELECT_GPX: 'Please select a GPX file for this track (up to 4MB size)',
+    ENTER_TRACK_NAME: 'Please enter a name for this track',
+    ENTER_TRACK_DESCRIPTION: 'Please enter a description for this track',
+    SELECT_REGION: 'Please select a region for this track',
+    VALID_NUMBER: 'Please enter a valid number',
+    SELECT_GOOD_GPX: 'Please select a "good" GPX file (valid format with at least a track segment with elevation data)',
+    SAVE_ERROR: 'Save error, status ',
+    DELETE_PIC_ERROR: 'Delete picture error, status ',
+    UPLOAD_PIC_ERROR: 'Upload picture error, status ',
+    REMOVE_ERROR: 'Remove error, status '
+};
