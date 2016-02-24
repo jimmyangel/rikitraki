@@ -14,7 +14,7 @@ html, body, #container {
   overflow: hidden;
 }
 body {
-  padding-top: 50px; 
+  padding-top: 50px;
 }
 
 #map {
@@ -43,15 +43,15 @@ body {
   opacity: 0.9;
 }
 
-.leaflet-marker-photo { 
+.leaflet-marker-photo {
   border: 2px solid #fff;
-} 
+}
 
-.leaflet-popup-content-wrapper { 
+.leaflet-popup-content-wrapper {
   text-align: center;
   max-height: 200px;
   overflow-y: auto;
-} 
+}
 
 .modal-dialog {
   opacity: 0.9;
@@ -172,4 +172,12 @@ body {
 
 input[type=text]::-ms-clear {
   display: none;
+}
+
+.blink {
+  animation: blinker 1.5s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0.3; }
 }
