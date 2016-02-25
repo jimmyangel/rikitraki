@@ -47,6 +47,8 @@ var tmMap = (function () {
 		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
 
 		$('#map').hide();
+		$('#vd-play').hide();
+
 		var drillPickLimit = isMobile ? 1 : undefined;
 		var viewer = new Cesium.Viewer('globe', {
 							// scene3DOnly: true,
@@ -67,6 +69,9 @@ var tmMap = (function () {
 							navigationInstructionsInitiallyVisible: false,
 							skyAtmosphere: false,
 							creditContainer: 'creditContainer'});
+
+		// Save camera position so that we can go back to it
+		var initialCameraPosition = viewer.camera.position.clone();
 
 		viewer.scene.screenSpaceCameraController.enableTilt = false;
 		viewer.scene.screenSpaceCameraController.enableLook = false;
@@ -177,19 +182,14 @@ var tmMap = (function () {
 		 	viewer.camera.setView({heading: 0.0});
 			return false;
 		});
-		// Refresh destroys everyting and starts over
+
+		// Refresh closes popup and resets camera view to initial
 		$('#globe-control-refresh').click(function() {
-			$('.leaflet-control-zoom-in').off();
-			$('.leaflet-control-zoom-out').off();
-			$('#globe-control-refresh').off();
-			$('#globe-control-north').off();
-			$('#globe').off();
 			$('#trackPopUp').hide();
-			$('#infoPanel').empty();
-			$('#mapGlobeButton').empty();
-			$('#fb-btn').off();
-		 	viewer.destroy();
-		 	setUpGlobe(tracks, regions);
+			viewer.camera.flyTo({
+				destination : initialCameraPosition,
+				duration: 2,
+			});
 			return false;
 		});
 
@@ -676,23 +676,9 @@ var tmMap = (function () {
 
 		// Should use fly to bounding sphere instead
 		var trailHeadHeight;
-		omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
+		var lGPX = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
 			// First grab the GeoJSON data from omnivore
 			var trackGeoJSON = this.toGeoJSON();
-			trailHeadHeight = trackGeoJSON.features[0].geometry.coordinates[0][2];
-
-			viewer.camera.flyTo({
-				destination : Cesium.Cartesian3.fromDegrees(
-								this.getBounds().getCenter().lng,
-								this.getBounds().getCenter().lat - 0.09,
-								trailHeadHeight + CAMERA_OFFSET),
-				duration: 0,
-				orientation : {
-					heading : Cesium.Math.toRadians(0.0),
-					pitch : Cesium.Math.toRadians(-35.0),
-					roll : 0.0
-				}
-			});
 
 			// Remove all features except LineString (for now)
 			var i = trackGeoJSON.features.length;
@@ -702,7 +688,35 @@ var tmMap = (function () {
 				}
 			}
 
-			// TESTING CZML Here
+			// If we do not have timestamps, make them up
+			if (!trackGeoJSON.features[0].properties.coordTimes) {
+				trackGeoJSON.features[0].properties.coordTimes = [];
+				var d = new Date(2015);
+				for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
+					trackGeoJSON.features[0].properties.coordTimes.push(d.toISOString());
+					d.setSeconds(d.getSeconds() + 10);
+				}
+			}
+
+			trailHeadHeight = trackGeoJSON.features[0].geometry.coordinates[0][2];
+
+			function resetCameraView (l, d) {
+				viewer.camera.flyTo({
+					destination : Cesium.Cartesian3.fromDegrees(
+									l.getBounds().getCenter().lng,
+									l.getBounds().getCenter().lat - 0.09,
+									trailHeadHeight + CAMERA_OFFSET),
+					duration: d,
+					orientation : {
+						heading : Cesium.Math.toRadians(0.0),
+						pitch : Cesium.Math.toRadians(-35.0),
+						roll : 0.0
+					}
+				});
+			}
+
+			resetCameraView(this, 0);
+
 			var trackCZML = [
 				{
 					id: 'document',
@@ -711,15 +725,13 @@ var tmMap = (function () {
 					clock: {
 						interval: trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1],
 						currentTime: trackGeoJSON.features[0].properties.coordTimes[0],
-						multiplier: 50,
+						multiplier: 100,
 						range: 'CLAMPED',
 						step: 'SYSTEM_CLOCK_MULTIPLIER'
 					}
 				},
 				{
 					id: 'track',
-					name: 'some name',
-					description: 'some description',
 					availability: trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1],
 					path : {
 			      material : {
@@ -745,25 +757,57 @@ var tmMap = (function () {
 				}
 			];
 
-			for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
-				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].properties.coordTimes[i]);
-				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[i][0]);
-				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[i][1]);
-				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[i][2]);
+			function keepSample(index) {
+				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].properties.coordTimes[index]);
+				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][0]);
+				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][1]);
+				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][2]);
 			}
 
-			viewer.dataSources.add(Cesium.CzmlDataSource.load(trackCZML)).then(function (ds) {
+			for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
+				if (i === 0) {
+					keepSample(i);
+				} else {
+					var cartPrev = Cesium.Cartesian3.fromDegrees(
+						trackGeoJSON.features[0].geometry.coordinates[i-1][0],
+						trackGeoJSON.features[0].geometry.coordinates[i-1][1],
+						trackGeoJSON.features[0].geometry.coordinates[i-1][2]);
+					var cartCurr = Cesium.Cartesian3.fromDegrees(
+						trackGeoJSON.features[0].geometry.coordinates[i][0],
+						trackGeoJSON.features[0].geometry.coordinates[i][1],
+						trackGeoJSON.features[0].geometry.coordinates[i][2]);
+					if (Cesium.Cartesian3.distance(cartCurr, cartPrev) > 10) {
+						keepSample(i);
+					}
+				}
+			}
+
+			// By default, multiplier is 100, but duration cannot be less than 120 sec or greater than 240 sec
+			function calcMult(rd) {
+				if (rd > 24000) {
+					return rd/240;
+				}
+				if (rd < 12000) {
+					return rd/120;
+				}
+				return 100;
+			}
+
+			viewer.dataSources.add(Cesium.CzmlDataSource.load(trackCZML)).then(function(ds) {
 				viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
 				viewer.clock.shouldAnimate = false;
+				viewer.clock.multiplier = calcMult(Cesium.JulianDate.secondsDifference(viewer.clock.stopTime, viewer.clock.startTime));
+
 				var track = ds.entities.getById('track');
 				var playToggle = true;
-				$('#vd-play').click(function () {
+				$('#vd-play').click(function() {
 					if (playToggle) {
 						viewer.clock.onTick.addEventListener(clockTracker);
 						if (viewer.clock.currentTime.equals(viewer.clock.stopTime)) {
 							viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[0]);
 						}
 						playToggle = false;
+						$('.help3d').hide();
 						$('#vd-play > span').removeClass('glyphicon-play');
 						$('#vd-play > span').addClass('glyphicon-pause');
 						$('#vd-play').addClass('blink');
@@ -773,75 +817,82 @@ var tmMap = (function () {
 						viewer.clock.onTick.removeEventListener(clockTracker);
 						viewer.clock.shouldAnimate = false;
 						playToggle = true;
-						$('#vd-play > span').removeClass('glyphico	n-pause');
+						$('#vd-play > span').removeClass('glyphicon-pause');
 						$('#vd-play > span').addClass('glyphicon-play');
-						$('#vd-play').removeClass('blink');
 					}
 
 					return false;
 				});
 
-				console.log(viewer.clock.startTime, viewer.clock.stopTime);
+				function resetReplay() {
+					viewer.clock.shouldAnimate = false;
+					viewer.trackedEntity = undefined;
+					playToggle = true;
+					$('.help3d').show();
+					$('#vd-play > span').removeClass('glyphicon-pause');
+					$('#vd-play > span').addClass('glyphicon-play');
+					$('#vd-play').removeClass('blink');
+					viewer.clock.onTick.removeEventListener(clockTracker);
+				}
 
-				function clockTracker (clock) {
+				function clockTracker(clock) {
 					if (clock.currentTime.equals(clock.stopTime)) {
-						console.log('i am done');
-						viewer.clock.shouldAnimate = false;
-						viewer.trackedEntity = undefined;
-						playToggle = true;
-						$('#vd-play > span').removeClass('glyphicon-pause');
-						$('#vd-play > span').addClass('glyphicon-play');
-						clock.onTick.removeEventListener(clockTracker);
-						// clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[0]);
+						resetReplay();
 					}
 				}
 
-				// viewer.clock.onTick.addEventListener(clockTracker);
-
-				// viewer.trackedEntity = track;
-
-				/*var doOnce = true;
-				viewer.clock.onTick.addEventListener(function (clock) {
-					// console.log('tick');
-					if (doOnce) {
-						// console.log(clock.currentTime);
-						viewer.camera.lookAt(track.position.getValue(clock.currentTime), new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-35.0), 500));
-						// doOnce = false;
+				// Draw the trailhead
+				var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
+				viewer.entities.add({
+					name: track.trackId,
+					position : Cesium.Cartesian3.fromDegrees(
+									trackGeoJSON.features[0].geometry.coordinates[0][0],
+									trackGeoJSON.features[0].geometry.coordinates[0][1],
+									trackGeoJSON.features[0].geometry.coordinates[0][2]),
+					billboard : {
+						image : 'images/' + thIconName + '.png',
+						verticalOrigin : Cesium.VerticalOrigin.BOTTOM
 					}
-				}); */
+				});
 
+				// Smooth zoom in/out
+				function zoomInOut(isZoomIn) {
+					var cameraHeight = viewer.camera.positionCartographic.height;
+					var moveIncrement = Math.abs((cameraHeight - trailHeadHeight)) / 200;
+					var iterations = 0;
+					var intrvl = setInterval(function () {
+						if (isZoomIn) {
+							viewer.camera.zoomIn(moveIncrement);
+						} else {
+							viewer.camera.zoomOut(moveIncrement);
+						}
+						if (iterations++ > 99) {
+							clearInterval(intrvl);
+						}
+					}, 1);
+				}
 
-				// viewer.clock.shouldAnimate = true;
-				// viewer.trackedEntity = ds.entities.getById('track');
-				// viewer.zoomTo(ds, new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-35.0), 500));
+				// Set up zoom control click events
+				$('.leaflet-control-zoom-in').click(function() {
+					console.log('zoom in');
+					zoomInOut(true);
+				 	return false;
+				});
+				$('.leaflet-control-zoom-out').click(function() {
+					zoomInOut(false);
+					return false;
+				});
+
+				// Refresh
+				$('#globe-control-refresh').click(function() {
+					viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
+					resetReplay();
+					resetCameraView(lGPX, 1);
+
+					return false;
+				});
+
 			});
-
-			// viewer.zoomTo(ds, new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-35.0), 500));
-
-
-			// console.log(trackGeoJSON, trackCZML);
-			// console.log(trackGeoJSON.features[0].properties.coordTimes[0], trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
-
-			// END OF CZML TESTING
-
-			// Go ahead and draw the track
-			/*var jds = viewer.dataSources.add(Cesium.GeoJsonDataSource.load(trackGeoJSON, {stroke: Cesium.Color.fromCssColorString(INSIDE_TRACK_COLOR), strokeWidth: 3})).then(function (jds) {
-				console.log(jds.entities.values);
-				tEntities = jds.entities.values;
-			}); */
-			// And draw the trailhead too
-			/*var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
-			viewer.entities.add({
-				name: track.trackId,
-				position : Cesium.Cartesian3.fromDegrees(
-								trackGeoJSON.features[0].geometry.coordinates[0][0],
-								trackGeoJSON.features[0].geometry.coordinates[0][1],
-								trackGeoJSON.features[0].geometry.coordinates[0][2]),
-				billboard : {
-					image : 'images/' + thIconName + '.png',
-					verticalOrigin : Cesium.VerticalOrigin.BOTTOM
-				}
-			});*/
 
 		});
 
@@ -853,46 +904,12 @@ var tmMap = (function () {
 			return false;
 		});
 
-		// Smooth zoom in/out
-		function zoomInOut(isZoomIn) {
-			var cameraHeight = viewer.scene.globe.ellipsoid.cartesianToCartographic(viewer.camera.position).height;
-			var moveIncrement = Math.abs((cameraHeight - trailHeadHeight)) / 200;
-			var iterations = 0;
-			var intrvl = setInterval(function () {
-				if (isZoomIn) {
-					viewer.camera.zoomIn(moveIncrement);
-				} else {
-					viewer.camera.zoomOut(moveIncrement);
-				}
-				if (iterations++ > 99) {
-					clearInterval(intrvl);
-				}
-			}, 1);
-		}
-
-		// Set up zoom control click events
-		$('.leaflet-control-zoom-in').click(function() {
-			console.log('zoom in');
-			zoomInOut(true);
-		 	return false;
-		});
-		$('.leaflet-control-zoom-out').click(function() {
-			zoomInOut(false);
-			return false;
-		});
-
 		$('#terrain-control-2d').on('click', function () {
 			window.location.href='?track=' + track.trackId;
 			return false;
 		});
 
 		$('#globe-control-north').hide();
-
-		// Refresh destroys everyting and starts over
-		$('#globe-control-refresh').click(function() {
-			location.reload();
-			return false;
-		});
 
 		// Set up twitter and facebook links and such
 		setUpSocialButtons(track.trackName);
