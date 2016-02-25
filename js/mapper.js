@@ -539,12 +539,12 @@ var tmMap = (function () {
 				}
 			}).addTo(map);
 
-	    	// Set up trailhead marker assuming the very first point is at the trailhead
-	    	var tLatLngs = tl.getLayers()[0].getLatLngs();
-	        var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
-	        var marker = L.marker(tLatLngs[0], {zIndexOffset: 1000, icon: L.divIcon({html: '<img src="images/' + thIconName + '.png">'})}).addTo(map);
-	        // Google directions hyperlink
-	        marker.bindPopup('<a href="https://www.google.com/maps/dir//' + tLatLngs[0].lat + ',' + tLatLngs[0].lng + '/" target="_blank">' + 'Google Maps<br>Directions to Trailhead' + '</a>');
+			// Set up trailhead marker assuming the very first point is at the trailhead
+			var tLatLngs = tl.getLayers()[0].getLatLngs();
+			var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
+			var marker = L.marker(tLatLngs[0], {zIndexOffset: 1000, icon: L.divIcon({html: '<img src="images/' + thIconName + '.png">'})}).addTo(map);
+			// Google directions hyperlink
+			marker.bindPopup('<a href="https://www.google.com/maps/dir//' + tLatLngs[0].lat + ',' + tLatLngs[0].lng + '/" target="_blank">' + 'Google Maps<br>Directions to Trailhead' + '</a>');
 
 			// Set up info panel control
 			var infoPanelContainer = L.DomUtil.create('div', 'info infoPanelContainer');
@@ -798,7 +798,7 @@ var tmMap = (function () {
 				viewer.clock.shouldAnimate = false;
 				viewer.clock.multiplier = calcMult(Cesium.JulianDate.secondsDifference(viewer.clock.stopTime, viewer.clock.startTime));
 
-				var track = ds.entities.getById('track');
+				// var track = ds.entities.getById('track');
 				var playToggle = true;
 				$('#vd-play').click(function() {
 					if (playToggle) {
@@ -843,6 +843,7 @@ var tmMap = (function () {
 
 				// Draw the trailhead
 				var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
+				console.log(track.trackType);
 				viewer.entities.add({
 					name: track.trackId,
 					position : Cesium.Cartesian3.fromDegrees(
