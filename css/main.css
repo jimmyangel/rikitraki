@@ -181,3 +181,11 @@ input[type=text]::-ms-clear {
 @keyframes blinker {
   50% { opacity: 0.3; }
 }
+
+#progressBar {
+  opacity: 0.8;
+}
+
+.progress-bar {
+  background-color: #808080;
+}
