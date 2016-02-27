@@ -1,19 +1,8 @@
 'use strict';
 /* exported tmMap */
-/* globals L, omnivore, tmForms, tmData, tmUtils, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
+/* globals L, omnivore, tmForms, tmData, tmUtils, tmConstants, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
 
 var tmMap = (function () {
-
-	var TRAIL_MARKER_COLOR = '7A5C1E';
-	var WAYPOINT_COLOR = '#3887BE';
-	var TRACK_COLOR = '#8D6E27';
-	var INSIDE_TRACK_COLOR = '#EBEB00';
-	var SELECTED_THUMBNAIL_COLOR = '#00FF00';
-	var FAVORITE = '&#10029;';
-	var KEYCODE_ESC = 27;
-	var KEYCODE_SPACE = 32;
-	var CAMERA_OFFSET = 6000;
-
 	var map; // For leaflet
 
 	var setUpCommon = function (tracks) {
@@ -43,7 +32,7 @@ var tmMap = (function () {
 		return setUpGotoMenu(tracks);
 	};
 
-	var setUpGlobe = function (tracks, regions) {
+	var setUpGlobe = function (tracks) {
 		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
 
 		$('#map').hide();
@@ -269,7 +258,7 @@ var tmMap = (function () {
 	var setUpTracksMenu = function (tracks) {
 		// Populate tracks dialog box
 		for (var tId in tracks) {
-			$('#tracksTable').append('<tr><td>' + (tracks[tId].trackFav ? FAVORITE : '') +
+			$('#tracksTable').append('<tr><td>' + (tracks[tId].trackFav ? tmConstants.FAVORITE : '') +
 									'</td><td>' + tracks[tId].trackName +
 									'</td><td>' + tracks[tId].trackLevel +
 									'</td><td>' + tracks[tId].trackRegionTags +
@@ -383,7 +372,7 @@ var tmMap = (function () {
 		var trackMarkersLayerGroup = L.markerClusterGroup();
 		for (var tId in tracks) {
 			if (tId !== trackId) {
-				var m = L.marker(tracks[tId].trackLatLng, {icon: L.MakiMarkers.icon({icon: 'marker-stroked', color: TRAIL_MARKER_COLOR, size: 'm'})});
+				var m = L.marker(tracks[tId].trackLatLng, {icon: L.MakiMarkers.icon({icon: 'marker-stroked', color: tmConstants.TRAIL_MARKER_COLOR, size: 'm'})});
 				m.bindPopup('<a href="?track=' + tId + '">' + tracks[tId].trackName + '</a>');
 				trackMarkersLayerGroup.addLayer(m);
 			}
@@ -481,7 +470,7 @@ var tmMap = (function () {
 		var customLayer = L.geoJson(null, {
 			// Set the track color
 		    style: function() {
-		        return {color: TRACK_COLOR, opacity: 0.8, weight: 8};
+		        return {color: tmConstants.TRACK_COLOR, opacity: 0.8, weight: 8};
 		    },
 		    // Bind elevation control via onEachFeature
 		    onEachFeature: function (feature, layer) {
@@ -499,7 +488,7 @@ var tmMap = (function () {
 			// If the user is logged in and owns the track then allow editing, passing track layer, in case we need to geotag pics
 			tmForms.enableEditButton(track, tl);
 			// Change the default icon for waypoints
-	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: WAYPOINT_COLOR, size: 's'});
+	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: tmConstants.WAYPOINT_COLOR, size: 's'});
 	        var trackDate = 'Not Available'; // By default
 	        // var trackCoordinates;
 	        // Now let's iterate over the features to customize the popups and get some data (e.g., track date)
@@ -535,7 +524,7 @@ var tmMap = (function () {
 	    	// Go ahead and draw the inside line (thinner and bright color like white)
 			L.geoJson(insideT, {
 				style: function () {
-					return {color: INSIDE_TRACK_COLOR, weight: 2, opacity: 1};
+					return {color: tmConstants.INSIDE_TRACK_COLOR, weight: 2, opacity: 1};
 				}
 			}).addTo(map);
 
@@ -556,7 +545,7 @@ var tmMap = (function () {
 			var infoPanel = L.control({position: 'topright'});
 			infoPanel.onAdd = function () {
 				infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button>' +
-											'<b>' + track.trackName + ' ' + (track.trackFav ? FAVORITE : '' + '</b>');
+											'<b>' + track.trackName + ' ' + (track.trackFav ? tmConstants.FAVORITE : '' + '</b>');
 				infoPanelDescription.innerHTML = '<hr><b>' + track.trackLevel + '</b><br>' +
 									' <b>Length:</b> ' + (imperial ? ((Math.round(trackMetrics[0] * 62.1371) / 100) + 'mi') : (trackMetrics[0] + 'km')) +
 									' - <b>Elevation Gain:</b> ' + (imperial ? ((Math.round(trackMetrics[1] * 3.28084)) + 'ft') : (trackMetrics[1] + 'm')) +
@@ -608,8 +597,8 @@ var tmMap = (function () {
 							// Highlight geolocated thumbnail associated with hovered picture in info panel
 							$('.slideShowContainer img').hover(
 								function() {
-									$(this).css('border-color', SELECTED_THUMBNAIL_COLOR);
-									$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', SELECTED_THUMBNAIL_COLOR);
+									$(this).css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
+									$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
 								},
 								function() {
 									$(this).css('border-color', '#fff');
@@ -661,11 +650,9 @@ var tmMap = (function () {
 							timeline: false,
 							navigationHelpButton: false,
 							navigationInstructionsInitiallyVisible: false,
-							skyAtmosphere: false,
 							scene3DOnly: true,
 							creditContainer: 'creditContainer'
 							});
-
 
 		var terrainProvider = new Cesium.CesiumTerrainProvider({
 			url : 'https://assets.agi.com/stk-terrain/world',
@@ -674,118 +661,14 @@ var tmMap = (function () {
 		});
 		viewer.terrainProvider = terrainProvider;
 
-		// Should use fly to bounding sphere instead
-		var trailHeadHeight;
 		var lGPX = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
 			// First grab the GeoJSON data from omnivore
 			var trackGeoJSON = this.toGeoJSON();
 
-			// Remove all features except LineString (for now)
-			var i = trackGeoJSON.features.length;
-			while (i--) {
-				if (trackGeoJSON.features[i].geometry.type !== 'LineString') {
-					trackGeoJSON.features.splice(i, 1);
-				}
-			}
-
-			// If we do not have timestamps, make them up
-			if (!trackGeoJSON.features[0].properties.coordTimes) {
-				trackGeoJSON.features[0].properties.coordTimes = [];
-				var d = new Date(2015);
-				for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
-					trackGeoJSON.features[0].properties.coordTimes.push(d.toISOString());
-					d.setSeconds(d.getSeconds() + 10);
-				}
-			}
-
-			trailHeadHeight = trackGeoJSON.features[0].geometry.coordinates[0][2];
-
-			function resetCameraView (l, d) {
-				viewer.camera.flyTo({
-					destination : Cesium.Cartesian3.fromDegrees(
-									l.getBounds().getCenter().lng,
-									l.getBounds().getCenter().lat - 0.09,
-									trailHeadHeight + CAMERA_OFFSET),
-					duration: d,
-					orientation : {
-						heading : Cesium.Math.toRadians(0.0),
-						pitch : Cesium.Math.toRadians(-35.0),
-						roll : 0.0
-					}
-				});
-			}
-
-			resetCameraView(this, 0);
-
-			var trackCZML = [
-				{
-					id: 'document',
-					name: 'CZML Track',
-					version: '1.0',
-					clock: {
-						interval: trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1],
-						currentTime: trackGeoJSON.features[0].properties.coordTimes[0],
-						multiplier: 100,
-						range: 'CLAMPED',
-						step: 'SYSTEM_CLOCK_MULTIPLIER'
-					}
-				},
-				{
-					id: 'track',
-					availability: trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1],
-					path : {
-			      material : {
-			        polylineOutline: {
-								color: {
-									rgba: (Cesium.Color.fromCssColorString(INSIDE_TRACK_COLOR)).toBytes()
-								},
-			          outlineColor: {
-			            rgba: (Cesium.Color.fromCssColorString(TRACK_COLOR)).toBytes()
-			          },
-			          outlineWidth: 5
-			        }
-			      },
-			      width: 7,
-			      leadTime: 10
-			    },
-					position: {
-						cartographicDegrees: []
-					},
-					viewFrom: {
-						'cartesian': [0, -1000, 300]
-					}
-				}
-			];
-
-			function keepSample(index) {
-				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].properties.coordTimes[index]);
-				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][0]);
-				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][1]);
-				trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][2]);
-			}
-
-			for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
-				if (i === 0) {
-					keepSample(i);
-				} else {
-					var cartPrev = Cesium.Cartesian3.fromDegrees(
-						trackGeoJSON.features[0].geometry.coordinates[i-1][0],
-						trackGeoJSON.features[0].geometry.coordinates[i-1][1],
-						trackGeoJSON.features[0].geometry.coordinates[i-1][2]);
-					var cartCurr = Cesium.Cartesian3.fromDegrees(
-						trackGeoJSON.features[0].geometry.coordinates[i][0],
-						trackGeoJSON.features[0].geometry.coordinates[i][1],
-						trackGeoJSON.features[0].geometry.coordinates[i][2]);
-					if (Cesium.Cartesian3.distance(cartCurr, cartPrev) > 10) {
-						keepSample(i);
-					}
-				}
-			}
-
 			// By default, multiplier is 100, but duration cannot be less than 120 sec or greater than 240 sec
 			function calcMult(rd) {
-				if (rd > 24000) {
-					return rd/240;
+				if (rd > 36000) {
+					return rd/360;
 				}
 				if (rd < 12000) {
 					return rd/120;
@@ -793,12 +676,29 @@ var tmMap = (function () {
 				return 100;
 			}
 
-			viewer.dataSources.add(Cesium.CzmlDataSource.load(trackCZML)).then(function(ds) {
+			viewer.dataSources.add(Cesium.CzmlDataSource.load(tmUtils.buildCZMLForTrack(trackGeoJSON, lGPX))).then(function(ds) {
+				viewer.flyTo(ds);
 				viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
 				viewer.clock.shouldAnimate = false;
-				viewer.clock.multiplier = calcMult(Cesium.JulianDate.secondsDifference(viewer.clock.stopTime, viewer.clock.startTime));
+				var rd = Cesium.JulianDate.secondsDifference(viewer.clock.stopTime, viewer.clock.startTime);
+				viewer.clock.multiplier = calcMult(rd);
 
-				// var track = ds.entities.getById('track');
+				var trailHeadHeight = trackGeoJSON.features[0].geometry.coordinates[0][2];
+				// Draw the trailhead
+				var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
+				viewer.entities.add({
+					name: track.trackId,
+					position : Cesium.Cartesian3.fromDegrees(
+									trackGeoJSON.features[0].geometry.coordinates[0][0],
+									trackGeoJSON.features[0].geometry.coordinates[0][1],
+									trackGeoJSON.features[0].geometry.coordinates[0][2]),
+					billboard : {
+						image : 'images/' + thIconName + '.png',
+						verticalOrigin : Cesium.VerticalOrigin.BOTTOM
+					}
+				});
+
+				// Set up play/pause functionality
 				var playToggle = true;
 				$('#vd-play').click(function() {
 					if (playToggle) {
@@ -808,11 +708,13 @@ var tmMap = (function () {
 						}
 						playToggle = false;
 						$('.help3d').hide();
+						$('#progressBar').show();
 						$('#vd-play > span').removeClass('glyphicon-play');
 						$('#vd-play > span').addClass('glyphicon-pause');
 						$('#vd-play').addClass('blink');
 						viewer.trackedEntity = ds.entities.getById('track');
 						viewer.clock.shouldAnimate = true;
+						ds.entities.getById('track').billboard.show = true;
 					} else {
 						viewer.clock.onTick.removeEventListener(clockTracker);
 						viewer.clock.shouldAnimate = false;
@@ -827,7 +729,10 @@ var tmMap = (function () {
 				function resetReplay() {
 					viewer.clock.shouldAnimate = false;
 					viewer.trackedEntity = undefined;
+					ds.entities.getById('track').billboard.show = false;
 					playToggle = true;
+					$('#progressBar').hide();
+					$('#progressBar .progress-bar').css('width', '0%');
 					$('.help3d').show();
 					$('#vd-play > span').removeClass('glyphicon-pause');
 					$('#vd-play > span').addClass('glyphicon-play');
@@ -836,25 +741,12 @@ var tmMap = (function () {
 				}
 
 				function clockTracker(clock) {
+					var tl = Cesium.JulianDate.secondsDifference(viewer.clock.currentTime, viewer.clock.startTime);
+					$('#progressBar .progress-bar').css('width', (100 * tl / rd) + '%');
 					if (clock.currentTime.equals(clock.stopTime)) {
 						resetReplay();
 					}
 				}
-
-				// Draw the trailhead
-				var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
-				console.log(track.trackType);
-				viewer.entities.add({
-					name: track.trackId,
-					position : Cesium.Cartesian3.fromDegrees(
-									trackGeoJSON.features[0].geometry.coordinates[0][0],
-									trackGeoJSON.features[0].geometry.coordinates[0][1],
-									trackGeoJSON.features[0].geometry.coordinates[0][2]),
-					billboard : {
-						image : 'images/' + thIconName + '.png',
-						verticalOrigin : Cesium.VerticalOrigin.BOTTOM
-					}
-				});
 
 				// Smooth zoom in/out
 				function zoomInOut(isZoomIn) {
@@ -888,7 +780,7 @@ var tmMap = (function () {
 				$('#globe-control-refresh').click(function() {
 					viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
 					resetReplay();
-					resetCameraView(lGPX, 1);
+					viewer.flyTo(ds);
 
 					return false;
 				});
@@ -898,7 +790,7 @@ var tmMap = (function () {
 		});
 
 		// Set up track name in info box
-		$('#infoPanel').append('<div style="min-width: 200px;" class="info leaflet-control"><b>' + track.trackName + ' ' + (track.trackFav ? FAVORITE : '') + '</b></div>');
+		$('#infoPanel').append('<div style="min-width: 200px;" class="info leaflet-control"><b>' + track.trackName + ' ' + (track.trackFav ? tmConstants.FAVORITE : '') + '</b></div>');
 		$('#infoPanel div').css('cursor', 'pointer');
 		$('#infoPanel').on('click', function () {
 			window.location.href='?track=' + track.trackId;
@@ -945,7 +837,7 @@ var tmMap = (function () {
 		// Handle keyboard events
 		$('.infoPanelContainer').on('keyup', function(e) {
 			// Collapse info box on ESC or SPACE
-			if ((e.keyCode === KEYCODE_ESC) || (e.keyCode === KEYCODE_SPACE)) {
+			if ((e.keyCode === tmConstants.KEYCODE_ESC) || (e.keyCode === tmConstants.KEYCODE_SPACE)) {
 				showToggle = collapseInfoPanel(showToggle, e);
 			} else {
 				// Let the info panel handle the other keys (like arrows and page-up/page-down), so stop propagation to the map
