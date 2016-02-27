@@ -918,15 +918,19 @@
             <a id="vd-play" href="#" title="Play/Pause"><span class="glyphicon glyphicon-play blink_me" aria-hidden="true"></span></a>
           </div>
         </div>
-        <div id="infoPanel" class="leaflet-top leaflet-right">
-        </div>
+        <div id="infoPanel" class="leaflet-top leaflet-right"></div>
 
         <div class="leaflet-bottom leaflet-right">
+          <div id="progressBar" style="width: 40%; float: right; padding: 1px 8px; display: none;">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: 0%;"></div>
+            </div>
+          </div>
           <div class="help3d leaflet-control" style="display: none;"><div>Control-Drag to rotate and tilt</div></div>
           <div id="creditContainer" class="leaflet-control-attribution leaflet-control"></div>
         </div>
-
       </div>
+
       <div id="trackPopUp" style="display: none;">
         <div id="trackPopUpContent" class="leaflet-popup" style="z-index: 10;">
           <a class="leaflet-popup-close-button" href="#">×</a>
