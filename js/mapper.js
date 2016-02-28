@@ -665,38 +665,13 @@ var tmMap = (function () {
 			// First grab the GeoJSON data from omnivore
 			var trackGeoJSON = this.toGeoJSON();
 
-			// By default, multiplier is 100, but duration cannot be less than 120 sec or greater than 240 sec
-			function calcMult(rd) {
-				if (rd > 36000) {
-					return rd/360;
-				}
-				if (rd < 12000) {
-					return rd/120;
-				}
-				return 100;
-			}
-
-			viewer.dataSources.add(Cesium.CzmlDataSource.load(tmUtils.buildCZMLForTrack(trackGeoJSON, lGPX))).then(function(ds) {
-				viewer.flyTo(ds);
-				viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
+			viewer.dataSources.add(Cesium.CzmlDataSource.load(tmUtils.buildCZMLForTrack(trackGeoJSON, lGPX, track.trackType))).then(function(ds) {
+				viewer.zoomTo(ds);
+				// viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
 				viewer.clock.shouldAnimate = false;
 				var rd = Cesium.JulianDate.secondsDifference(viewer.clock.stopTime, viewer.clock.startTime);
-				viewer.clock.multiplier = calcMult(rd);
 
 				var trailHeadHeight = trackGeoJSON.features[0].geometry.coordinates[0][2];
-				// Draw the trailhead
-				var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
-				viewer.entities.add({
-					name: track.trackId,
-					position : Cesium.Cartesian3.fromDegrees(
-									trackGeoJSON.features[0].geometry.coordinates[0][0],
-									trackGeoJSON.features[0].geometry.coordinates[0][1],
-									trackGeoJSON.features[0].geometry.coordinates[0][2]),
-					billboard : {
-						image : 'images/' + thIconName + '.png',
-						verticalOrigin : Cesium.VerticalOrigin.BOTTOM
-					}
-				});
 
 				// Set up play/pause functionality
 				var playToggle = true;
@@ -767,7 +742,6 @@ var tmMap = (function () {
 
 				// Set up zoom control click events
 				$('.leaflet-control-zoom-in').click(function() {
-					console.log('zoom in');
 					zoomInOut(true);
 				 	return false;
 				});
@@ -780,10 +754,17 @@ var tmMap = (function () {
 				$('#globe-control-refresh').click(function() {
 					viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
 					resetReplay();
-					viewer.flyTo(ds);
+					viewer.flyTo(ds, {duration: tmConstants.FLY_TIME});
 
 					return false;
 				});
+
+				// Autoplay?
+				if (tmConfig.getVDPlayFlag()) {
+					setTimeout(function () {
+						$('#vd-play').click();
+					}, tmConstants.AUTOPLAY_DELAY);
+				}
 
 			});
 

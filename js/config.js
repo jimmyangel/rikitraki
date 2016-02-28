@@ -35,6 +35,10 @@ var tmConfig = (function () {
 		return getUrlVars().terrain === 'yes' ? true : false;
 	};
 
+	var getVDPlayFlag = function () {
+		return getUrlVars().vdplay === 'yes' ? true : false;
+	};
+
 	var getLayers = function (f) {
 		$.getJSON('config/layers.json', f).fail(function(jqxhr, textStatus, error) {throw error;});
 		return f; //f is the function that is invoked when the data is ready
@@ -82,6 +86,7 @@ var tmConfig = (function () {
 		getGlobeFlag: getGlobeFlag,
 		getOverride: getOverride,
 		getTerrainFlag: getTerrainFlag,
+		getVDPlayFlag: getVDPlayFlag,
 		getLayers: getLayers,
 		getUrlVars: getUrlVars,
 		getWebGlFlag: getWebGlFlag
@@ -98,6 +103,9 @@ var tmConstants = {
 	KEYCODE_ESC: 27,
 	KEYCODE_SPACE: 32,
 	CAMERA_OFFSET: 6000,
+	FLY_TIME: 2,
+	MIN_SAMPLE_DISTANCE: 10,
+	AUTOPLAY_DELAY: 3000
 };
 
 var tmMessages = {
