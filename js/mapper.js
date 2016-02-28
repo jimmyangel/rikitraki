@@ -684,6 +684,7 @@ var tmMap = (function () {
 						playToggle = false;
 						$('.help3d').hide();
 						$('#progressBar').show();
+						$('#vd-speed').show();
 						$('#vd-play > span').removeClass('glyphicon-play');
 						$('#vd-play > span').addClass('glyphicon-pause');
 						$('#vd-play').addClass('blink');
@@ -707,6 +708,7 @@ var tmMap = (function () {
 					ds.entities.getById('track').billboard.show = false;
 					playToggle = true;
 					$('#progressBar').hide();
+					$('#vd-speed').hide();
 					$('#progressBar .progress-bar').css('width', '0%');
 					$('.help3d').show();
 					$('#vd-play > span').removeClass('glyphicon-pause');
@@ -756,6 +758,16 @@ var tmMap = (function () {
 					resetReplay();
 					viewer.flyTo(ds, {duration: tmConstants.FLY_TIME});
 
+					return false;
+				});
+
+				$('#vd-faster').click(function () {
+					viewer.clock.multiplier = viewer.clock.multiplier * 2;
+					return false;
+				});
+
+				$('#vd-slower').click(function () {
+					viewer.clock.multiplier = viewer.clock.multiplier / 2;
 					return false;
 				});
 
