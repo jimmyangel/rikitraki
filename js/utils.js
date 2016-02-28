@@ -58,8 +58,7 @@ var tmUtils = (function () {
 		return re.test(email);
 	};
 
-	var buildCZMLForTrack = function (trackGeoJSON, l) {
-		console.log(l.getBounds().getNorth());
+	var buildCZMLForTrack = function (trackGeoJSON, l, trackType) {
 
 		// Remove all features except LineString (for now)
 		var i = trackGeoJSON.features.length;
@@ -70,13 +69,25 @@ var tmUtils = (function () {
 		}
 
 		// If we do not have timestamps, make them up
-		if (!trackGeoJSON.features[0].properties.coordTimes) {
+		if (!(Array.isArray(trackGeoJSON.features[0].properties.coordTimes) &&
+					trackGeoJSON.features[0].properties.coordTimes.length === trackGeoJSON.features[0].geometry.coordinates.length)) {
 			trackGeoJSON.features[0].properties.coordTimes = [];
 			var d = new Date(2015);
 			for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
 				trackGeoJSON.features[0].properties.coordTimes.push(d.toISOString());
 				d.setSeconds(d.getSeconds() + 10);
 			}
+		}
+
+		// By default, clock multiplier is 100, but duration should be less than 120 sec or greater than 240 sec
+		function calcMult(rd) {
+			if (rd > 36000) {
+				return rd/360;
+			}
+			if (rd < 12000) {
+				return rd/120;
+			}
+			return 100;
 		}
 
 		// Base structure for the CZML
@@ -87,8 +98,9 @@ var tmUtils = (function () {
 				version: '1.0',
 				clock: {
 					interval: trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1],
-					currentTime: trackGeoJSON.features[0].properties.coordTimes[0],
-					multiplier: 100,
+					currentTime: trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1],
+					multiplier: calcMult(((new Date(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1])).getTime() -
+																(new Date(trackGeoJSON.features[0].properties.coordTimes[0])).getTime()) / 1000),
 					range: 'CLAMPED',
 					step: 'SYSTEM_CLOCK_MULTIPLIER'
 				}
@@ -124,6 +136,19 @@ var tmUtils = (function () {
 				}
 			},
 			{
+				id: 'trailhead',
+				billboard: {
+						image: 'images/' + (trackType ? trackType.toLowerCase() : 'hiking') + '.png',
+						verticalOrigin: 'BOTTOM'
+				},
+				position: {cartographicDegrees: [
+						trackGeoJSON.features[0].geometry.coordinates[0][0],
+						trackGeoJSON.features[0].geometry.coordinates[0][1],
+						trackGeoJSON.features[0].geometry.coordinates[0][2]
+					]
+				}
+			},
+			{
 				id: 'nw',
 				description: 'invisible nw for camery fly',
 				point: {
@@ -152,6 +177,7 @@ var tmUtils = (function () {
 			trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][2]);
 		}
 
+		// Simplify track by dropping samples closer than tmConstants.MIN_SAMPLE_DISTANCE meters
 		for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
 			if (i === 0) {
 				keepSample(i);
@@ -164,12 +190,11 @@ var tmUtils = (function () {
 					trackGeoJSON.features[0].geometry.coordinates[i][0],
 					trackGeoJSON.features[0].geometry.coordinates[i][1],
 					trackGeoJSON.features[0].geometry.coordinates[i][2]);
-				if (Cesium.Cartesian3.distance(cartCurr, cartPrev) > 10) {
+				if (Cesium.Cartesian3.distance(cartCurr, cartPrev) > tmConstants.MIN_SAMPLE_DISTANCE) {
 					keepSample(i);
 				}
 			}
 		}
-		console.log(trackCZML);
 		return trackCZML;
 
 	};
