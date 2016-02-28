@@ -97,10 +97,9 @@ var tmUtils = (function () {
 				name: 'CZML Track',
 				version: '1.0',
 				clock: {
-					interval: trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1],
-					currentTime: trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1],
-					multiplier: calcMult(((new Date(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1])).getTime() -
-																(new Date(trackGeoJSON.features[0].properties.coordTimes[0])).getTime()) / 1000),
+					interval: '',
+					currentTime: '',
+					multiplier: 100,
 					range: 'CLAMPED',
 					step: 'SYSTEM_CLOCK_MULTIPLIER'
 				}
@@ -178,6 +177,7 @@ var tmUtils = (function () {
 		}
 
 		// Simplify track by dropping samples closer than tmConstants.MIN_SAMPLE_DISTANCE meters
+		var lastIndex = 0;
 		for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
 			if (i === 0) {
 				keepSample(i);
@@ -192,9 +192,16 @@ var tmUtils = (function () {
 					trackGeoJSON.features[0].geometry.coordinates[i][2]);
 				if (Cesium.Cartesian3.distance(cartCurr, cartPrev) > tmConstants.MIN_SAMPLE_DISTANCE) {
 					keepSample(i);
+					lastIndex = i;
 				}
 			}
 		}
+		// Set up simulation clock parameters
+		trackCZML[0].clock.interval = trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[lastIndex];
+		trackCZML[0].clock.currentTime = trackGeoJSON.features[0].properties.coordTimes[lastIndex];
+		trackCZML[0].clock.multiplier = calcMult(((new Date(trackGeoJSON.features[0].properties.coordTimes[lastIndex])).getTime() -
+																							(new Date(trackGeoJSON.features[0].properties.coordTimes[0])).getTime()) / 1000);
+
 		return trackCZML;
 
 	};
