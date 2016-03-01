@@ -1,6 +1,6 @@
 'use strict';
 /* exported tmMap */
-/* globals L, omnivore, tmForms, tmData, tmUtils, tmConstants, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
+/* globals L, omnivore, tmForms, tmData, tmUtils, tmConfig, tmConstants, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL */
 
 var tmMap = (function () {
 	var map; // For leaflet

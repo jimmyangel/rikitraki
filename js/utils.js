@@ -79,8 +79,6 @@ var tmUtils = (function () {
 			}
 		}
 
-		console.log(trackGeoJSON);
-
 		// By default, clock multiplier is 100, but duration should be less than 120 sec or greater than 240 sec
 		function calcMult(rd) {
 			if (rd > 36000) {
@@ -205,7 +203,6 @@ var tmUtils = (function () {
 																							(new Date(trackGeoJSON.features[0].properties.coordTimes[0])).getTime()) / 1000);
 
 		trackCZML[1].availability = trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[lastIndex];
-
 
 		return trackCZML;
 
