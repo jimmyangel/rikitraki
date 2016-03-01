@@ -251,8 +251,8 @@ var tmMap = (function () {
 		}
 		// Add scale
 		L.control.scale({position: 'bottomleft'}).addTo(map);
-		return layerControl; // We will need this later
 
+		return layerControl; // We will need this later
 	};
 
 	var setUpTracksMenu = function (tracks) {
@@ -316,6 +316,29 @@ var tmMap = (function () {
 		}
 		// Set up twitter and facebook links
 		setUpSocialButtons('Check out hiking trails on RikiTraki');
+
+		// Welcome message
+		if (!localStorage.getItem('rikitraki-noWelcome') && !(sessionStorage.getItem('rikitraki-hasSeenWelcome'))) {
+			setTimeout(function() {
+				$('#welcomeMessage').modal('show');
+				sessionStorage.setItem('rikitraki-hasSeenWelcome', true);
+			}, 1000);
+
+			setTimeout(function() {
+				$('#welcomeMessage').modal('hide');
+			}, 20000);
+
+			$('#welcomeMessage').click(function () {
+				$('#welcomeMessage').modal('hide');
+			});
+
+			$('#welcomeMessage').on('hide.bs.modal', function () {
+				if ($('#welcome-optout').is(':checked')) {
+					localStorage.setItem('rikitraki-noWelcome', true);
+				}
+			});
+		}
+
 	};
 
 	var setUpMotdInfoBox = function (tracks, isLeaflet) {

@@ -189,3 +189,17 @@ input[type=text]::-ms-clear {
 .progress-bar {
   background-color: #808080;
 }
+
+#welcomeMessage .modal-dialog {
+  color: dark-grey;
+  padding-top: 15%;
+}
+
+#welcomeMessage .modal-content {
+  background-image: url('../images/message.jpg');
+  background-size:  cover;
+}
+
+#welcomeMessage h3, h4 {
+  font-weight: 300;
+}
