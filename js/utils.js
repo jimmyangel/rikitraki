@@ -67,10 +67,30 @@ var tmUtils = (function () {
 				trackGeoJSON.features.splice(i, 1);
 			}
 		}
+		function isMonoIncr(dateArray) {
+			for (var i=1; i<dateArray.length; i++) {
+				if (new Date(dateArray[i]).getTime() < new Date(dateArray[i-1]).getTime()) {
+					return false;
+				}
+			}
+			return true;
+		}
 
-		// If we do not have timestamps, make them up
-		if (!(Array.isArray(trackGeoJSON.features[0].properties.coordTimes) &&
-					trackGeoJSON.features[0].properties.coordTimes.length === trackGeoJSON.features[0].geometry.coordinates.length)) {
+		function isInvalidTimesArray(dateArray) {
+			if (!Array.isArray(dateArray)) {
+				return true;
+			}
+			if (dateArray.length != trackGeoJSON.features[0].geometry.coordinates.length) {
+				return true;
+			}
+			if (isMonoIncr(dateArray)) {
+				return false;
+			}
+			return true;
+		}
+
+		// If we do not have valid timestamps, make them up
+		if (isInvalidTimesArray(trackGeoJSON.features[0].properties.coordTimes)) {
 			trackGeoJSON.features[0].properties.coordTimes = [];
 			var d = new Date(2015);
 			for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
