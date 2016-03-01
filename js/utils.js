@@ -80,7 +80,7 @@ var tmUtils = (function () {
 			if (!Array.isArray(dateArray)) {
 				return true;
 			}
-			if (dateArray.length != trackGeoJSON.features[0].geometry.coordinates.length) {
+			if (dateArray.length !== trackGeoJSON.features[0].geometry.coordinates.length) {
 				return true;
 			}
 			if (isMonoIncr(dateArray)) {
