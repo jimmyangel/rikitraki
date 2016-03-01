@@ -79,6 +79,8 @@ var tmUtils = (function () {
 			}
 		}
 
+		console.log(trackGeoJSON);
+
 		// By default, clock multiplier is 100, but duration should be less than 120 sec or greater than 240 sec
 		function calcMult(rd) {
 			if (rd > 36000) {
@@ -183,9 +185,9 @@ var tmUtils = (function () {
 				keepSample(i);
 			} else {
 				var cartPrev = Cesium.Cartesian3.fromDegrees(
-					trackGeoJSON.features[0].geometry.coordinates[i-1][0],
-					trackGeoJSON.features[0].geometry.coordinates[i-1][1],
-					trackGeoJSON.features[0].geometry.coordinates[i-1][2]);
+					trackGeoJSON.features[0].geometry.coordinates[lastIndex][0],
+					trackGeoJSON.features[0].geometry.coordinates[lastIndex][1],
+					trackGeoJSON.features[0].geometry.coordinates[lastIndex][2]);
 				var cartCurr = Cesium.Cartesian3.fromDegrees(
 					trackGeoJSON.features[0].geometry.coordinates[i][0],
 					trackGeoJSON.features[0].geometry.coordinates[i][1],
@@ -201,6 +203,9 @@ var tmUtils = (function () {
 		trackCZML[0].clock.currentTime = trackGeoJSON.features[0].properties.coordTimes[lastIndex];
 		trackCZML[0].clock.multiplier = calcMult(((new Date(trackGeoJSON.features[0].properties.coordTimes[lastIndex])).getTime() -
 																							(new Date(trackGeoJSON.features[0].properties.coordTimes[0])).getTime()) / 1000);
+
+		trackCZML[1].availability = trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[lastIndex];
+
 
 		return trackCZML;
 
