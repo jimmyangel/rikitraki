@@ -191,7 +191,7 @@ input[type=text]::-ms-clear {
 }
 
 #welcomeMessage .modal-dialog {
-  color: dark-grey;
+  color: white;
   padding-top: 15%;
 }
 
@@ -200,6 +200,6 @@ input[type=text]::-ms-clear {
   background-size:  cover;
 }
 
-#welcomeMessage h3, h4 {
-  font-weight: 300;
+#welcomeMessage h2, h3, h4 {
+  font-weight: 200;
 }
