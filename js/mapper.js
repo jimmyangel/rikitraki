@@ -923,7 +923,7 @@ var tmMap = (function () {
 		setUpCommon: setUpCommon,
 		setUpGlobe: setUpGlobe,
 		setUpMap: setUpMap,
-		setUpAllTracksView,
+		setUpAllTracksView: setUpAllTracksView,
 		setUpSingleTrackView: setUpSingleTrackView,
 		setUpSingleTrackTerrainView: setUpSingleTrackTerrainView
 	};
