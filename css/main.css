@@ -29,6 +29,22 @@ body {
   font-family: sans-serif;
 }
 
+#logo img {
+  height: 42px;
+}
+
+#logo {
+  background: url('../images/logo.png');
+  background-position: bottom left;
+  background-size: 65px 42px;
+}
+
+#logo:hover {
+  background: url('../images/logoact.png');
+  background-position: bottom left;
+  background-size: 65px 42px;
+}
+
 .navbar .navbar-brand {
   font-weight: bold;
   font-size: 28px;
