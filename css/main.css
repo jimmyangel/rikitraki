@@ -33,6 +33,11 @@ body {
   height: 42px;
 }
 
+/* The purpose of the below is to preload the logo active image to avoid jerky delay */
+#navbar-header {
+  background: url('../images/logoact.png') no-repeat -9999px -9999px;
+}
+
 #logo {
   background: url('../images/logo.png');
   background-position: bottom left;
