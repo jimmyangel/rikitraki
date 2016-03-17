@@ -26,34 +26,28 @@ function setUpMap() {
 		var regions = tmMap.setUpCommon(data.tracks);
 
 		// Now figure out what view to set up
-		if (tmConfig.getTerrainFlag() &&isWebGlSupported && (trackId in data.tracks)) {
+		if ((tmConfig.getTerrainFlag() || tmConfig.getGlobeFlag()) && isWebGlSupported) {
 			$.getScript('components/Cesium/Cesium.js', function () {
-				tmMap.setUpSingleTrackTerrainView(data.tracks[trackId]);		
+				tmMap.setUp3DView(data.tracks, (trackId in data.tracks) ? data.tracks[trackId] : undefined);
 			});
 		} else {
-			if (tmConfig.getGlobeFlag() && isWebGlSupported) {
-				$.getScript('components/Cesium/Cesium.js', function () {
-					tmMap.setUpGlobe(data.tracks, regions);
-				});
-			} else {
-				// Get JSON layer config file and wait before populating map
-				tmConfig.getLayers(function(l) {
-					// Set up map and get layer control which we will need later on
-					var layerControl = tmMap.setUpMap(l);
-					// If we do not have a (valid) track id in the query parameter, then go for all tracks
-					if (!(trackId in data.tracks)) {
-						// Since trackId not found then add all tracks markers to map and display all
-						// But first lets see if we need to zoom into a region
-						var regionParm = tmConfig.getRegion();
-						tmMap.setUpAllTracksView(data.tracks, regions[regionParm], layerControl);
-					// Otherwise, go for a single track and its gory details
-					} else {
-						tmMap.setUpSingleTrackView(data.tracks[trackId], data.tracks, layerControl);
-					}
-				});
-			}
+			// Get JSON layer config file and wait before populating map
+			tmConfig.getLayers(function(l) {
+				// Set up map and get layer control which we will need later on
+				var layerControl = tmMap.setUpMap(l);
+				// If we do not have a (valid) track id in the query parameter, then go for all tracks
+				if (!(trackId in data.tracks)) {
+					// Since trackId not found then add all tracks markers to map and display all
+					// But first lets see if we need to zoom into a region
+					var regionParm = tmConfig.getRegion();
+					tmMap.setUpAllTracksView(data.tracks, regions[regionParm], layerControl);
+				// Otherwise, go for a single track and its gory details
+				} else {
+					tmMap.setUpSingleTrackView(data.tracks[trackId], data.tracks, layerControl);
+				}
+			});
 		}
-	});	
+	});
 }
 
 window.onload = setUpMap; // Ok, set up the map
