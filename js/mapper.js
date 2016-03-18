@@ -524,34 +524,52 @@ var tmMap = (function () {
 	}
 
 	function layout3DTrackMarkers (viewer, tracks) {
+		var d = $.Deferred();
+
 		var drillPickLimit = isMobile ? 1 : undefined;
 		// Save camera position so that we can go back to it
 		// var initialCameraPosition = viewer.camera.position.clone();
-
-		// Populate track markers
+		var tIds = [];
+		var pos = [];
 		for (var tId in tracks) {
-			viewer.entities.add({
-				id: tId,
-				name: tId,
-				position : Cesium.Cartesian3.fromDegrees(tracks[tId].trackLatLng[1], tracks[tId].trackLatLng[0]),
-				point : {
-					pixelSize : 10,
-					color : Cesium.Color.YELLOW
-				}
-			});
+			tIds.push(tId);
+			pos.push(Cesium.Cartographic.fromDegrees(tracks[tId].trackLatLng[1], tracks[tId].trackLatLng[0]));
 		}
 
-		// On hover, change cursor style
-		var savedCursor = $('#globe').css('cursor');
-		var pointerCursorToggle = false;
-		$('#globe').on('mousemove', function (e) {
-			var p = viewer.scene.pick(new Cesium.Cartesian2(e.offsetX, e.offsetY));
-			if (Cesium.defined(p)) {
-				var entity = p.id;
-				if (entity instanceof Cesium.Entity) {
-					if (!pointerCursorToggle) {
-						pointerCursorToggle = true;
-						$('#globe').css('cursor', 'pointer');
+		Cesium.sampleTerrain(viewer.terrainProvider, 14, pos).then(function (pos) {
+			console.log('done sampling');
+		// Populate track markers
+		// for (var tId in tracks) {
+			for (var i=0; i<tIds.length; i++) {
+				viewer.entities.add({
+					id: tIds[i],
+					name: tIds[i],
+					// position : Cesium.Cartesian3.fromDegrees(tracks[tId].trackLatLng[1], tracks[tId].trackLatLng[0]),
+					position : Cesium.Cartesian3.fromRadians(pos[i].longitude, pos[i].latitude, pos[i].height),
+					point : {
+						pixelSize : 10,
+						color : Cesium.Color.YELLOW
+					}
+				});
+			}
+
+			// On hover, change cursor style
+			var savedCursor = $('#globe').css('cursor');
+			var pointerCursorToggle = false;
+			$('#globe').on('mousemove', function (e) {
+				var p = viewer.scene.pick(new Cesium.Cartesian2(e.offsetX, e.offsetY));
+				if (Cesium.defined(p)) {
+					var entity = p.id;
+					if (entity instanceof Cesium.Entity) {
+						if (!pointerCursorToggle) {
+							pointerCursorToggle = true;
+							$('#globe').css('cursor', 'pointer');
+						}
+					} else {
+						if (pointerCursorToggle) {
+							pointerCursorToggle = false;
+							$('#globe').css('cursor', savedCursor);
+						}
 					}
 				} else {
 					if (pointerCursorToggle) {
@@ -559,117 +577,114 @@ var tmMap = (function () {
 						$('#globe').css('cursor', savedCursor);
 					}
 				}
-			} else {
-				if (pointerCursorToggle) {
-					pointerCursorToggle = false;
-					$('#globe').css('cursor', savedCursor);
+			});
+
+			// On click open pop up
+			$('#globe').on('click touchstart', function (e) {
+
+				function positionPopUp (c) {
+					var x = c.x - ($('#trackPopUpContent').width()) / 2;
+					var y = c.y - ($('#trackPopUpContent').height());
+					/* $('#trackPopUpContent').css('left', x + 'px');
+					$('#trackPopUpContent').css('top', y + 'px'); */
+					$('#trackPopUpContent').css('transform', 'translate3d(' + x + 'px, ' + y + 'px, 0)');
+
 				}
-			}
-		});
 
-		// On click open pop up
-		$('#globe').on('click touchstart', function (e) {
-
-			function positionPopUp (c) {
-				var x = c.x - ($('#trackPopUpContent').width()) / 2;
-				var y = c.y - ($('#trackPopUpContent').height());
-				/* $('#trackPopUpContent').css('left', x + 'px');
-				$('#trackPopUpContent').css('top', y + 'px'); */
-				$('#trackPopUpContent').css('transform', 'translate3d(' + x + 'px, ' + y + 'px, 0)');
-
-			}
-
-			var c;
-			if (e.type === 'touchstart'){
-				c = new Cesium.Cartesian2(e.originalEvent.touches[0].clientX, e.originalEvent.touches[0].clientY - 50);
-			} else {
-				c = new Cesium.Cartesian2(e.offsetX, e.offsetY);
-			}
-			var popUpCreated = false;
-			var pArray = viewer.scene.drillPick(c, drillPickLimit);
-			var pArrayLength = pArray.length;
-			for (var i=0; i<pArrayLength; i++) {
-				if (Cesium.defined(pArray[i])) {
-					var entity = pArray[i].id;
-					if (entity instanceof Cesium.Entity) {
-						var br = '';
-						if (Cesium.defined(entity.point)) {
-							if (!popUpCreated) {
-								$('#trackPopUpLink').empty();
-								popUpCreated = true;
-							} else {
-								br = '<br>';
+				var c;
+				if (e.type === 'touchstart'){
+					c = new Cesium.Cartesian2(e.originalEvent.touches[0].clientX, e.originalEvent.touches[0].clientY - 50);
+				} else {
+					c = new Cesium.Cartesian2(e.offsetX, e.offsetY);
+				}
+				var popUpCreated = false;
+				var pArray = viewer.scene.drillPick(c, drillPickLimit);
+				var pArrayLength = pArray.length;
+				for (var i=0; i<pArrayLength; i++) {
+					if (Cesium.defined(pArray[i])) {
+						var entity = pArray[i].id;
+						if (entity instanceof Cesium.Entity) {
+							var br = '';
+							if (Cesium.defined(entity.point)) {
+								if (!popUpCreated) {
+									$('#trackPopUpLink').empty();
+									popUpCreated = true;
+								} else {
+									br = '<br>';
+								}
+								$('#trackPopUpLink').append('<a class="trackLink" popUpTrackId="' + entity.name + '" href="#">' + br + tracks[entity.name].trackName + '</a>');
 							}
-							$('#trackPopUpLink').append('<a class="trackLink" popUpTrackId="' + entity.name + '" href="#">' + br + tracks[entity.name].trackName + '</a>');
 						}
 					}
 				}
-			}
 
-			$('.trackLink').click(function () {
-				viewer.dataSources.remove(trackDataSource);
-				var t = $(this).attr('popUpTrackId');
-				if (savedTrackMarkerEntity) {
-					console.log(savedTrackMarkerEntity);
-					savedTrackMarkerEntity.show = true;
+				$('.trackLink').click(function () {
+					viewer.dataSources.remove(trackDataSource);
+					var t = $(this).attr('popUpTrackId');
+					if (savedTrackMarkerEntity) {
+						console.log(savedTrackMarkerEntity);
+						savedTrackMarkerEntity.show = true;
+					}
+					grabAndRender3DTrack (viewer, tracks[t]);
+					$('.leaflet-popup-close-button').click();
+					return false;
+				});
+
+				if (popUpCreated) {
+					$('#trackPopUp').show();
+					positionPopUp(c); // Initial position at the place item picked
+					var removeHandler = viewer.scene.postRender.addEventListener(function () {
+						var changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, entity.position.getValue(Cesium.JulianDate.now()));
+						// If things moved, move the popUp too
+						if ((c.x !== changedC.x) || (c.y !== changedC.y)) {
+							positionPopUp(changedC);
+							c = changedC;
+						}
+					});
+					// PopUp close button event handler
+					$('.leaflet-popup-close-button').click(function() {
+						$('#trackPopUp').hide();
+						$('#trackPopUpLink').empty();
+						removeHandler.call();
+						return false;
+					});
 				}
-				grabAndRender3DTrack (viewer, tracks[t]);
-				$('.leaflet-popup-close-button').click();
+			});
+
+			/* setUpMotdInfoBox(tracks, false);
+
+			// Set up zoom control click events
+			var dest = new Cesium.Cartesian3();
+			// flyTo has a nice animation, that's why I am using it instead of zoomIn/zoomOut
+			// TO DO: adjust multiplier dapending on camera height
+			$('.leaflet-control-zoom-in').click(function() {
+			 	viewer.camera.flyTo({destination: Cesium.Cartesian3.divideByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
+			 	return false;
+			});
+			$('.leaflet-control-zoom-out').click(function() {
+			 	viewer.camera.flyTo({destination: Cesium.Cartesian3.multiplyByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
+				return false;
+			});
+			$('#globe-control-north').click(function() {
+			 	viewer.camera.setView({heading: 0.0});
 				return false;
 			});
 
-			if (popUpCreated) {
-				$('#trackPopUp').show();
-				positionPopUp(c); // Initial position at the place item picked
-				var removeHandler = viewer.scene.postRender.addEventListener(function () {
-					var changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, entity.position.getValue(Cesium.JulianDate.now()));
-					// If things moved, move the popUp too
-					if ((c.x !== changedC.x) || (c.y !== changedC.y)) {
-						positionPopUp(changedC);
-						c = changedC;
-					}
+			// Refresh closes popup and resets camera view to initial
+			$('#globe-control-refresh').click(function() {
+				$('#trackPopUp').hide();
+				viewer.camera.flyTo({
+					destination : initialCameraPosition,
+					duration: 2,
 				});
-				// PopUp close button event handler
-				$('.leaflet-popup-close-button').click(function() {
-					$('#trackPopUp').hide();
-					$('#trackPopUpLink').empty();
-					removeHandler.call();
-					return false;
-				});
-			}
-		});
-
-		/* setUpMotdInfoBox(tracks, false);
-
-		// Set up zoom control click events
-		var dest = new Cesium.Cartesian3();
-		// flyTo has a nice animation, that's why I am using it instead of zoomIn/zoomOut
-		// TO DO: adjust multiplier dapending on camera height
-		$('.leaflet-control-zoom-in').click(function() {
-		 	viewer.camera.flyTo({destination: Cesium.Cartesian3.divideByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
-		 	return false;
-		});
-		$('.leaflet-control-zoom-out').click(function() {
-		 	viewer.camera.flyTo({destination: Cesium.Cartesian3.multiplyByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
-			return false;
-		});
-		$('#globe-control-north').click(function() {
-		 	viewer.camera.setView({heading: 0.0});
-			return false;
-		});
-
-		// Refresh closes popup and resets camera view to initial
-		$('#globe-control-refresh').click(function() {
-			$('#trackPopUp').hide();
-			viewer.camera.flyTo({
-				destination : initialCameraPosition,
-				duration: 2,
+				return false;
 			});
-			return false;
-		});
 
-		// Set up twitter and facebook links
-		setUpSocialButtons('Check out hiking trails on the RikiTraki globe'); */
+			// Set up twitter and facebook links
+			setUpSocialButtons('Check out hiking trails on the RikiTraki globe'); */
+			d.resolve();
+		});
+		return d.promise();
 	}
 
 	function grabAndRender3DTrack (viewer, track) {
@@ -853,46 +868,49 @@ var tmMap = (function () {
 
 		var viewer = initCesiumViewer();
 
-		layout3DTrackMarkers (viewer, tracks);
+		$.when(layout3DTrackMarkers (viewer, tracks)).done(function () {
 
-		//$('#2Dbutton').show();
+			//$('#2Dbutton').show();
 
-		/* $('#globe-control-north').click(function() {
-			viewer.camera.setView({heading: 0.0});
-			return false;
-		}); */
-
-		if (track) {
-			console.log(track);
-			$('.help3d').show();
-			// $('#2Dbutton').show();
-
-			grabAndRender3DTrack(viewer, track);
-
-			// Temp below
-
-			// $('#globe-control-north').hide();
-
-			// Set up twitter and facebook links and such
-			setUpSocialButtons(track.trackName);
-		} else {
-			$('#vd-play').hide();
-			setUp3DZoomControls(viewer, 200);
-			$('#terrain-control-2d').on('click', function () {
-				window.location.href = './';
+			/* $('#globe-control-north').click(function() {
+				viewer.camera.setView({heading: 0.0});
 				return false;
-			});
-			var initialCameraPosition = viewer.camera.position.clone();
-			$('#globe-control-refresh').click(function() {
-				$('#trackPopUp').hide();
-				viewer.camera.flyTo({
-					destination : initialCameraPosition,
-					duration: 2,
+			}); */
+
+			if (track) {
+				console.log(track);
+				$('.help3d').show();
+				// $('#2Dbutton').show();
+
+				grabAndRender3DTrack(viewer, track);
+
+				// Temp below
+
+				// $('#globe-control-north').hide();
+
+				// Set up twitter and facebook links and such
+				setUpSocialButtons(track.trackName);
+			} else {
+				$('#vd-play').hide();
+				setUp3DZoomControls(viewer, 200);
+				$('#terrain-control-2d').on('click', function () {
+					window.location.href = './';
+					return false;
 				});
-				return false;
-			});
-			setUpMotdInfoBox(tracks, false, viewer);
-		}
+				var initialCameraPosition = viewer.camera.position.clone();
+				$('#globe-control-refresh').click(function() {
+					$('#trackPopUp').hide();
+					viewer.camera.flyTo({
+						destination : initialCameraPosition,
+						duration: 2,
+					});
+					return false;
+				});
+				setUpMotdInfoBox(tracks, false, viewer);
+			}
+
+		});
+
 	};
 
 	var setUpInfoPanelEventHandling = function () {
