@@ -37,8 +37,8 @@ var tmMap = (function () {
 	var setUpMap = function (l) {
 		$('#globe').hide();
 
-		if (isWebGlSupported) {
-			$('#mapGlobeButton').append('<li><a role="button" title="Globe" href="./?globe=yes"><span class="glyphicon icon-sphere" aria-hidden="true"></span></a></li>');
+		if (!isWebGlSupported) {
+			$('#mapGlobeButton').hide();
 		}
 
 		map = new L.map('map');
@@ -206,7 +206,7 @@ var tmMap = (function () {
 						if (isLeaflet) {
 							window.location.href='?track=' + t;
 						} else {
-							grabAndRender3DTrack (viewer, tracks[t]);
+							goto3DTrack(viewer, tracks[t]);
 						}
 					}
 				}
@@ -527,8 +527,7 @@ var tmMap = (function () {
 		var d = $.Deferred();
 
 		var drillPickLimit = isMobile ? 1 : undefined;
-		// Save camera position so that we can go back to it
-		// var initialCameraPosition = viewer.camera.position.clone();
+
 		var tIds = [];
 		var pos = [];
 		for (var tId in tracks) {
@@ -619,14 +618,7 @@ var tmMap = (function () {
 				}
 
 				$('.trackLink').click(function () {
-					viewer.dataSources.remove(trackDataSource);
-					var t = $(this).attr('popUpTrackId');
-					if (savedTrackMarkerEntity) {
-						console.log(savedTrackMarkerEntity);
-						savedTrackMarkerEntity.show = true;
-					}
-					grabAndRender3DTrack (viewer, tracks[t]);
-					$('.leaflet-popup-close-button').click();
+					goto3DTrack(viewer, tracks[$(this).attr('popUpTrackId')]);
 					return false;
 				});
 
@@ -651,43 +643,26 @@ var tmMap = (function () {
 				}
 			});
 
-			/* setUpMotdInfoBox(tracks, false);
-
-			// Set up zoom control click events
-			var dest = new Cesium.Cartesian3();
-			// flyTo has a nice animation, that's why I am using it instead of zoomIn/zoomOut
-			// TO DO: adjust multiplier dapending on camera height
-			$('.leaflet-control-zoom-in').click(function() {
-			 	viewer.camera.flyTo({destination: Cesium.Cartesian3.divideByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
-			 	return false;
-			});
-			$('.leaflet-control-zoom-out').click(function() {
-			 	viewer.camera.flyTo({destination: Cesium.Cartesian3.multiplyByScalar(viewer.camera.position, 1.2, dest), duration: 0.5});
-				return false;
-			});
-			$('#globe-control-north').click(function() {
-			 	viewer.camera.setView({heading: 0.0});
-				return false;
-			});
-
-			// Refresh closes popup and resets camera view to initial
-			$('#globe-control-refresh').click(function() {
-				$('#trackPopUp').hide();
-				viewer.camera.flyTo({
-					destination : initialCameraPosition,
-					duration: 2,
-				});
-				return false;
-			});
-
-			// Set up twitter and facebook links
-			setUpSocialButtons('Check out hiking trails on the RikiTraki globe'); */
 			d.resolve();
 		});
 		return d.promise();
 	}
 
-	function grabAndRender3DTrack (viewer, track) {
+	function goto3DTrack(viewer, t, keepState) {
+		if (trackDataSource) {
+			viewer.dataSources.remove(trackDataSource, true);
+		}
+		if (savedTrackMarkerEntity) {
+			savedTrackMarkerEntity.show = true;
+		}
+		grabAndRender3DTrack (viewer, t);
+		if (!keepState) {
+			history.pushState({trackId: t.trackId}, '', '?track=' + t.trackId + '&terrain=yes');
+		}
+		$('.leaflet-popup-close-button').click();
+	}
+
+	function grabAndRender3DTrack (viewer, track, autoPlay) {
 		savedTrackMarkerEntity = viewer.entities.getById(track.trackId);
 		savedTrackMarkerEntity.show = false;
 		var lGPX = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
@@ -700,7 +675,7 @@ var tmMap = (function () {
 				// viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
 				viewer.clock.shouldAnimate = false;
 
-				setUp3DTrackControls (viewer, trackGeoJSON);
+				setUp3DTrackControls (viewer, trackGeoJSON, autoPlay);
 			});
 
 			// Set up track name in info box (TODO: show everything and make collapsible)
@@ -720,7 +695,7 @@ var tmMap = (function () {
 		});
 	}
 
-	function setUp3DTrackControls (viewer, trackGeoJSON) {
+	function setUp3DTrackControls (viewer, trackGeoJSON, autoPlay) {
 
 		function playingButtonState() {
 			$('.help3d').hide();
@@ -823,7 +798,7 @@ var tmMap = (function () {
 		});
 
 		// Autoplay?
-		if (tmConfig.getVDPlayFlag()) {
+		if (autoPlay) {
 			setTimeout(function () {
 				$('#vd-play').click();
 			}, tmConstants.AUTOPLAY_DELAY);
@@ -864,31 +839,19 @@ var tmMap = (function () {
 	var setUp3DView = function(tracks, track) {
 		$('#map').hide();
 
-		$('#mapGlobeButton').append('<li><a role="button" title="Map" href="."><span class="glyphicon icon-map2" aria-hidden="true"></span></a></li>');
+		// $('#mapGlobeButton').append('<li><a role="button" title="Globe" href="./?globe=yes"><span class="glyphicon icon-sphere" aria-hidden="true"></span></a></li>');
 
 		var viewer = initCesiumViewer();
+		var initialCameraPosition = viewer.camera.position.clone();
 
 		$.when(layout3DTrackMarkers (viewer, tracks)).done(function () {
-
-			//$('#2Dbutton').show();
-
-			/* $('#globe-control-north').click(function() {
-				viewer.camera.setView({heading: 0.0});
-				return false;
-			}); */
-
 			if (track) {
-				console.log(track);
 				$('.help3d').show();
-				// $('#2Dbutton').show();
 
-				grabAndRender3DTrack(viewer, track);
+				grabAndRender3DTrack(viewer, track, tmConfig.getVDPlayFlag());
+				history.replaceState({trackId: track.trackId}, '', '?track=' + track.trackId + '&terrain=yes');
 
-				// Temp below
-
-				// $('#globe-control-north').hide();
-
-				// Set up twitter and facebook links and such
+				// Set up twitter and facebook links and such (TODO: move to bottom)
 				setUpSocialButtons(track.trackName);
 			} else {
 				$('#vd-play').hide();
@@ -897,21 +860,51 @@ var tmMap = (function () {
 					window.location.href = './';
 					return false;
 				});
-				var initialCameraPosition = viewer.camera.position.clone();
 				$('#globe-control-refresh').click(function() {
-					$('#trackPopUp').hide();
-					viewer.camera.flyTo({
-						destination : initialCameraPosition,
-						duration: 2,
-					});
+					globeReset(viewer, initialCameraPosition, tracks);
 					return false;
 				});
 				setUpMotdInfoBox(tracks, false, viewer);
 			}
 
+			window.onpopstate = function(event) {
+				if (event.state) {
+					if (event.state.trackId) {
+						goto3DTrack(viewer, tracks[event.state.trackId], true);
+						return;
+					} else {
+						console.log('handle globe reset here'); // TODO: globe reset
+						return;
+					}
+				}
+				// Handle all other back/forward situations with a reload
+				window.location = document.location;
+			};
+
+			$('#mapGlobeButton').click(function() {
+				globeReset(viewer, initialCameraPosition, tracks);
+				return false;
+			});
+
 		});
 
 	};
+
+	function globeReset(viewer, initialCameraPosition, tracks) {
+		$('#trackPopUp').hide();
+		$('#infoPanel').empty();
+		if (trackDataSource) {
+			viewer.dataSources.remove(trackDataSource, true);
+		}
+		if (savedTrackMarkerEntity) {
+			savedTrackMarkerEntity.show = true;
+		}
+		viewer.camera.flyTo({
+			destination : initialCameraPosition,
+			duration: 2,
+		});
+		setUpMotdInfoBox(tracks, false, viewer);
+	}
 
 	var setUpInfoPanelEventHandling = function () {
 		// Enable proper info panel scrolling by adjusting max-height dynamically intially and on window resize
