@@ -545,9 +545,13 @@ var tmMap = (function () {
 					name: tIds[i],
 					// position : Cesium.Cartesian3.fromDegrees(tracks[tId].trackLatLng[1], tracks[tId].trackLatLng[0]),
 					position : Cesium.Cartesian3.fromRadians(pos[i].longitude, pos[i].latitude, pos[i].height),
-					point : {
+					/* point : {
 						pixelSize : 10,
 						color : Cesium.Color.YELLOW
+					}, */
+					billboard: {
+						image: 'images/l-marker.png',
+						scale: 0.8
 					}
 				});
 			}
@@ -604,7 +608,7 @@ var tmMap = (function () {
 						var entity = pArray[i].id;
 						if (entity instanceof Cesium.Entity) {
 							var br = '';
-							if (Cesium.defined(entity.point)) {
+							if (Cesium.defined(entity.billboard)) {
 								if (!popUpCreated) {
 									$('#trackPopUpLink').empty();
 									popUpCreated = true;
