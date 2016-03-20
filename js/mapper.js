@@ -514,10 +514,21 @@ var tmMap = (function () {
 			console.log($('#basemap-layer:checked').val());
 		});
 
-		$('#layer-control').hover(function() {
-			$('#layer-control').addClass('leaflet-control-layers-expanded');
-		}, function() {
+		$('#layer-control').on('mouseenter touchstart', function() {
+			if (!$('#layer-control').hasClass('leaflet-control-layers-expanded')) {
+				$('#layer-control').addClass('leaflet-control-layers-expanded');
+				return false
+			}
+		});
+
+		$('#layer-control').on('mouseleave', function() {
 			$('#layer-control').removeClass('leaflet-control-layers-expanded');
+		});
+
+		$('#globe').on('touchstart', function(e) {
+			if ((!$(event.target).closest('#layer-control').length) && ($('#layer-control').hasClass('leaflet-control-layers-expanded'))) {
+				$('#layer-control').removeClass('leaflet-control-layers-expanded');
+			}
 		});
 
 		return tmBaseMapLayers[dflt];
