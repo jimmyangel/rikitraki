@@ -930,11 +930,18 @@
             <a id="globe-control-refresh" href="#" title="Reset view"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a>
           </div>
           <div class="leaflet-control leaflet-bar">
-            <a id="vd-play" href="#" title="Play/Pause"><span class="glyphicon glyphicon-play blink_me" aria-hidden="true"></span></a>
+            <a id="vd-play" style="display: none;" href="#" title="Play/Pause"><span class="glyphicon glyphicon-play blink_me" aria-hidden="true"></span></a>
           </div>
           <div id="vd-speed" class="leaflet-control leaflet-bar" style="display: none;">
             <a id="vd-faster" href="#" title="Faster"><i class="icon-fast-fw"></i></a>
             <a id="vd-slower" href="#" title="Slower"><i class="icon-fast-fw-outline"></i></a>
+          </div>
+          <div id="layer-control" class="leaflet-control leaflet-control-layers" aria-haspopup="true">
+            <a class="leaflet-control-layers-toggle" href="#" title="Layers"></a>
+            <form class="leaflet-control-layers-list">
+              <div id="basemap-layer-control" class="leaflet-control-layers-base">
+              </div>
+            </form>
           </div>
         </div>
         <div id="infoPanel" class="leaflet-top leaflet-right"></div>
