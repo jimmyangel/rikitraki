@@ -32,20 +32,18 @@ function setUpMap() {
 			});
 		} else {
 			// Get JSON layer config file and wait before populating map
-			tmConfig.getLayers(function(l) {
-				// Set up map and get layer control which we will need later on
-				var layerControl = tmMap.setUpMap(l);
-				// If we do not have a (valid) track id in the query parameter, then go for all tracks
-				if (!(trackId in data.tracks)) {
-					// Since trackId not found then add all tracks markers to map and display all
-					// But first lets see if we need to zoom into a region
-					var regionParm = tmConfig.getRegion();
-					tmMap.setUpAllTracksView(data.tracks, regions[regionParm], layerControl);
-				// Otherwise, go for a single track and its gory details
-				} else {
-					tmMap.setUpSingleTrackView(data.tracks[trackId], data.tracks, layerControl);
-				}
-			});
+			// Set up map and get layer control which we will need later on
+			var layerControl = tmMap.setUpMap();
+			// If we do not have a (valid) track id in the query parameter, then go for all tracks
+			if (!(trackId in data.tracks)) {
+				// Since trackId not found then add all tracks markers to map and display all
+				// But first lets see if we need to zoom into a region
+				var regionParm = tmConfig.getRegion();
+				tmMap.setUpAllTracksView(data.tracks, regions[regionParm], layerControl);
+			// Otherwise, go for a single track and its gory details
+			} else {
+				tmMap.setUpSingleTrackView(data.tracks[trackId], data.tracks, layerControl);
+			}
 		}
 	});
 }
