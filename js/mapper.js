@@ -513,7 +513,6 @@ var tmMap = (function () {
 				maximumLevel: tmBaseMapLayers[selectedLayer].maxZoom,
 				credit: tmBaseMapLayers[selectedLayer].attribution
 			}));
-			console.log($('#basemap-layer:checked').val());
 		});
 
 		$('#layer-control').on('mouseenter touchstart', function() {
@@ -587,7 +586,6 @@ var tmMap = (function () {
 		}
 
 		Cesium.sampleTerrain(viewer.terrainProvider, 14, pos).then(function (pos) {
-			console.log('done sampling');
 		// Populate track markers
 		// for (var tId in tracks) {
 			for (var i=0; i<tIds.length; i++) {
@@ -674,7 +672,6 @@ var tmMap = (function () {
 				}
 
 				$('.trackLink').click(function () {
-					console.log('clicked marker ', fsm3D.current, tracks[$(this).attr('popUpTrackId')]);
 					fsm3D.show3DTrack(tracks[$(this).attr('popUpTrackId')]);
 					// goto3DTrack(tracks[$(this).attr('popUpTrackId')]);
 					return false;
@@ -708,7 +705,6 @@ var tmMap = (function () {
 
 	// Enter Track state
 	function goto3DTrack(event, from, to, t, leaveState) {
-		console.log(event, from, to, t);
 		if (trackDataSource) {
 			viewer.dataSources.remove(trackDataSource, true);
 		}
@@ -719,11 +715,9 @@ var tmMap = (function () {
 		grabAndRender3DTrack (t, tmConfig.getVDPlayFlag(), !(from === 'Init'));
 		$('.help3d').show();
 		if (from === 'Init') {
-			console.log('replace state');
 			history.replaceState({trackId: t.trackId}, '', '?track=' + t.trackId + '&terrain=yes');
 		} else {
 			if (!leaveState) {
-				console.log('push state');
 				history.pushState({trackId: t.trackId}, '', '?track=' + t.trackId + '&terrain=yes');
 			}
 		}
@@ -830,14 +824,12 @@ var tmMap = (function () {
 		var tl = Cesium.JulianDate.secondsDifference(viewer.clock.currentTime, viewer.clock.startTime);
 		$('#progressBar .progress-bar').css('width', (100 * tl / rd) + '%');
 		if (clock.currentTime.equals(clock.stopTime)) {
-			console.log('clock tracker');
 			fsm3D.finishPlay();
 			// resetReplay();
 		}
 	}
 
 	function resetPlay() {
-		console.log('reset play');
 		viewer.clock.shouldAnimate = false;
 		viewer.trackedEntity = undefined;
 		trackDataSource.entities.getById('track').billboard.show = false;
@@ -870,7 +862,6 @@ var tmMap = (function () {
 	}
 
 	function startPlaying(event, from, to, trackGeoJSON) {
-		console.log('start playing', event);
 		if (viewer.clock.currentTime.equals(viewer.clock.stopTime) || (event === 'play')) {
 			viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[0]);
 		}
@@ -880,7 +871,6 @@ var tmMap = (function () {
 		viewer.trackedEntity = trackDataSource.entities.getById('track');
 		viewer.clock.shouldAnimate = true;
 		trackDataSource.entities.getById('track').billboard.show = true;
-		console.log('play');
 	}
 
 	function enterPauseMode(event, from, to) {
@@ -973,7 +963,7 @@ var tmMap = (function () {
 				{name: 'show3DTrack', from: ['Init', 'Track', 'Globe', 'Playing', 'Paused'], to: 'Track'},
 				{name: 'showGlobe', from: ['Init', 'Globe', 'Track', 'Playing', 'Paused'], to: 'Globe'},
 				{name: 'play', from: 'Track', to: 'Playing'},
-				{name: 'finishPlay', from: ['Playing', 'Pause'], to: 'Track'},
+				{name: 'finishPlay', from: ['Playing', 'Paused'], to: 'Track'},
 				{name: 'pause', from: 'Playing', to: 'Paused'},
 				{name: 'resume', from: 'Paused', to: 'Playing'},
 				{name: 'refresh', from: ['Track', 'Playing', 'Paused'], to: 'Track'}
@@ -986,7 +976,6 @@ var tmMap = (function () {
 				onbeforepause: enterPauseMode,
 				onbeforeresume: startPlaying,
 				onbeforerefresh: refresh3DTrack,
-				onInit: function() {console.log('Init...');}
 			}
 		});
 
