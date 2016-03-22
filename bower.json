@@ -16,7 +16,8 @@
     "exif-js": "~2.1.1",
     "blueimp-canvas-to-blob": "~2.2.0",
     "country-region-selector": "~0.2.2",
-    "Sortable": "~1.4.2"
+    "Sortable": "~1.4.2",
+    "javascript-state-machine": "~2.3.5"
   },
   "resolutions": {
     "leaflet": "0.7.x"
