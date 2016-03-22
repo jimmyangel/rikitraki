@@ -105,7 +105,7 @@ var tmConstants = {
 	CAMERA_OFFSET: 6000,
 	FLY_TIME: 2,
 	MIN_SAMPLE_DISTANCE: 10,
-	AUTOPLAY_DELAY: 3000
+	AUTOPLAY_DELAY: 5000
 };
 
 var tmMessages = {
