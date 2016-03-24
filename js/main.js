@@ -11,6 +11,8 @@ var CESIUM_BASE_URL = 'components/Cesium/';
 var isMobile = tmConfig.getOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 var isWebGlSupported = false;
 
+$('#loadingSpinner').spin();
+
 // Turn off ajax caching for IE
 $.ajaxSetup({cache: !(/MSIE|Trident|Edge/i.test(navigator.userAgent))});
 
