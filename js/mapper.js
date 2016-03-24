@@ -45,6 +45,11 @@ var tmMap = (function () {
 
 		map = new L.map('map');
 
+		map.whenReady(function() {
+			$('#loadingOverlay').hide();
+			$('#loadingSpinner').spin(false);
+		});
+
 		// Populate basemap layers from JSON config file
 		// Add layer control
 		// var layerControl = L.control.layers(null, null, {position: 'topleft', collapsed: true}).addTo(map);
@@ -572,6 +577,15 @@ var tmMap = (function () {
 			requestWaterMask : false,
 			requestVertexNormals : true
 		});
+
+		Cesium.when(terrainProvider.readyPromise, function() {console.log('ready');});
+
+		var removeHandler = viewer.scene.postRender.addEventListener(function () {
+			$('#loadingOverlay').hide();
+			$('#loadingSpinner').spin(false);
+			removeHandler.call();
+		});
+
 		viewer.terrainProvider = terrainProvider;
 		return viewer;
 	}
