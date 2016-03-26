@@ -536,8 +536,6 @@ var tmMap = (function () {
 			requestVertexNormals : true
 		});
 
-		Cesium.when(terrainProvider.readyPromise, function() {console.log('ready');});
-
 		var removeHandler = viewer.scene.postRender.addEventListener(function () {
 			$('#loadingOverlay').hide();
 			$('#loadingSpinner').spin(false);
