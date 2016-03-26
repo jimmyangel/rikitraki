@@ -138,7 +138,7 @@ var tmMap = (function () {
 			if (t) { //Ignore header, which should be undefined
 				if (fsm3D) {
 					$('#tracksModal').modal('hide');
-					fsm3D.show3DTrack(tracks[t]);
+					fsm3D.show3DTrack(tracks[t], tracks);
 					return false;
 				} else {
 					window.location.href='?track=' + t;
@@ -219,7 +219,7 @@ var tmMap = (function () {
 						if (isLeaflet) {
 							window.location.href='?track=' + t;
 						} else {
-							fsm3D.show3DTrack(tracks[t]);
+							fsm3D.show3DTrack(tracks[t], track);
 							// goto3DTrack(tracks[t]);
 						}
 					}
@@ -627,7 +627,7 @@ var tmMap = (function () {
 			}
 
 			$('.trackLink').click(function () {
-				fsm3D.show3DTrack(tracks[$(this).attr('popUpTrackId')]);
+				fsm3D.show3DTrack(tracks[$(this).attr('popUpTrackId')], tracks);
 				// goto3DTrack(tracks[$(this).attr('popUpTrackId')]);
 				return false;
 			});
@@ -670,12 +670,9 @@ var tmMap = (function () {
 	}
 
 	// Enter Track state
-	function goto3DTrack(event, from, to, t, leaveState) {
+	function goto3DTrack(event, from, to, t, tracks, leaveState) {
 		if (trackDataSource) {
 			viewer.dataSources.remove(trackDataSource, true);
-		}
-		if (savedTrackMarkerEntity) {
-			savedTrackMarkerEntity.show = true;
 		}
 
 		grabAndRender3DTrack (t, tmConfig.getVDPlayFlag(), (from === 'Init') ? false : true);
@@ -687,12 +684,17 @@ var tmMap = (function () {
 				history.pushState({trackId: t.trackId}, '', '?track=' + t.trackId + '&terrain=yes');
 			}
 		}
+		if ($('#show-markers').is(':checked')) {
+			showMarkers(tracks);
+		} else {
+			hideMarkers(tracks);
+		}
+		$('#overlay-layer-control').show();
 		$('.leaflet-popup-close-button').click();
 	}
 
 	function grabAndRender3DTrack (track, autoPlay, fly) {
 		savedTrackMarkerEntity = viewer.entities.getById(track.trackId);
-		savedTrackMarkerEntity.show = false;
 		var lGPX = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
 			// First grab the GeoJSON data from omnivore
 			var trackGeoJSON = this.toGeoJSON();
@@ -709,19 +711,12 @@ var tmMap = (function () {
 				setUp3DTrackControls (trackGeoJSON, autoPlay);
 			});
 
-			// Set up track name in info box (TODO: show everything and make collapsible)
+			// Set up track name in info box
 			$('#infoPanel').empty();
 			$('#infoPanel').append('<div style="min-width: 200px;" class="leaflet-control info infoPanelContainer"></div>');
 			buildTrackInfoPanel(track, this.toGeoJSON(), '#infoPanel>.infoPanelContainer');
 			setUpInfoPanelEventHandling();
 			$('.infoPanelTitle button').click(); // in 3D, start with info panel closed
-
-			//$('#infoPanel>.infoPanelContainer').append(buildInfoPanelHTML(track, this.toGeoJSON(), false)); // A clone is needed
-			/* $('#infoPanel div').css('cursor', 'pointer');
-			$('#infoPanel').on('click', function () {
-				window.location.href='?track=' + track.trackId;
-				return false;
-			}); */
 
 			$('#terrain-control-2d').off();
 			$('#terrain-control-2d').click(function() {
@@ -732,13 +727,6 @@ var tmMap = (function () {
 	}
 
 	function buildTrackInfoPanel(track, trackGeoJSON, container, picGeoTagCallback, doneWithThumbsCallback) {
-
-		/* $(container).on("DOMNodeInserted",function() {
-			if (('.infoPanelDescription').length) {
-				console.log('set up event handling');
-				setUpInfoPanelEventHandling();
-			}
-		}); */
 
 		var trackMetrics = [0, 0, 0, 0];
 		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
@@ -784,13 +772,6 @@ var tmMap = (function () {
 			appendThumbnails(track, picGeoTagCallback, doneWithThumbsCallback);
 		}
 
-		/* $('.leaflet-control-container').on('DOMNodeInserted',function(e) {
-			if ($(e.target).hasClass('infoPanelContainer')) {
-				setUpInfoPanelEventHandling();
-				$('.leaflet-control-container').off();
-			}
-			console.log($(e.target).hasClass('infoPanelContainer'));
-		}); */
 	}
 
 	function appendThumbnails(track, picGeoTagCallback, doneWithThumbsCallback) {
@@ -798,30 +779,32 @@ var tmMap = (function () {
 		lightbox.option({'wrapAround': true, 'alwaysShowNavOnTouchDevices': true});
 		// Go get the geo tags and then put the pics on the map
 		tmData.getGeoTags(track.trackId, function(data) {
-			var thumbnailsHTML = '<div class="slideShowContainer">';
-			track.trackPhotos = data.geoTags.trackPhotos; // Add trackPhotos structure to track to allow editing
-			var haveGeoTags = false;
-			// var photoLayerGroup = L.layerGroup();
-			thumbnailsHTML += '<hr>';
+			if (data.geoTags.trackPhotos) {
+				var thumbnailsHTML = '<div class="slideShowContainer">';
+				track.trackPhotos = data.geoTags.trackPhotos; // Add trackPhotos structure to track to allow editing
+				var haveGeoTags = false;
+				// var photoLayerGroup = L.layerGroup();
+				thumbnailsHTML += '<hr>';
 
-			for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
-				if (data.geoTags.trackPhotos[k].picIndex === undefined) {
-					data.geoTags.trackPhotos[k].picIndex = k;
+				for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
+					if (data.geoTags.trackPhotos[k].picIndex === undefined) {
+						data.geoTags.trackPhotos[k].picIndex = k;
+					}
+					thumbnailsHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
+											data.geoTags.trackPhotos[k].picIndex +
+											'" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
+											'><img  nopin="nopin" class="infoThumbs" geoTagXRef="' + data.geoTags.trackPhotos[k].picIndex +
+											'" src="data:image/jpeg;base64,' + data.geoTags.trackPhotos[k].picThumbBlob + '" /></a>';
+					if (picGeoTagCallback && data.geoTags.trackPhotos[k].picLatLng) {
+						picGeoTagCallback(data.geoTags.trackPhotos[k]);
+					}
 				}
-				thumbnailsHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
-										data.geoTags.trackPhotos[k].picIndex +
-										'" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
-										'><img  nopin="nopin" class="infoThumbs" geoTagXRef="' + data.geoTags.trackPhotos[k].picIndex +
-										'" src="data:image/jpeg;base64,' + data.geoTags.trackPhotos[k].picThumbBlob + '" /></a>';
-				if (picGeoTagCallback && data.geoTags.trackPhotos[k].picLatLng) {
-					picGeoTagCallback(data.geoTags.trackPhotos[k]);
-				}
-			}
 
-			thumbnailsHTML += '</div>';
-			$('.infoPanelBody').append(thumbnailsHTML);
-			if (doneWithThumbsCallback) {
-				 doneWithThumbsCallback();
+				thumbnailsHTML += '</div>';
+				$('.infoPanelBody').append(thumbnailsHTML);
+				if (doneWithThumbsCallback) {
+					 doneWithThumbsCallback();
+				}
 			}
 
 		}, function(jqxhr, textStatus) {console.log(textStatus);});
@@ -985,6 +968,8 @@ var tmMap = (function () {
 
 	// Enter Globe state
 	function gotoGlobe(event, from, to, initialCameraPosition, tracks, leaveState) {
+		showMarkers(tracks);
+		$('#overlay-layer-control').hide();
 		setUp3DZoomControls(200);
 		$('#vd-play').hide();
 		$('#trackPopUp').hide();
@@ -1011,6 +996,7 @@ var tmMap = (function () {
 		}
 		if (savedTrackMarkerEntity) {
 			savedTrackMarkerEntity.show = true;
+			savedTrackMarkerEntity = undefined;
 		}
 		viewer.camera.flyTo({
 			destination : initialCameraPosition,
@@ -1029,6 +1015,9 @@ var tmMap = (function () {
 	function showMarkers(tracks) {
 		for (var tId in tracks) {
 			viewer.entities.getById(tId).show = true;
+			if (savedTrackMarkerEntity) {
+				savedTrackMarkerEntity.show = false;
+			}
 		}
 	}
 
@@ -1054,9 +1043,9 @@ var tmMap = (function () {
 				onbeforefinishPlay: resetPlay,
 				onbeforepause: enterPauseMode,
 				onbeforeresume: startPlaying,
-				onbeforerefresh: refresh3DTrack,
+				onbeforerefresh: refresh3DTrack /*,
 				onenterPlaying: function() {hideMarkers (tracks);},
-				onleavePlaying: function() {showMarkers (tracks);}
+				onleavePlaying: function() {showMarkers (tracks);} */
 			}
 		});
 
@@ -1065,8 +1054,17 @@ var tmMap = (function () {
 
 		layout3DTrackMarkers(tracks);
 		updateTrackMarkersHeight(tracks);
+
+		$('#show-markers').change(function() {
+			if ($(this).is(':checked')) {
+				showMarkers(tracks);
+			} else {
+				hideMarkers(tracks);
+			}
+		});
+
 		if (track) {
-			fsm3D.show3DTrack(track);
+			fsm3D.show3DTrack(track, tracks);
 			// Set up twitter and facebook links and such (TODO: move to bottom)
 			setUpSocialButtons(track.trackName);
 		} else {
@@ -1076,7 +1074,7 @@ var tmMap = (function () {
 		window.onpopstate = function(event) {
 			if (event.state) {
 				if (event.state.trackId) {
-					fsm3D.show3DTrack(tracks[event.state.trackId], true);
+					fsm3D.show3DTrack(tracks[event.state.trackId], tracks, true);
 					return;
 				} else {
 					fsm3D.showGlobe(initialCameraPosition, tracks, true);
@@ -1109,10 +1107,6 @@ var tmMap = (function () {
 		$('.infoPanelContainer').on('mousedown wheel scrollstart touchstart mousewheel DOMMouseScroll MozMousePixelScroll', function(e) {
 			e.stopPropagation();
 		});
-		// L.DomEvent.disableClickPropagation(infoPanelContainer);
-
-		// By default, info panel is collapsed so close button should be hidden
-		// $('.infoPanelTitle button').hide();
 
 		// Event handling for expand/collapse on click
 		var showToggle = true;
