@@ -36,7 +36,7 @@ var tmMap = (function () {
 		return setUpGotoMenu(tracks);
 	};
 
-	var setUpMap = function (l) {
+	var setUpMap = function () {
 		$('#globe').hide();
 
 		if (!isWebGlSupported) {
@@ -193,7 +193,7 @@ var tmMap = (function () {
 
 	};
 
-	var setUpMotdInfoBox = function (tracks, isLeaflet, viewer) {
+	var setUpMotdInfoBox = function (tracks, isLeaflet) {
 		tmData.getMotd(function(data) {
 			var infoPanelContainer = buildMotdInfoBoxDOMElement(tracks, data);
 			if (isLeaflet) {
@@ -219,8 +219,7 @@ var tmMap = (function () {
 						if (isLeaflet) {
 							window.location.href='?track=' + t;
 						} else {
-							fsm3D.show3DTrack(tracks[t], track);
-							// goto3DTrack(tracks[t]);
+							fsm3D.show3DTrack(tracks[t], tracks);
 						}
 					}
 				}
@@ -495,7 +494,7 @@ var tmMap = (function () {
 			$('#layer-control').removeClass('leaflet-control-layers-expanded');
 		});
 
-		$('#globe').on('touchstart', function(e) {
+		$('#globe').on('touchstart', function() {
 			if ((!$(event.target).closest('#layer-control').length) && ($('#layer-control').hasClass('leaflet-control-layers-expanded'))) {
 				$('#layer-control').removeClass('leaflet-control-layers-expanded');
 			}
@@ -628,7 +627,6 @@ var tmMap = (function () {
 
 			$('.trackLink').click(function () {
 				fsm3D.show3DTrack(tracks[$(this).attr('popUpTrackId')], tracks);
-				// goto3DTrack(tracks[$(this).attr('popUpTrackId')]);
 				return false;
 			});
 
@@ -782,7 +780,6 @@ var tmMap = (function () {
 			if (data.geoTags.trackPhotos) {
 				var thumbnailsHTML = '<div class="slideShowContainer">';
 				track.trackPhotos = data.geoTags.trackPhotos; // Add trackPhotos structure to track to allow editing
-				var haveGeoTags = false;
 				// var photoLayerGroup = L.layerGroup();
 				thumbnailsHTML += '<hr>';
 
@@ -923,7 +920,7 @@ var tmMap = (function () {
 		trackDataSource.entities.getById('track').billboard.show = true;
 	}
 
-	function enterPauseMode(event, from, to) {
+	function enterPauseMode() {
 		viewer.clock.onTick.removeEventListener(clockTracker);
 		viewer.clock.shouldAnimate = false;
 		pausedButtonState();
