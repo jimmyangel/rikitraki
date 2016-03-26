@@ -20,6 +20,10 @@ var tmData = (function () {
 		$.getJSON(API_BASE_URL + '/v1/tracks/' + tId + '/geotags/', successCallback).fail(errorCallback);
 	};
 
+	var getGeoTagsF = function (tId, successCallback, errorCallback) {
+		return $.getJSON(API_BASE_URL + '/v1/tracks/' + tId + '/geotags/', successCallback).fail(errorCallback);
+	};
+
 	var getMotd = function (successCallback) {
 		$.getJSON(API_BASE_URL + '/v1/motd', successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
 	};
@@ -165,6 +169,7 @@ var tmData = (function () {
 		getTrackInfo: getTrackInfo,
 		getNumberOfTracks: getNumberOfTracks,
 		getGeoTags: getGeoTags,
+		getGeoTagsF: getGeoTagsF,
 		getMotd: getMotd,
 		getJWTToken: getJWTToken,
 		registerUser: registerUser,

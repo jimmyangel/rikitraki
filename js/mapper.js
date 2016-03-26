@@ -137,7 +137,6 @@ var tmMap = (function () {
 			var t = $(this).find('td').eq(4).html();
 			if (t) { //Ignore header, which should be undefined
 				if (fsm3D) {
-					console.log('i am in 3d');
 					$('#tracksModal').modal('hide');
 					fsm3D.show3DTrack(tracks[t]);
 					return false;
@@ -418,88 +417,47 @@ var tmMap = (function () {
 
 			// Set up info panel control
 			var infoPanelContainer = L.DomUtil.create('div', 'info infoPanelContainer');
-			var infoPanelTitle = L.DomUtil.create('div', 'infoPanelTitle', infoPanelContainer);
-			var infoPanelBody = L.DomUtil.create('div', 'infoPanelBody', infoPanelContainer);
-			var infoPanelDescription = L.DomUtil.create('div', 'infoPanelDescription', infoPanelBody);
-			var slideShowContainer = L.DomUtil.create('div', 'slideShowContainer', infoPanelBody);
 
 			var infoPanel = L.control({position: 'topright'});
+
+			var photoLayerGroup = L.layerGroup();
 			infoPanel.onAdd = function () {
-				infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button>' +
-											'<b>' + track.trackName + ' ' + (track.trackFav ? tmConstants.FAVORITE : '' + '</b>');
-				infoPanelDescription.innerHTML = '<hr><b>' + track.trackLevel + '</b><br>' +
-									' <b>Length:</b> ' + (imperial ? ((Math.round(trackMetrics[0] * 62.1371) / 100) + 'mi') : (trackMetrics[0] + 'km')) +
-									' - <b>Elevation Gain:</b> ' + (imperial ? ((Math.round(trackMetrics[1] * 3.28084)) + 'ft') : (trackMetrics[1] + 'm')) +
-									' <b>Max Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[2] * 3.28084)) + 'ft') : (trackMetrics[2] + 'm')) +
-									' <b>Min Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[3] * 3.28084)) + 'ft') : (trackMetrics[3] + 'm')) +
-									'<br><b>Region:</b> ' + track.trackRegionTags + '<br><b>Date Recorded:</b> ' + trackDate +
-									'<hr>' + track.trackDescription.replace(/$/mg,'<br>') + '<br><br><b>By: </b>' + track.username + '<hr>' +
-									'<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX' + '" download>Download GPS track</a>';
-
-				// Populate photos
-				if (track.hasPhotos) {
-					// Tell lightbox to do a wraparound album and to show nav on touch devices
-					lightbox.option({'wrapAround': true, 'alwaysShowNavOnTouchDevices': true});
-					// Go get the geo tags and then put the pics on the map
-					tmData.getGeoTags(track.trackId, function(data) {
-						track.trackPhotos = data.geoTags.trackPhotos; // Add trackPhotos structure to track to allow editing
-						var haveGeoTags = false;
-						var photoLayerGroup = L.layerGroup();
-						slideShowContainer.innerHTML = '<hr>';
-
-						for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
-							// Tell lightbox that this is a slideshow
-							slideShowContainer.innerHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
-												  (data.geoTags.trackPhotos[k].picIndex === undefined ? k : data.geoTags.trackPhotos[k].picIndex) +
-												  '" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
-												  '><img  nopin="nopin" class="infoThumbs" geoTagXRef="' + k +
-												  '" src="data:image/jpeg;base64,' + data.geoTags.trackPhotos[k].picThumbBlob + '" /></a>';
-
-							// If we have geotags, go ahead and place them on thumbnail photo markers and don't do a slideshow, just single image
-							if (data.geoTags.trackPhotos[k].picLatLng) {
-								haveGeoTags = true;
-								var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
-										 (data.geoTags.trackPhotos[k].picIndex === undefined ? k : data.geoTags.trackPhotos[k].picIndex) +
-										 '" data-lightbox="picture' + '" data-title="' + data.geoTags.trackPhotos[k].picCaption +
-										 '" ><img geoTagRef="' + k + '"picLatLng="' + data.geoTags.trackPhotos[k].picLatLng.toString() +
-										 '" src="data:image/jpeg;base64,' + data.geoTags.trackPhotos[k].picThumbBlob + '" width="40" height="40"/></a>';
-								var photoMarker = L.marker(data.geoTags.trackPhotos[k].picLatLng, {
-									clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
-									icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
-								});
-								photoLayerGroup.addLayer(photoMarker);
-							}
+				$(infoPanelContainer).append(buildTrackInfoPanel(track, tl.toGeoJSON(), infoPanelContainer, function(geoTagPhotos) {
+					var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
+							 geoTagPhotos.picIndex +
+							 '" data-lightbox="picture' + '" data-title="' + geoTagPhotos.picCaption +
+							 '" ><img geoTagRef="' + geoTagPhotos.picIndex + '"picLatLng="' + geoTagPhotos.picLatLng.toString() +
+							 '" src="data:image/jpeg;base64,' + geoTagPhotos.picThumbBlob + '" width="40" height="40"/></a>';
+					var photoMarker = L.marker(geoTagPhotos.picLatLng, {
+						clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
+						icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
+					});
+					photoLayerGroup.addLayer(photoMarker);
+				}, function() {
+					photoLayerGroup.addTo(map);
+					layerControl.addOverlay(photoLayerGroup, 'Show track photos');
+					// If the track title is small we need to update map bounds to account for added pictures
+					map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
+					// Highlight geolocated thumbnail associated with hovered picture in info panel
+					$('.slideShowContainer img').hover(
+						function() {
+							$(this).css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
+							$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
+						},
+						function() {
+							$(this).css('border-color', '#fff');
+							$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', '#fff');
 						}
-						// If we have geotagged pictures, add a layer control to show/hide them and handle hover over slide show
-						if (haveGeoTags) {
-							photoLayerGroup.addTo(map);
-							layerControl.addOverlay(photoLayerGroup, 'Show track photos');
-
-							// Highlight geolocated thumbnail associated with hovered picture in info panel
-							$('.slideShowContainer img').hover(
-								function() {
-									$(this).css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
-									$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
-								},
-								function() {
-									$(this).css('border-color', '#fff');
-									$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', '#fff');
-								}
-							);
-						}
-
-
-					}, function(jqxhr, textStatus) {console.log(textStatus);}); // TODO Handle this; for now, ignore errors looking for the geotags files
-				}
+					);
+				}));
 				return infoPanelContainer;
 			};
 
 			infoPanel.addTo(map);
+			setUpInfoPanelEventHandling();
 
 			// Fit th map to the trail boundaries leaving 50% room for the info panel
-	    	map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
-	    	setUpInfoPanelEventHandling();
-
+	    map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
 
 		}).addTo(map);
 
@@ -755,12 +713,17 @@ var tmMap = (function () {
 
 			// Set up track name in info box (TODO: show everything and make collapsible)
 			$('#infoPanel').empty();
-			$('#infoPanel').append('<div style="min-width: 200px;" class="info leaflet-control"><b>' + track.trackName + ' ' + (track.trackFav ? tmConstants.FAVORITE : '') + '</b></div>');
-			$('#infoPanel div').css('cursor', 'pointer');
+			$('#infoPanel').append('<div style="min-width: 200px;" class="leaflet-control info infoPanelContainer"></div>');
+			buildTrackInfoPanel(track, this.toGeoJSON(), '#infoPanel>.infoPanelContainer');
+			setUpInfoPanelEventHandling();
+			$('.infoPanelTitle button').click(); // in 3D, start with info panel closed
+
+			//$('#infoPanel>.infoPanelContainer').append(buildInfoPanelHTML(track, this.toGeoJSON(), false)); // A clone is needed
+			/* $('#infoPanel div').css('cursor', 'pointer');
 			$('#infoPanel').on('click', function () {
 				window.location.href='?track=' + track.trackId;
 				return false;
-			});
+			}); */
 
 			$('#terrain-control-2d').off();
 			$('#terrain-control-2d').click(function() {
@@ -768,6 +731,102 @@ var tmMap = (function () {
 				return false;
 			});
 		});
+	}
+
+	function buildTrackInfoPanel(track, trackGeoJSON, container, picGeoTagCallback, doneWithThumbsCallback) {
+
+		/* $(container).on("DOMNodeInserted",function() {
+			if (('.infoPanelDescription').length) {
+				console.log('set up event handling');
+				setUpInfoPanelEventHandling();
+			}
+		}); */
+
+		var trackMetrics = [0, 0, 0, 0];
+		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
+		var trackDate = 'Not Available';
+		for (var i=0; i<trackGeoJSON.features.length; i++) {
+			if (trackGeoJSON.features[i].geometry.type === 'LineString') {
+				trackMetrics = tmUtils.calculateTrackMetrics(trackGeoJSON.features[i]);
+				if (trackGeoJSON.features[i].properties.time) {
+					trackDate = new Date(trackGeoJSON.features[i].properties.time).toString();
+				}
+			}
+			if (trackGeoJSON.features[i].geometry.type === 'Point') {
+				// If date not available from the LineString, try from one of the waypoints
+				if (trackDate === 'Not Available') {
+					if (trackGeoJSON.features[i].properties.time) {
+						trackDate = new Date(trackGeoJSON.features[i].properties.time).toString();
+					}
+				}
+			}
+		}
+		var infoPanelHTML = '';
+		infoPanelHTML +=
+			'<div class="infoPanelTitle">' +
+				'<button class="close" aria-hidden="true">&times;</button>' +
+				'<b>' + track.trackName + ' ' + (track.trackFav ? tmConstants.FAVORITE : '') + '</b>' +
+			'</div>' +
+			'<div class="infoPanelBody">' +
+				'<div class="infoPanelDescription">' +
+					'<hr><b>' + track.trackLevel + '</b><br>' +
+					' <b>Length:</b> ' + (imperial ? ((Math.round(trackMetrics[0] * 62.1371) / 100) + 'mi') : (trackMetrics[0] + 'km')) +
+					' - <b>Elevation Gain:</b> ' + (imperial ? ((Math.round(trackMetrics[1] * 3.28084)) + 'ft') : (trackMetrics[1] + 'm')) +
+					' <b>Max Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[2] * 3.28084)) + 'ft') : (trackMetrics[2] + 'm')) +
+					' <b>Min Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[3] * 3.28084)) + 'ft') : (trackMetrics[3] + 'm')) +
+					'<br><b>Region:</b> ' + track.trackRegionTags + '<br><b>Date Recorded:</b> ' + trackDate +
+					'<hr>' + track.trackDescription.replace(/$/mg,'<br>') + '<br><br><b>By: </b>' + track.username + '<hr>' +
+					'<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX' + '" download>Download GPS track</a>' +
+				'</div>';
+
+		infoPanelHTML +='</div>';
+
+		$(container).append(infoPanelHTML);
+		if(track.hasPhotos) {
+			appendThumbnails(track, picGeoTagCallback, doneWithThumbsCallback);
+		}
+
+		/* $('.leaflet-control-container').on('DOMNodeInserted',function(e) {
+			if ($(e.target).hasClass('infoPanelContainer')) {
+				setUpInfoPanelEventHandling();
+				$('.leaflet-control-container').off();
+			}
+			console.log($(e.target).hasClass('infoPanelContainer'));
+		}); */
+	}
+
+	function appendThumbnails(track, picGeoTagCallback, doneWithThumbsCallback) {
+		// Tell lightbox to do a wraparound album and to show nav on touch devices
+		lightbox.option({'wrapAround': true, 'alwaysShowNavOnTouchDevices': true});
+		// Go get the geo tags and then put the pics on the map
+		tmData.getGeoTags(track.trackId, function(data) {
+			var thumbnailsHTML = '<div class="slideShowContainer">';
+			track.trackPhotos = data.geoTags.trackPhotos; // Add trackPhotos structure to track to allow editing
+			var haveGeoTags = false;
+			// var photoLayerGroup = L.layerGroup();
+			thumbnailsHTML += '<hr>';
+
+			for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
+				if (data.geoTags.trackPhotos[k].picIndex === undefined) {
+					data.geoTags.trackPhotos[k].picIndex = k;
+				}
+				thumbnailsHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
+										data.geoTags.trackPhotos[k].picIndex +
+										'" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
+										'><img  nopin="nopin" class="infoThumbs" geoTagXRef="' + data.geoTags.trackPhotos[k].picIndex +
+										'" src="data:image/jpeg;base64,' + data.geoTags.trackPhotos[k].picThumbBlob + '" /></a>';
+				if (picGeoTagCallback && data.geoTags.trackPhotos[k].picLatLng) {
+					picGeoTagCallback(data.geoTags.trackPhotos[k]);
+				}
+			}
+
+			thumbnailsHTML += '</div>';
+			$('.infoPanelBody').append(thumbnailsHTML);
+			if (doneWithThumbsCallback) {
+				 doneWithThumbsCallback();
+			}
+
+		}, function(jqxhr, textStatus) {console.log(textStatus);});
 	}
 
 	function setUp3DTrackControls (trackGeoJSON, autoPlay) {
