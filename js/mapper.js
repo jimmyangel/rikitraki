@@ -7,6 +7,7 @@ var tmMap = (function () {
 	var viewer; //For Cesium
 	var fsm3D; // Finite state machine for 3D functionality
 	var trackDataSource;
+	var geoTagsDataSource;
 	var savedTrackMarkerEntity;
 
 	var setUpCommon = function (tracks) {
@@ -433,21 +434,29 @@ var tmMap = (function () {
 					});
 					photoLayerGroup.addLayer(photoMarker);
 				}, function() {
-					photoLayerGroup.addTo(map);
-					layerControl.addOverlay(photoLayerGroup, 'Show track photos');
-					// If the track title is small we need to update map bounds to account for added pictures
-					map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
-					// Highlight geolocated thumbnail associated with hovered picture in info panel
-					$('.slideShowContainer img').hover(
-						function() {
-							$(this).css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
-							$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
-						},
-						function() {
-							$(this).css('border-color', '#fff');
-							$('[geoTagRef=' + $(this).attr('geoTagXRef') + ']').parent().parent().css('border-color', '#fff');
-						}
-					);
+					if (photoLayerGroup.getLayers().length) {
+						photoLayerGroup.addTo(map);
+						layerControl.addOverlay(photoLayerGroup, 'Show track photos');
+						// If the track title is small we need to update map bounds to account for added pictures
+						map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
+						// Highlight geolocated thumbnail associated with hovered picture in info panel
+						$('.slideShowContainer img').hover(
+							function() {
+								var el = $('[geoTagRef=' + $(this).attr('geoTagXRef') + ']');
+								if (el.length) {
+									$(this).css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
+									el.parent().parent().css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
+								}
+							},
+							function() {
+								var el = $('[geoTagRef=' + $(this).attr('geoTagXRef') + ']');
+								if (el.length) {
+									$(this).css('border-color', '#fff');
+									el.parent().parent().css('border-color', '#fff');
+								}
+							}
+						);
+					}
 				}));
 				return infoPanelContainer;
 			};
@@ -546,8 +555,6 @@ var tmMap = (function () {
 	}
 
 	function layout3DTrackMarkers (tracks) {
-		var drillPickLimit = isMobile ? 1 : undefined;
-
 		// Populate track markers
 		for (var tId in tracks) {
 			viewer.entities.add({
@@ -586,6 +593,11 @@ var tmMap = (function () {
 				}
 			}
 		});
+		handle3DClickEvents(tracks);
+	}
+
+	function handle3DClickEvents(tracks) {
+		var drillPickLimit = isMobile ? 1 : undefined;
 
 		// On click open pop up
 		$('#globe').on('click touchstart', function (e) {
@@ -610,16 +622,20 @@ var tmMap = (function () {
 					var entity = pArray[i].id;
 					var savedEntity;
 					if (entity instanceof Cesium.Entity) {
-						var br = '';
-						if (entity.name && tracks[entity.name]) {
-							if (!popUpCreated) {
-								$('#trackPopUpLink').empty();
-								popUpCreated = true;
-							} else {
-								br = '<br>';
+						if (entity.id.substring(0, 3) === 'pic') {
+							$('[geoTagXRef=' + entity.id.substring(4) + ']').click();
+						} else {
+							if (entity.name && tracks[entity.name]) {
+								var br = '';
+								if (!popUpCreated) {
+									$('#trackPopUpLink').empty();
+									popUpCreated = true;
+								} else {
+									br = '<br>';
+								}
+								$('#trackPopUpLink').append('<a class="trackLink" popUpTrackId="' + entity.name + '" href="#">' + br + tracks[entity.name].trackName + '</a>');
+								savedEntity = entity;
 							}
-							$('#trackPopUpLink').append('<a class="trackLink" popUpTrackId="' + entity.name + '" href="#">' + br + tracks[entity.name].trackName + '</a>');
-							savedEntity = entity;
 						}
 					}
 				}
@@ -669,8 +685,14 @@ var tmMap = (function () {
 
 	// Enter Track state
 	function goto3DTrack(event, from, to, t, tracks, leaveState) {
-		if (trackDataSource) {
+		// Remove old track datasources
+		if (Cesium.defined(trackDataSource)) {
 			viewer.dataSources.remove(trackDataSource, true);
+			trackDataSource = undefined;
+		}
+		if (Cesium.defined(geoTagsDataSource)) {
+			viewer.dataSources.remove(geoTagsDataSource, true);
+			geoTagsDataSource = undefined;
 		}
 
 		grabAndRender3DTrack (t, tmConfig.getVDPlayFlag(), (from === 'Init') ? false : true);
@@ -692,6 +714,7 @@ var tmMap = (function () {
 	}
 
 	function grabAndRender3DTrack (track, autoPlay, fly) {
+		$('#show-photos-label').hide();
 		savedTrackMarkerEntity = viewer.entities.getById(track.trackId);
 		var lGPX = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
 			// First grab the GeoJSON data from omnivore
@@ -711,8 +734,33 @@ var tmMap = (function () {
 
 			// Set up track name in info box
 			$('#infoPanel').empty();
-			$('#infoPanel').append('<div style="min-width: 200px;" class="leaflet-control info infoPanelContainer"></div>');
-			buildTrackInfoPanel(track, this.toGeoJSON(), '#infoPanel>.infoPanelContainer');
+			$('#infoPanel').append('<div class="leaflet-control info infoPanelContainer"></div>');
+			buildTrackInfoPanel(track, this.toGeoJSON(), '#infoPanel>.infoPanelContainer', null, function(geoTags) {
+				tmUtils.buildCZMLForGeoTags(geoTags, viewer, function (geoTagsCZML) {
+					viewer.dataSources.add(Cesium.CzmlDataSource.load(geoTagsCZML)).then(function(gds) {
+						geoTagsDataSource = gds;
+						$('#show-photos-label').show();
+						$('.slideShowContainer img').hover(
+							function() {
+								var ent = gds.entities.getById('picS-'+ $(this).attr('geoTagXRef'));
+								if (ent) {
+									$(this).css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
+									ent.billboard.show = true;
+									gds.entities.getById('pic-'+ $(this).attr('geoTagXRef')).billboard.show = false;
+								}
+							},
+							function() {
+								var ent = gds.entities.getById('picS-'+ $(this).attr('geoTagXRef'));
+								if (ent) {
+									$(this).css('border-color', '#fff');
+									gds.entities.getById('pic-'+ $(this).attr('geoTagXRef')).billboard.show = true;
+									ent.billboard.show = false;
+								}
+							}
+						);
+					});
+				});
+			});
 			setUpInfoPanelEventHandling();
 			$('.infoPanelTitle button').click(); // in 3D, start with info panel closed
 
@@ -782,7 +830,6 @@ var tmMap = (function () {
 				track.trackPhotos = data.geoTags.trackPhotos; // Add trackPhotos structure to track to allow editing
 				// var photoLayerGroup = L.layerGroup();
 				thumbnailsHTML += '<hr>';
-
 				for (var k=0; k<data.geoTags.trackPhotos.length; k++) {
 					if (data.geoTags.trackPhotos[k].picIndex === undefined) {
 						data.geoTags.trackPhotos[k].picIndex = k;
@@ -800,7 +847,7 @@ var tmMap = (function () {
 				thumbnailsHTML += '</div>';
 				$('.infoPanelBody').append(thumbnailsHTML);
 				if (doneWithThumbsCallback) {
-					 doneWithThumbsCallback();
+					 doneWithThumbsCallback(data.geoTags);
 				}
 			}
 
@@ -866,6 +913,28 @@ var tmMap = (function () {
 		viewer.flyTo(trackDataSource, {duration: tmConstants.FLY_TIME});
 	}
 
+	//function showPhotoNear(position) {
+		// TODO: open popup with picture near
+		/* if (geoTagsDataSource) {
+			for (var i=0; i<geoTagsDataSource.entities.values.length; i++) {
+
+				// viewer.entities.getById(tIds[i]).position = new Cesium.ConstantPositionProperty(Cesium.Cartesian3.fromRadians(pos[i].longitude, pos[i].latitude, pos[i].height));
+				// var grabbedHeight = Cesium.Cartographic.fromCartesian(position);
+				var grabbedHeight = Cesium.Ellipsoid.WGS84.cartesianToCartographic(position).height;
+				// var grabbedHeight = Cesium.Cartographic.fromCartesian3(position);
+
+				console.log(grabbedHeight);
+
+				if (Cesium.Cartesian3.distance(geoTagsDataSource.entities.values[i].position.getValue(), position) < 100) {
+					geoTagsDataSource.entities.values[i].billboard.show = true;
+				} else {
+					geoTagsDataSource.entities.values[i].billboard.show = false;
+				}
+			}
+		} */
+
+	//}
+
 	function clockTracker(clock) {
 		var rd = Cesium.JulianDate.secondsDifference(viewer.clock.stopTime, viewer.clock.startTime);
 		var tl = Cesium.JulianDate.secondsDifference(viewer.clock.currentTime, viewer.clock.startTime);
@@ -874,6 +943,7 @@ var tmMap = (function () {
 			fsm3D.finishPlay();
 			// resetReplay();
 		}
+		//showPhotoNear(trackDataSource.entities.getById('track').position.getValue(clock.currentTime));
 	}
 
 	function resetPlay() {
@@ -1018,6 +1088,14 @@ var tmMap = (function () {
 		}
 	}
 
+	function showPhotoMarkers(isShow) {
+		if (Cesium.defined(geoTagsDataSource)) {
+			for (var i=0; i<geoTagsDataSource.entities.values.length; i++) {
+				geoTagsDataSource.entities.values[i].show = isShow;
+			}
+		}
+	}
+
 	// Entry point for 3D visualization (both globe and track)
 	var setUp3DView = function(tracks, track) {
 		$('#map').hide();
@@ -1057,6 +1135,14 @@ var tmMap = (function () {
 				showMarkers(tracks);
 			} else {
 				hideMarkers(tracks);
+			}
+		});
+
+		$('#show-photos').change(function() {
+			if ($(this).is(':checked')) {
+				showPhotoMarkers(true);
+			} else {
+				showPhotoMarkers(false);
 			}
 		});
 

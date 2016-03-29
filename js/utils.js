@@ -114,7 +114,7 @@ var tmUtils = (function () {
 		var trackCZML = [
 			{
 				id: 'document',
-				name: 'CZML Track',
+				name: 'Track CZML',
 				version: '1.0',
 				clock: {
 					interval: '',
@@ -228,9 +228,92 @@ var tmUtils = (function () {
 
 	};
 
+	var buildCZMLForGeoTags = function (geoTags, viewer, callback) {
+
+		function createSmallThumbnail(img, thumbSize, borderSize, borderColor) {
+			var canvas = document.createElement('canvas');
+			canvas.width = thumbSize; canvas.height = thumbSize;
+			var ctx = canvas.getContext('2d');
+			ctx.lineWidth = borderSize;
+			ctx.strokeStyle = borderColor;
+			ctx.drawImage(img, 0, 0, thumbSize, thumbSize);
+			ctx.strokeRect(0, 0, thumbSize, thumbSize);
+			return canvas;
+		}
+
+		// Base CZML structure
+		var geoTagsCZML = [
+			{
+				id: 'document',
+				name: 'GeoTags CZML',
+				version: '1.0'
+			}
+		];
+
+		function addCZMLItem(picIndex, position, img) {
+			var d = $.Deferred();
+			img.onload = function() {
+				geoTagsCZML.push(
+					{
+						id: 'pic-' + picIndex,
+						billboard: {
+								image: createSmallThumbnail(img, 44, 4, '#fff'),
+								verticalOrigin: 'BOTTOM',
+								show: true
+						},
+						position: {
+							cartographicRadians: position
+						}
+					});
+					geoTagsCZML.push(
+					{
+						id: 'picS-' + picIndex,
+						billboard: {
+								image: createSmallThumbnail(img, 44, 4, tmConstants.SELECTED_THUMBNAIL_COLOR),
+								verticalOrigin: 'BOTTOM',
+								show: false
+						},
+						position: {
+							cartographicRadians: position
+						}
+					});
+					d.resolve();
+				};
+				return d.promise();
+		}
+
+		// Grab thumbnail height info
+		var p = []; // Save here indexes of pics that have lat lng
+		var pos = [];
+		for (var i=0; i<geoTags.trackPhotos.length; i++) {
+			if (geoTags.trackPhotos[i].picLatLng) {
+				pos.push(Cesium.Cartographic.fromDegrees(geoTags.trackPhotos[i].picLatLng[1], geoTags.trackPhotos[i].picLatLng[0]));
+				p.push(i);
+			}
+		}
+
+		if (p.length > 0) {
+			Cesium.sampleTerrain(viewer.terrainProvider, 14, pos).then(function (pos) {
+				var addCZMLItemTasks = [];
+				for (var k=0; k<p.length; k++) {
+					var img = new Image();
+					img.src = 'data:image/jpeg;base64,' + geoTags.trackPhotos[p[k]].picThumbBlob;
+					/* img.onload = function() {
+						console.log('image loaded');
+					}; */
+					addCZMLItemTasks.push(addCZMLItem(geoTags.trackPhotos[p[k]].picIndex, [pos[k].longitude, pos[k].latitude, pos[k].height+50], img));
+				}
+				$.when.apply(this, addCZMLItemTasks).then(function () {
+					callback(geoTagsCZML);
+				});
+			});
+		}
+	};
+
 	return {
 		calculateTrackMetrics: calculateTrackMetrics,
 		isValidEmail: isValidEmail,
-		buildCZMLForTrack: buildCZMLForTrack
+		buildCZMLForTrack: buildCZMLForTrack,
+		buildCZMLForGeoTags: buildCZMLForGeoTags
 	};
 })();
