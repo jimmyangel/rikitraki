@@ -115,6 +115,10 @@ body:after {
   outline: 0 solid;
 }
 
+.infoPanelContainer {
+  min-width: 200px;
+}
+
 .help3d {
   padding: 6px 8px;
   font: 14px/16px Arial, Helvetica, sans-serif;
