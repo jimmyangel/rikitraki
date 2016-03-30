@@ -168,7 +168,7 @@ var tmMap = (function () {
 			map.fitBounds(trackMarkersLayerGroup.getBounds(), {paddingBottomRight: [$(window).width() < 1000 ? 0 : 240, 0]});
 		}
 		// Set up twitter and facebook links
-		setUpSocialButtons('Check out hiking trails on RikiTraki');
+		setUpSocialButtons(tmMessages.SOCIAL_DEFAULT_MSG);
 
 		// Welcome message
 		if (!localStorage.getItem('rikitraki-noWelcome') && !(sessionStorage.getItem('rikitraki-hasSeenWelcome'))) {
@@ -356,10 +356,10 @@ var tmMap = (function () {
 		    onEachFeature: function (feature, layer) {
 		    	// Elevation control only understands lines
 	    		if (feature.geometry.type === 'LineString' && Array.isArray(feature.geometry.coordinates)) {
-	 				// Save this line to draw the inside of the track
-	 				insideT = layer.toGeoJSON();
-	 				el.addData.bind(el)(feature, layer);
-	 			}
+		 				// Save this line to draw the inside of the track
+		 				insideT = layer.toGeoJSON();
+		 				el.addData.bind(el)(feature, layer);
+	 				}
 		    }
 		});
 
@@ -641,12 +641,12 @@ var tmMap = (function () {
 				}
 			}
 
-			$('.trackLink').click(function () {
-				fsm3D.show3DTrack(tracks[$(this).attr('popUpTrackId')], tracks);
-				return false;
-			});
-
 			if (popUpCreated) {
+				$('.trackLink').off();
+				$('.trackLink').click(function () {
+					fsm3D.show3DTrack(tracks[$(this).attr('popUpTrackId')], tracks);
+					return false;
+				});
 				$('#trackPopUp').show();
 				positionPopUp(c); // Initial position at the place item picked
 				var removeHandler = viewer.scene.postRender.addEventListener(function () {
@@ -686,14 +686,7 @@ var tmMap = (function () {
 	// Enter Track state
 	function goto3DTrack(event, from, to, t, tracks, leaveState) {
 		// Remove old track datasources
-		if (Cesium.defined(trackDataSource)) {
-			viewer.dataSources.remove(trackDataSource, true);
-			trackDataSource = undefined;
-		}
-		if (Cesium.defined(geoTagsDataSource)) {
-			viewer.dataSources.remove(geoTagsDataSource, true);
-			geoTagsDataSource = undefined;
-		}
+		removeTrackDataSources();
 
 		grabAndRender3DTrack (t, tmConfig.getVDPlayFlag(), (from === 'Init') ? false : true);
 		$('.help3d').show();
@@ -711,6 +704,18 @@ var tmMap = (function () {
 		}
 		$('#overlay-layer-control').show();
 		$('.leaflet-popup-close-button').click();
+		setUpSocialButtons(t.trackName);
+	}
+
+	function removeTrackDataSources() {
+		if (Cesium.defined(trackDataSource)) {
+			viewer.dataSources.remove(trackDataSource, true);
+			trackDataSource = undefined;
+		}
+		if (Cesium.defined(geoTagsDataSource)) {
+			viewer.dataSources.remove(geoTagsDataSource, true);
+			geoTagsDataSource = undefined;
+		}
 	}
 
 	function grabAndRender3DTrack (track, autoPlay, fly) {
@@ -740,6 +745,7 @@ var tmMap = (function () {
 					viewer.dataSources.add(Cesium.CzmlDataSource.load(geoTagsCZML)).then(function(gds) {
 						geoTagsDataSource = gds;
 						$('#show-photos-label').show();
+						$('#show-photos').prop('checked', true);
 						$('.slideShowContainer img').hover(
 							function() {
 								var ent = gds.entities.getById('picS-'+ $(this).attr('geoTagXRef'));
@@ -1003,7 +1009,7 @@ var tmMap = (function () {
 		var msInc = 20;
 
 		var cameraHeight = viewer.camera.positionCartographic.height;
-		var zoomDistance = ((Math.abs((cameraHeight - minHeight*2)))/(Math.sin(Math.abs(viewer.camera.pitch))))/2;
+		var zoomDistance = ((Math.abs((cameraHeight - minHeight)))/(Math.sin(Math.abs(viewer.camera.pitch))))/2;
 		var moveIncrement = zoomDistance * (1-ratio)/(1-Math.pow(ratio, numInc));
 
 		var i = 0;
@@ -1058,9 +1064,9 @@ var tmMap = (function () {
 				history.pushState({}, '', '?globe=yes');
 			}
 		}
-		if (trackDataSource) {
-			viewer.dataSources.remove(trackDataSource, true);
-		}
+
+		removeTrackDataSources();
+
 		if (savedTrackMarkerEntity) {
 			savedTrackMarkerEntity.show = true;
 			savedTrackMarkerEntity = undefined;
@@ -1071,6 +1077,7 @@ var tmMap = (function () {
 		});
 
 		setUpMotdInfoBox(tracks, false, viewer);
+		setUpSocialButtons(tmMessages.SOCIAL_DEFAULT_MSG);
 	}
 
 	function hideMarkers(tracks) {
@@ -1118,9 +1125,7 @@ var tmMap = (function () {
 				onbeforefinishPlay: resetPlay,
 				onbeforepause: enterPauseMode,
 				onbeforeresume: startPlaying,
-				onbeforerefresh: refresh3DTrack /*,
-				onenterPlaying: function() {hideMarkers (tracks);},
-				onleavePlaying: function() {showMarkers (tracks);} */
+				onbeforerefresh: refresh3DTrack
 			}
 		});
 
@@ -1148,8 +1153,6 @@ var tmMap = (function () {
 
 		if (track) {
 			fsm3D.show3DTrack(track, tracks);
-			// Set up twitter and facebook links and such (TODO: move to bottom)
-			setUpSocialButtons(track.trackName);
 		} else {
 			fsm3D.showGlobe(initialCameraPosition, tracks);
 		}
@@ -1253,15 +1256,22 @@ var tmMap = (function () {
 	var setUpSocialButtons = function (text) {
 		// Twitter
 		$('.btn-twitter').attr('href', 'https://twitter.com/intent/tweet?text=' + text + '&url=' + encodeURIComponent(window.location.href) + '&via=jimmieangel' + '&hashtags=rikitraki');
+
+		$('#fb-btn').off().click(function() {
+			window.open('https://www.facebook.com/sharer/sharer.php?p[url]=' + encodeURIComponent(window.location.href), 'Share on facebook',
+				'top=' + ((window.innerHeight / 2) - (350 / 2)) + ',left='+ ((window.innerWidth / 2) - (520 / 2)) + ',toolbar=0,status=0,width=' + 520 + ',height=' + 350);
+			return false;
+		});
+
 		// Facebook
-		$('#fb-btn').click(function() {
+		/*$('#fb-btn').click(function() {
 			FB.ui({
 				method: 'feed',
 				link: window.location.href,
 				caption: text,
 			}, function(){});
 		  return false;
-		});
+		}); */
 	};
 
 	return {
