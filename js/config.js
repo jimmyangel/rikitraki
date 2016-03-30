@@ -127,7 +127,8 @@ var tmMessages = {
   SAVE_ERROR: 'Save error, status ',
   DELETE_PIC_ERROR: 'Delete picture error, status ',
   UPLOAD_PIC_ERROR: 'Upload picture error, status ',
-  REMOVE_ERROR: 'Remove error, status '
+  REMOVE_ERROR: 'Remove error, status ',
+	SOCIAL_DEFAULT_MSG: 'Check our GPS tracks on RikiTraki'
 };
 
 var tmBaseMapLayers = [
