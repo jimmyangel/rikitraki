@@ -25,12 +25,12 @@ var tmMap = (function () {
 		});
 
 		// Get and initialize the facebook sdk
-		$.getScript('//connect.facebook.net/en_US/sdk.js', function() {
+		/* $.getScript('//connect.facebook.net/en_US/sdk.js', function() {
 		    FB.init({
 		      appId: '111118879223414',
 		      version: 'v2.3'
 		    });
-		});
+		}); */
 
 		// Set up bootstrap menus (Go to and Tracks)
 		setUpTracksMenu(tracks);
