@@ -3,7 +3,7 @@
 /* globals L, Cesium, tmConstants */
 
 var tmUtils = (function () {
-	var calculateTrackMetrics = function(feature) {
+	var calculateTrackMetrics = function(feature, tm) {
 		if (!Array.isArray(feature.geometry.coordinates)) {
 			// Some gps tracks misbehave, so skip offending part
 			return null;
@@ -35,7 +35,8 @@ var tmUtils = (function () {
 		if (feature.geometry.coordinates[i][2] < minElevation) {
 			minElevation = feature.geometry.coordinates[i][2];
 		}
-		return [(distance/1000).toFixed(2), elevation.toFixed(2), maxElevation.toFixed(2), minElevation.toFixed(2)];
+		return [(tm[0] + distance/1000), (tm[1] + elevation), (Math.max(tm[2], maxElevation)), (Math.min(tm[3], minElevation))];
+		// return [(distance/1000).toFixed(2), elevation.toFixed(2), maxElevation.toFixed(2), minElevation.toFixed(2)];
 	};
 
 	// This private function attemps to reduce elevation data noise and elevation gain exageration by running a (WINDOW size) moving average
@@ -61,13 +62,20 @@ var tmUtils = (function () {
 	var buildCZMLForTrack = function (trackGeoJSON, l, trackType) {
 
 		// Remove all features except LineString (for now)
+		var j = 0;
 		var i = trackGeoJSON.features.length;
 		while (i--) {
 			if (trackGeoJSON.features[i].geometry.type !== 'LineString') {
 				trackGeoJSON.features.splice(i, 1);
+			} else {
+				// Also remove feature if the LineString has no elevation data
+				if (!Array.isArray(trackGeoJSON.features[i].geometry.coordinates) || !(trackGeoJSON.features[i].geometry.coordinates[0].length === 3)) {
+					trackGeoJSON.features.splice(i, 1);
+				}
 			}
 		}
-		function isMonoIncr(dateArray) {
+		// Commenting out the below, because timestamps will be all made up
+		/* function isMonoIncr(dateArray) {
 			for (var i=1; i<dateArray.length; i++) {
 				if (new Date(dateArray[i]).getTime() < new Date(dateArray[i-1]).getTime()) {
 					return false;
@@ -87,16 +95,21 @@ var tmUtils = (function () {
 				return false;
 			}
 			return true;
-		}
+		} */
 
-		// If we do not have valid timestamps, make them up
-		if (isInvalidTimesArray(trackGeoJSON.features[0].properties.coordTimes)) {
-			trackGeoJSON.features[0].properties.coordTimes = [];
-			var d = new Date(2015);
-			for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
-				trackGeoJSON.features[0].properties.coordTimes.push(d.toISOString());
-				d.setSeconds(d.getSeconds() + 10);
-			}
+		// Replace original timestamps with fake ones (to have a smoother track animation)
+		var d = new Date(2015);
+		for (j=0; j<trackGeoJSON.features.length; j++) {
+
+			//if (isInvalidTimesArray(trackGeoJSON.features[j].properties.coordTimes)) {
+				trackGeoJSON.features[j].properties.coordTimes = [];
+				// var d = new Date(2015);
+				for (i=0; i<trackGeoJSON.features[j].geometry.coordinates.length; i++) {
+					trackGeoJSON.features[j].properties.coordTimes.push(d.toISOString());
+					d.setSeconds(d.getSeconds() + 10);
+				}
+			//}
+
 		}
 
 		// By default, clock multiplier is 100, but duration should be less than 120 sec or greater than 240 sec
@@ -189,40 +202,45 @@ var tmUtils = (function () {
 			}
 		];
 
-		function keepSample(index) {
-			trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].properties.coordTimes[index]);
-			trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][0]);
-			trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][1]);
-			trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[0].geometry.coordinates[index][2]);
+		function keepSample(feature, index) {
+			trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[feature].properties.coordTimes[index]);
+			trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[feature].geometry.coordinates[index][0]);
+			trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[feature].geometry.coordinates[index][1]);
+			trackCZML[1].position.cartographicDegrees.push(trackGeoJSON.features[feature].geometry.coordinates[index][2]);
 		}
 
-		// Simplify track by dropping samples closer than tmConstants.MIN_SAMPLE_DISTANCE meters
-		var lastIndex = 0;
-		for (i=0; i<trackGeoJSON.features[0].geometry.coordinates.length; i++) {
-			if (i === 0) {
-				keepSample(i);
-			} else {
-				var cartPrev = Cesium.Cartesian3.fromDegrees(
-					trackGeoJSON.features[0].geometry.coordinates[lastIndex][0],
-					trackGeoJSON.features[0].geometry.coordinates[lastIndex][1],
-					trackGeoJSON.features[0].geometry.coordinates[lastIndex][2]);
-				var cartCurr = Cesium.Cartesian3.fromDegrees(
-					trackGeoJSON.features[0].geometry.coordinates[i][0],
-					trackGeoJSON.features[0].geometry.coordinates[i][1],
-					trackGeoJSON.features[0].geometry.coordinates[i][2]);
-				if (Cesium.Cartesian3.distance(cartCurr, cartPrev) > tmConstants.MIN_SAMPLE_DISTANCE) {
-					keepSample(i);
-					lastIndex = i;
+		// Iterate over Linestring Features
+		for (j=0; j<trackGeoJSON.features.length; j++) {
+
+			// Simplify track segment by dropping samples closer than tmConstants.MIN_SAMPLE_DISTANCE meters
+			var lastIndex = 0;
+			for (i=0; i<trackGeoJSON.features[j].geometry.coordinates.length; i++) {
+				if (i === 0) {
+					keepSample(j, i);
+				} else {
+					var cartPrev = Cesium.Cartesian3.fromDegrees(
+						trackGeoJSON.features[j].geometry.coordinates[lastIndex][0],
+						trackGeoJSON.features[j].geometry.coordinates[lastIndex][1],
+						trackGeoJSON.features[j].geometry.coordinates[lastIndex][2]);
+					var cartCurr = Cesium.Cartesian3.fromDegrees(
+						trackGeoJSON.features[j].geometry.coordinates[i][0],
+						trackGeoJSON.features[j].geometry.coordinates[i][1],
+						trackGeoJSON.features[j].geometry.coordinates[i][2]);
+					if (Cesium.Cartesian3.distance(cartCurr, cartPrev) > tmConstants.MIN_SAMPLE_DISTANCE) {
+						keepSample(j, i);
+						lastIndex = i;
+					}
 				}
 			}
+
 		}
 		// Set up simulation clock parameters
-		trackCZML[0].clock.interval = trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[lastIndex];
-		trackCZML[0].clock.currentTime = trackGeoJSON.features[0].properties.coordTimes[lastIndex];
-		trackCZML[0].clock.multiplier = calcMult(((new Date(trackGeoJSON.features[0].properties.coordTimes[lastIndex])).getTime() -
+		trackCZML[0].clock.interval = trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[j-1].properties.coordTimes[lastIndex];
+		trackCZML[0].clock.currentTime = trackGeoJSON.features[j-1].properties.coordTimes[lastIndex];
+		trackCZML[0].clock.multiplier = calcMult(((new Date(trackGeoJSON.features[j-1].properties.coordTimes[lastIndex])).getTime() -
 																							(new Date(trackGeoJSON.features[0].properties.coordTimes[0])).getTime()) / 1000);
 
-		trackCZML[1].availability = trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[0].properties.coordTimes[lastIndex];
+		trackCZML[1].availability = trackGeoJSON.features[0].properties.coordTimes[0] + '/' + trackGeoJSON.features[j-1].properties.coordTimes[lastIndex];
 
 		return trackCZML;
 

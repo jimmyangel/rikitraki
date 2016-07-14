@@ -8,6 +8,7 @@ var tmConfig = (function () {
 
 	// This function assumes that the api and the web page are colocated, if that is not the case it will need to be changed
 	var getApiBaseUrl = function () {
+		return 'https://www.rikitraki.com/api'; // Comment this out before pushing to prod
 		if (window.location.port === DEV_WEB_PORT) {
 			return window.location.protocol + '//' + window.location.hostname + ':' + DEV_WS_PORT + '/api';
 		}
