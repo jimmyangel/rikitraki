@@ -344,7 +344,7 @@ var tmMap = (function () {
 		layerControl.addTo(map);
 
 
-		var insideT; // Here we will put the inside line of the track in a different color
+		var insideT = {type: "FeatureCollection", features: []}; // Here we will put the inside line of the track in a different color
 
 		// We use a custom layer to have more control over track display
 		var customLayer = L.geoJson(null, {
@@ -354,10 +354,10 @@ var tmMap = (function () {
 		    },
 		    // Bind elevation control via onEachFeature
 		    onEachFeature: function (feature, layer) {
-		    	// Elevation control only understands lines
-	    		if (feature.geometry.type === 'LineString' && Array.isArray(feature.geometry.coordinates)) {
+		    	// Elevation control only understands lines and must have elevation info (otherwise, skip)
+	    		if (feature.geometry.type === 'LineString' && Array.isArray(feature.geometry.coordinates) && feature.geometry.coordinates[0].length === 3) {
 		 				// Save this line to draw the inside of the track
-		 				insideT = layer.toGeoJSON();
+		 				insideT.features.push(layer.toGeoJSON());
 		 				el.addData.bind(el)(feature, layer);
 	 				}
 		    }
@@ -375,16 +375,17 @@ var tmMap = (function () {
 			this.eachLayer(function (layer) {
 				layer.bindPopup(layer.feature.properties.name, {maxWidth: 200});
 				// Hey since we are iterating through features, we may as well get the track distance, elevation gain and other track useful info
-				if (layer.feature.geometry.type === 'LineString') {
+				/*if (layer.feature.geometry.type === 'LineString') {
 					var tm = tmUtils.calculateTrackMetrics(layer.feature);
 					if (tm) {
+						console.log(tm);
 						trackMetrics = tm;
 					}
 					// Grab the recorded date, if available
 					if (layer.feature.properties.time) {
 						trackDate = new Date(layer.feature.properties.time).toString();
 					}
-				}
+				} */
 				// Set the icon for Point markers
 		    	if (layer.feature.geometry.type === 'Point'){
 		    		layer.setIcon(wpIcon);
@@ -780,12 +781,12 @@ var tmMap = (function () {
 
 	function buildTrackInfoPanel(track, trackGeoJSON, container, picGeoTagCallback, doneWithThumbsCallback) {
 
-		var trackMetrics = [0, 0, 0, 0];
+		var trackMetrics = [0, 0, 0, Infinity];
 		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
 		var trackDate = 'Not Available';
 		for (var i=0; i<trackGeoJSON.features.length; i++) {
 			if (trackGeoJSON.features[i].geometry.type === 'LineString') {
-				trackMetrics = tmUtils.calculateTrackMetrics(trackGeoJSON.features[i]);
+				trackMetrics = tmUtils.calculateTrackMetrics(trackGeoJSON.features[i], trackMetrics);
 				if (trackGeoJSON.features[i].properties.time) {
 					trackDate = new Date(trackGeoJSON.features[i].properties.time).toString();
 				}
@@ -798,6 +799,9 @@ var tmMap = (function () {
 					}
 				}
 			}
+		}
+		for (i=0; i<trackMetrics.length; i++) {
+			trackMetrics[i] = trackMetrics[i].toFixed(2);
 		}
 		var infoPanelHTML = '';
 		infoPanelHTML +=
@@ -912,7 +916,10 @@ var tmMap = (function () {
 	}
 
 	function refresh3DTrack(event, from, to, trackGeoJSON) {
-		viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(trackGeoJSON.features[0].properties.coordTimes[trackGeoJSON.features[0].properties.coordTimes.length-1]);
+		viewer.clock.currentTime =
+			Cesium.JulianDate.fromIso8601(trackGeoJSON.features[trackGeoJSON.features.length-1].
+				properties.coordTimes[trackGeoJSON.features[trackGeoJSON.features.length-1].
+					properties.coordTimes.length-1]);
 		if (fsm3D.current !== 'Track') {
 			fsm3D.finishPlay();
 		}
