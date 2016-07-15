@@ -343,28 +343,17 @@ var tmMap = (function () {
 		// Later control should always be the last one
 		layerControl.addTo(map);
 
-
-		var insideT = {type: "FeatureCollection", features: []}; // Here we will put the inside line of the track in a different color
-
 		// We use a custom layer to have more control over track display
 		var customLayer = L.geoJson(null, {
 			// Set the track color
 		    style: function() {
 		        return {color: tmConstants.TRACK_COLOR, opacity: 0.8, weight: 8};
-		    },
-		    // Bind elevation control via onEachFeature
-		    onEachFeature: function (feature, layer) {
-		    	// Elevation control only understands lines and must have elevation info (otherwise, skip)
-	    		if (feature.geometry.type === 'LineString' && Array.isArray(feature.geometry.coordinates) && feature.geometry.coordinates[0].length === 3) {
-		 				// Save this line to draw the inside of the track
-		 				insideT.features.push(layer.toGeoJSON());
-		 				el.addData.bind(el)(feature, layer);
-	 				}
 		    }
 		});
 
 		// Get gpx track data and put it on the map
 		var tl = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null, customLayer).on('ready', function() {
+			console.log(tl);
 			// If the user is logged in and owns the track then allow editing, passing track layer, in case we need to geotag pics
 			tmForms.enableEditButton(track, tl);
 			// Change the default icon for waypoints
@@ -402,15 +391,23 @@ var tmMap = (function () {
 	    	// map.fitBounds(tl.getBounds(), {maxZoom: map.getBoundsZoom(tl.getBounds())-1, paddingBottomRight: [($('#map').width())*.5, 0]});
 	    	// map.setZoom(map.getBoundsZoom(tl.getBounds())-1); // For some reason this has a glitch on iPad
 
-	    	// Go ahead and draw the inside line (thinner and bright color like white)
+	    // Go ahead and draw the inside line (thinner and bright color like yellow)
+			var insideT = {type: "FeatureCollection", features: []}; // Here we will put the inside line of the track in a different color
+			insideT.features.push(tmUtils.extractSingleLineString(tl.toGeoJSON()));
 			L.geoJson(insideT, {
 				style: function () {
 					return {color: tmConstants.INSIDE_TRACK_COLOR, weight: 2, opacity: 1};
-				}
+				},
+				onEachFeature: el.addData.bind(el)
 			}).addTo(map);
 
 			// Set up trailhead marker assuming the very first point is at the trailhead
 			var tLatLngs = tl.getLayers()[0].getLatLngs();
+			if (Array.isArray(tLatLngs[0])) { // If this is true, we have a MultiLineString
+				tLatLngs = tLatLngs[0];
+				console.log(tLatLngs);
+			}
+
 			var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
 			var marker = L.marker(tLatLngs[0], {zIndexOffset: 1000, icon: L.divIcon({html: '<img src="images/' + thIconName + '.png">'})}).addTo(map);
 			// Google directions hyperlink
@@ -423,7 +420,7 @@ var tmMap = (function () {
 
 			var photoLayerGroup = L.layerGroup();
 			infoPanel.onAdd = function () {
-				$(infoPanelContainer).append(buildTrackInfoPanel(track, tl.toGeoJSON(), infoPanelContainer, function(geoTagPhotos) {
+				$(infoPanelContainer).append(buildTrackInfoPanel(track, insideT, infoPanelContainer, function(geoTagPhotos) {
 					var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
 							 geoTagPhotos.picIndex +
 							 '" data-lightbox="picture' + '" data-title="' + geoTagPhotos.picCaption +
@@ -724,7 +721,8 @@ var tmMap = (function () {
 		savedTrackMarkerEntity = viewer.entities.getById(track.trackId);
 		var lGPX = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
 			// First grab the GeoJSON data from omnivore
-			var trackGeoJSON = this.toGeoJSON();
+			var trackGeoJSON = {type: "FeatureCollection", features: []};
+			trackGeoJSON.features.push(tmUtils.extractSingleLineString(this.toGeoJSON()));
 
 			viewer.dataSources.add(Cesium.CzmlDataSource.load(tmUtils.buildCZMLForTrack(trackGeoJSON, lGPX, track.trackType))).then(function(ds) {
 				trackDataSource = ds; // Save this data source so that we can remove it when needed
@@ -741,7 +739,7 @@ var tmMap = (function () {
 			// Set up track name in info box
 			$('#infoPanel').empty();
 			$('#infoPanel').append('<div class="leaflet-control info infoPanelContainer"></div>');
-			buildTrackInfoPanel(track, this.toGeoJSON(), '#infoPanel>.infoPanelContainer', null, function(geoTags) {
+			buildTrackInfoPanel(track, trackGeoJSON, '#infoPanel>.infoPanelContainer', null, function(geoTags) {
 				tmUtils.buildCZMLForGeoTags(geoTags, viewer, function (geoTagsCZML) {
 					viewer.dataSources.add(Cesium.CzmlDataSource.load(geoTagsCZML)).then(function(gds) {
 						geoTagsDataSource = gds;
@@ -784,6 +782,7 @@ var tmMap = (function () {
 		var trackMetrics = [0, 0, 0, Infinity];
 		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
 		var trackDate = 'Not Available';
+		console.log('building info panel');
 		for (var i=0; i<trackGeoJSON.features.length; i++) {
 			if (trackGeoJSON.features[i].geometry.type === 'LineString') {
 				trackMetrics = tmUtils.calculateTrackMetrics(trackGeoJSON.features[i], trackMetrics);

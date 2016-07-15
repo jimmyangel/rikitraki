@@ -328,10 +328,47 @@ var tmUtils = (function () {
 		}
 	};
 
+	var extractSingleLineString = function (t) {
+		var sLS = {
+			geometry: {
+				coordinates: [],
+				type: "LineString"
+			},
+			properties: {
+				coordTimes: []
+			},
+			type: "Feature"
+		};
+		for (var i=0; i<t.features.length; i++) {
+			if (t.features[i].geometry.type == 'LineString') {
+				if (t.features[i].geometry.coordinates[0].length >= 3) {
+					sLS.geometry.coordinates.push.apply(sLS.geometry.coordinates, t.features[i].geometry.coordinates);
+					if (t.features[i].properties.coordTimes) {
+						sLS.properties.coordTimes.push.apply(sLS.properties.coordTimes, t.features[i].properties.coordTimes);
+					}
+				}
+			} else {
+				if (t.features[i].geometry.type == 'MultiLineString') {
+					for (var j=0; j<t.features[i].geometry.coordinates.length; j++) {
+						if (t.features[i].geometry.coordinates[j][0].length >= 3) {
+							sLS.geometry.coordinates.push.apply(sLS.geometry.coordinates, t.features[i].geometry.coordinates[j]);
+						}
+						if (t.features[i].properties.coordTimes[j]) {
+							sLS.properties.coordTimes.push.apply(sLS.properties.coordTimes, t.features[i].properties.coordTimes[j]);
+						}
+					};
+				}
+			}
+		}
+		console.log(sLS);
+		return sLS;
+	}
+
 	return {
 		calculateTrackMetrics: calculateTrackMetrics,
 		isValidEmail: isValidEmail,
 		buildCZMLForTrack: buildCZMLForTrack,
-		buildCZMLForGeoTags: buildCZMLForGeoTags
+		buildCZMLForGeoTags: buildCZMLForGeoTags,
+		extractSingleLineString: extractSingleLineString
 	};
 })();

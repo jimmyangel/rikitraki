@@ -515,25 +515,21 @@ var tmForms = (function () {
 					displayUploadError(badGpxMsg);
 					return;
 				}
-				var trackGeoJSON = layer.toGeoJSON();
-				// Must have at least one feature
-				if (trackGeoJSON.features.length <= 0) {
+
+				var singleLineString = tmUtils.extractSingleLineString(layer.toGeoJSON());
+
+				// Must have a track to be valid
+				if (singleLineString.geometry.coordinates.length === 0) {
 					displayUploadError(badGpxMsg);
 					return;
-				} else {
-					// Must have at least one LineString feature with elevation data
-					for (i=0; i<trackGeoJSON.features.length && trackGeoJSON.features[i].geometry.type !== 'LineString'; i++) {}
-					if ((i >= trackGeoJSON.features.length) || (trackGeoJSON.features[0].geometry.coordinates[0].length < 3)) {
-						displayUploadError(badGpxMsg);
-						return;
-					}
 				}
-				// Ok, looks like we have a valid GPX from here on and index i carries the LineString feature
+
+				// Ok, looks like we have a valid GPX from here on
 				$('#uploadingMessage').fadeIn('slow');
 				$('#uploadSpinner').spin({left: '90%'});
 				$('#uploadButton').attr('disabled', 'disabled');
 				var track = {};
-				track.trackLatLng = [trackGeoJSON.features[i].geometry.coordinates[0][1], trackGeoJSON.features[i].geometry.coordinates[0][0]];
+				track.trackLatLng = [singleLineString.geometry.coordinates[0][1], singleLineString.geometry.coordinates[0][0]];
 				var country = $('#track-country').val();
 				track.trackRegionTags = new Array((country === 'United States') ? 'US' : country, $('#track-region').val());
 				track.trackLevel = $('#track-level:checked').val();
@@ -544,7 +540,7 @@ var tmForms = (function () {
 				track.trackDescription = $('#track-description').val();
 				track.trackGPXBlob = fReader.result;
 				track.hasPhotos = false;
-				makeTrackPhotos (trackGeoJSON.features[i], function(trackPhotos) {
+				makeTrackPhotos (singleLineString, function(trackPhotos) {
 					if (trackPhotos.length > 0) {
 						track.trackPhotos = trackPhotos;
 						track.hasPhotos = true;
