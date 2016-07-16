@@ -69,7 +69,7 @@ var tmUtils = (function () {
 				trackGeoJSON.features.splice(i, 1);
 			} else {
 				// Also remove feature if the LineString has no elevation data
-				if (!Array.isArray(trackGeoJSON.features[i].geometry.coordinates) || !(trackGeoJSON.features[i].geometry.coordinates[0].length === 3)) {
+				if (!Array.isArray(trackGeoJSON.features[i].geometry.coordinates) || (trackGeoJSON.features[i].geometry.coordinates[0].length < 3)) {
 					trackGeoJSON.features.splice(i, 1);
 				}
 			}
@@ -210,10 +210,11 @@ var tmUtils = (function () {
 		}
 
 		// Iterate over Linestring Features
+		var lastIndex = 0;
 		for (j=0; j<trackGeoJSON.features.length; j++) {
 
 			// Simplify track segment by dropping samples closer than tmConstants.MIN_SAMPLE_DISTANCE meters
-			var lastIndex = 0;
+			lastIndex = 0;
 			for (i=0; i<trackGeoJSON.features[j].geometry.coordinates.length; i++) {
 				if (i === 0) {
 					keepSample(j, i);
@@ -332,19 +333,19 @@ var tmUtils = (function () {
 		var sLS = {
 			geometry: {
 				coordinates: [],
-				type: "LineString"
+				type: 'LineString'
 			},
 			properties: {
 				coordTimes: []
 			},
-			type: "Feature"
+			type: 'Feature'
 		};
 		for (var i=0; i<t.features.length; i++) {
 			// Grab the first time found
 			if (t.features[i].properties.time && !sLS.properties.time) {
 				sLS.properties.time = t.features[i].properties.time;
 			}
-			if (t.features[i].geometry.type == 'LineString') {
+			if (t.features[i].geometry.type === 'LineString') {
 				if (t.features[i].geometry.coordinates[0].length >= 3) {
 					sLS.geometry.coordinates.push.apply(sLS.geometry.coordinates, t.features[i].geometry.coordinates);
 					if (t.features[i].properties.coordTimes) {
@@ -352,7 +353,7 @@ var tmUtils = (function () {
 					}
 				}
 			} else {
-				if (t.features[i].geometry.type == 'MultiLineString') {
+				if (t.features[i].geometry.type === 'MultiLineString') {
 					for (var j=0; j<t.features[i].geometry.coordinates.length; j++) {
 						if (t.features[i].geometry.coordinates[j][0].length >= 3) {
 							sLS.geometry.coordinates.push.apply(sLS.geometry.coordinates, t.features[i].geometry.coordinates[j]);
@@ -360,12 +361,12 @@ var tmUtils = (function () {
 						if (t.features[i].properties.coordTimes[j]) {
 							sLS.properties.coordTimes.push.apply(sLS.properties.coordTimes, t.features[i].properties.coordTimes[j]);
 						}
-					};
+					}
 				}
 			}
 		}
 		return sLS;
-	}
+	};
 
 	return {
 		calculateTrackMetrics: calculateTrackMetrics,

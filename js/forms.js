@@ -508,7 +508,6 @@ var tmForms = (function () {
 			fReader.onload = function() {
 				// We try to parse using omnivore to make sure a GPX file can be viewed later
 				var layer;
-				var i;
 				try {
 					layer = omnivore.gpx.parse(fReader.result);
 				} catch (e) {
