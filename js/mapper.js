@@ -353,38 +353,17 @@ var tmMap = (function () {
 
 		// Get gpx track data and put it on the map
 		var tl = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null, customLayer).on('ready', function() {
-			console.log(tl);
 			// If the user is logged in and owns the track then allow editing, passing track layer, in case we need to geotag pics
 			tmForms.enableEditButton(track, tl);
 			// Change the default icon for waypoints
-	        var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: tmConstants.WAYPOINT_COLOR, size: 's'});
-	        var trackDate = 'Not Available'; // By default
-	        // var trackCoordinates;
-	        // Now let's iterate over the features to customize the popups and get some data (e.g., track date)
+	    var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: tmConstants.WAYPOINT_COLOR, size: 's'});
+	    // Now let's iterate over the features to customize the popups and markers
 			this.eachLayer(function (layer) {
 				layer.bindPopup(layer.feature.properties.name, {maxWidth: 200});
-				// Hey since we are iterating through features, we may as well get the track distance, elevation gain and other track useful info
-				/*if (layer.feature.geometry.type === 'LineString') {
-					var tm = tmUtils.calculateTrackMetrics(layer.feature);
-					if (tm) {
-						console.log(tm);
-						trackMetrics = tm;
-					}
-					// Grab the recorded date, if available
-					if (layer.feature.properties.time) {
-						trackDate = new Date(layer.feature.properties.time).toString();
-					}
-				} */
 				// Set the icon for Point markers
-		    	if (layer.feature.geometry.type === 'Point'){
-		    		layer.setIcon(wpIcon);
-		    		// If date not available from the LineString, try from one of the waypoints
-		    		if (trackDate === 'Not Available') {
-		    			if (layer.feature.properties.time) {
-		    				trackDate = new Date(layer.feature.properties.time).toString();
-		    			}
-		    		}
-		    	}
+	    	if (layer.feature.geometry.type === 'Point'){
+	    		layer.setIcon(wpIcon);
+	    	}
 			});
 			// Fit th map to the trail boundaries leaving 50% room for the info panel
 	    	// map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
@@ -405,7 +384,6 @@ var tmMap = (function () {
 			var tLatLngs = tl.getLayers()[0].getLatLngs();
 			if (Array.isArray(tLatLngs[0])) { // If this is true, we have a MultiLineString
 				tLatLngs = tLatLngs[0];
-				console.log(tLatLngs);
 			}
 
 			var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
@@ -782,7 +760,6 @@ var tmMap = (function () {
 		var trackMetrics = [0, 0, 0, Infinity];
 		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
 		var trackDate = 'Not Available';
-		console.log('building info panel');
 		for (var i=0; i<trackGeoJSON.features.length; i++) {
 			if (trackGeoJSON.features[i].geometry.type === 'LineString') {
 				trackMetrics = tmUtils.calculateTrackMetrics(trackGeoJSON.features[i], trackMetrics);
