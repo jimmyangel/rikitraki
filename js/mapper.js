@@ -1,6 +1,6 @@
 'use strict';
 /* exported tmMap */
-/* globals L, omnivore, tmForms, tmData, tmUtils, tmConfig, tmConstants, tmMessages, FB, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL, tmBaseMapLayers, StateMachine */
+/* globals L, omnivore, tmForms, tmData, tmUtils, tmConfig, tmConstants, tmMessages, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL, tmBaseMapLayers, StateMachine */
 
 var tmMap = (function () {
 	var map; // For leaflet
@@ -310,8 +310,6 @@ var tmMap = (function () {
 		var trackMarkersLayerGroup = setUpMarkersForAllTracks(tracks, track.trackId);
 		layerControl.addOverlay(trackMarkersLayerGroup, 'Show markers for all tracks');
 
-		var trackMetrics = [0, 0, 0, 0];
-
 		// If region is US, we use imperial units
 		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
 
@@ -371,7 +369,7 @@ var tmMap = (function () {
 	    	// map.setZoom(map.getBoundsZoom(tl.getBounds())-1); // For some reason this has a glitch on iPad
 
 	    // Go ahead and draw the inside line (thinner and bright color like yellow)
-			var insideT = {type: "FeatureCollection", features: []}; // Here we will put the inside line of the track in a different color
+			var insideT = {type: 'FeatureCollection', features: []}; // Here we will put the inside line of the track in a different color
 			insideT.features.push(tmUtils.extractSingleLineString(tl.toGeoJSON()));
 			L.geoJson(insideT, {
 				style: function () {
@@ -699,7 +697,7 @@ var tmMap = (function () {
 		savedTrackMarkerEntity = viewer.entities.getById(track.trackId);
 		var lGPX = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
 			// First grab the GeoJSON data from omnivore
-			var trackGeoJSON = {type: "FeatureCollection", features: []};
+			var trackGeoJSON = {type: 'FeatureCollection', features: []};
 			trackGeoJSON.features.push(tmUtils.extractSingleLineString(this.toGeoJSON()));
 
 			viewer.dataSources.add(Cesium.CzmlDataSource.load(tmUtils.buildCZMLForTrack(trackGeoJSON, lGPX, track.trackType))).then(function(ds) {
