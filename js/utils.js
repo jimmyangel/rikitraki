@@ -340,6 +340,10 @@ var tmUtils = (function () {
 			type: "Feature"
 		};
 		for (var i=0; i<t.features.length; i++) {
+			// Grab the first time found
+			if (t.features[i].properties.time && !sLS.properties.time) {
+				sLS.properties.time = t.features[i].properties.time;
+			}
 			if (t.features[i].geometry.type == 'LineString') {
 				if (t.features[i].geometry.coordinates[0].length >= 3) {
 					sLS.geometry.coordinates.push.apply(sLS.geometry.coordinates, t.features[i].geometry.coordinates);
@@ -360,7 +364,6 @@ var tmUtils = (function () {
 				}
 			}
 		}
-		console.log(sLS);
 		return sLS;
 	}
 
