@@ -3,7 +3,7 @@
 
 var tmConfig = (function () {
 	// Development port numbers
-	var DEV_WEB_PORT = '9000';
+	var DEV_WEB_PORT = '8080';
 	var DEV_WS_PORT = '3000';
 
 	// This function assumes that the api and the web page are colocated, if that is not the case it will need to be changed
@@ -141,8 +141,8 @@ var tmBaseMapLayers = [
 		},
 		{
 			layerName: 'Thunder Forest Outdoors',
-			layerUrl: 'https://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png',
-			attribution: '© <a href="http://www.opencyclemap.org">OpenCycleMap</a>, © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+			layerUrl: 'https://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=c3fa9edd920b4974b82703cf9d296359',
+			attribution: '© <a href="http://www.thunderforest.com/">Thunderforest</a>, © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 			maxZoom: 17
 		},
 		{
