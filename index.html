@@ -212,7 +212,7 @@
 
                       </div>
                       <div class="tab-pane fade" id="register">
-                        <form class="form-horizontal" role="form" id="tab">
+                        <form class="form-horizontal" role="form">
                           <div class="form-group has-feedback">
                             <label class="control-label col-sm-4">Username</label>
                             <div class="col-sm-8">
@@ -299,7 +299,7 @@
                 <div class ="well well-sm">
                   <div id="userTabContent" class="tab-content">
                     <div class="tab-pane active in" id="update">
-                      <form class="form-horizontal" role="form" id="tab">
+                      <form class="form-horizontal" role="form">
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-5" for="password">Enter your password</label>
                           <div class="col-sm-7">
@@ -349,7 +349,7 @@
                       </form>
                     </div>
                     <div class="tab-pane" id="remove" style="display: none">
-                      <form class="form-horizontal" role="form" id="tab">
+                      <form class="form-horizontal" role="form">
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-5">Enter your password</label>
                           <div class="col-sm-7">
@@ -442,9 +442,9 @@
                         <div class="form-group">
                           <label class="control-label col-sm-3">Difficulty</label>
                           <div class="col-sm-9">
-                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="track-level" value="Easy" checked>Easy</label>
-                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="track-level" value="Moderate">Moderate</label>
-                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="track-level" value="Difficult">Difficult</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" class="track-level" value="Easy" checked>Easy</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" class="track-level" value="Moderate">Moderate</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" class="track-level" value="Difficult">Difficult</label>
                           </div>
                         </div>
                         <div class="form-group">
@@ -486,7 +486,7 @@
 
                     <div class="tab-pane" id="track-photos-tab">
 
-                      <form class="form-horizontal" role="form" id="tab">
+                      <form class="form-horizontal" role="form">
                         <div class="form-group has-feedback">
                           <label class="control-label col-sm-3">Up to 8 jpeg images</label>
                           <div class="col-sm-1">
@@ -580,9 +580,9 @@
                         <div class="form-group">
                           <label class="control-label col-sm-3">Difficulty</label>
                           <div class="col-sm-9">
-                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="edit-track-level" value="Easy" checked>Easy</label>
-                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="edit-track-level" value="Moderate">Moderate</label>
-                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" id="edit-track-level" value="Difficult">Difficult</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" class="edit-track-level" value="Easy" checked>Easy</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" class="edit-track-level" value="Moderate">Moderate</label>
+                            <label class="radio-inline"><input type="radio" name="difficultyRadioOptions" class="edit-track-level" value="Difficult">Difficult</label>
                           </div>
                         </div>
                         <div class="form-group">
@@ -615,7 +615,7 @@
                       </form>
                     </div>
                     <div class="tab-pane" id="edit-track-photos-tab">
-                      <form class="form-horizontal" role="form" id="tab">
+                      <form class="form-horizontal" role="form">
                         <div id="edit-track-file-selector" class="form-group has-feedback" style="display: none">
                           <label class="control-label col-sm-3">Add jpeg images (8 max)</label>
                           <div class="col-sm-1">
@@ -641,7 +641,7 @@
                       </form>
                     </div>
                     <div class="tab-pane" id="remove-track-info-tab">
-                      <form class="form-horizontal" role="form" id="tab">
+                      <form class="form-horizontal" role="form">
                         <div class="form-group">
                           <label class="control-label col-sm-4">Are you sure?</label>
                             <div class="checkbox">
@@ -742,9 +742,9 @@
                         <div class="form-group">
                           <label class="control-label col-sm-3">By difficulty</label>
                           <div class="col-sm-9">
-                            <label class="checkbox-inline"><input type="checkbox" id="filter-level" value="Easy">Easy</label>
-                            <label class="checkbox-inline"><input type="checkbox" id="filter-level" value="Moderate">Moderate</label>
-                            <label class="checkbox-inline"><input type="checkbox" id="filter-level" value="Difficult">Difficult</label>
+                            <label class="checkbox-inline"><input type="checkbox" class="filter-level" value="Easy">Easy</label>
+                            <label class="checkbox-inline"><input type="checkbox" class="filter-level" value="Moderate">Moderate</label>
+                            <label class="checkbox-inline"><input type="checkbox" class="filter-level" value="Difficult">Difficult</label>
                           </div>
                         </div>
                         <div class="form-group">
@@ -769,8 +769,8 @@
                             <input type="number" id="filter-near" class="form-control">
                           </div>
                           <div class="col-sm-7">
-                            <label class="radio-inline"><input type="radio" name="nearRadioOptions" id="filter-near-units" value="Km" checked>Km</label>
-                            <label class="radio-inline"><input type="radio" name="nearRadioOptions" id="filter-near-units" value="Miles">Miles</label>
+                            <label class="radio-inline"><input type="radio" name="nearRadioOptions" class="filter-near-units" value="Km" checked>Km</label>
+                            <label class="radio-inline"><input type="radio" name="nearRadioOptions" class="filter-near-units" value="Miles">Miles</label>
                           </div>
                         </div>
                         <div class="form-group">
