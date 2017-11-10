@@ -531,7 +531,7 @@ var tmForms = (function () {
 				track.trackLatLng = [singleLineString.geometry.coordinates[0][1], singleLineString.geometry.coordinates[0][0]];
 				var country = $('#track-country').val();
 				track.trackRegionTags = new Array((country === 'United States') ? 'US' : country, $('#track-region').val());
-				track.trackLevel = $('#track-level:checked').val();
+				track.trackLevel = $('.track-level:checked').val();
 				track.trackType = $('#track-activity').val();
 				track.trackFav = $('#track-favorite').is(':checked');
 				track.trackGPX = $('#track-file')[0].files[0].name;
@@ -707,7 +707,7 @@ var tmForms = (function () {
 			$('#edit-track-name').val(track.trackName);
 			$('#edit-track-description').val(track.trackDescription);
 			$('#edit-track-activity').val(track.trackType ? track.trackType : 'Hiking'); // For compatibility with old data
-			$('#edit-track-level[value=' + track.trackLevel + ']').prop('checked', true);
+			$('.edit-track-level[value=' + track.trackLevel + ']').prop('checked', true);
 			if (track.trackFav) {
 				$('#edit-track-favorite').prop('checked', true);
 			}
@@ -851,7 +851,7 @@ var tmForms = (function () {
 			t.trackName = $('#edit-track-name').val();
 			t.trackDescription = $('#edit-track-description').val();
 			t.trackFav = $('#edit-track-favorite').is(':checked');
-			t.trackLevel = $('#edit-track-level:checked').val();
+			t.trackLevel = $('.edit-track-level:checked').val();
 			t.trackType = $('#edit-track-activity').val();
 			var country = $('#edit-track-country').val();
 			t.trackRegionTags = new Array((country === 'United States') ? 'US' : country, $('#edit-track-region').val());
@@ -1000,7 +1000,7 @@ var tmForms = (function () {
 				if (filter.level) {
 					filter.level = filter.level.split(',');
 					for (i=0; i<filter.level.length; i++) {
-						$('#filter-level[value="' + filter.level[i] + '"]').prop('checked', true);
+						$('.filter-level[value="' + filter.level[i] + '"]').prop('checked', true);
 					}
 				}
 				if (filter.activity) {
@@ -1055,7 +1055,7 @@ var tmForms = (function () {
 			if (trackFav) {
 				filter.trackFav = true;
 			}
-			var filterLevel = $('#filter-level:checked');
+			var filterLevel = $('.filter-level:checked');
 			if (filterLevel.length < 3) {
 				for (i=0; i<filterLevel.length; i++) {
 					filter.level = (i === 0) ? (filterLevel[i].value) : (filter.level + ',' + filterLevel[i].value);
