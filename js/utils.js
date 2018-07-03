@@ -312,7 +312,7 @@ var tmUtils = (function () {
 		}
 
 		if (p.length > 0) {
-			Cesium.sampleTerrain(viewer.terrainProvider, 14, pos).then(function (pos) {
+			Cesium.sampleTerrainMostDetailed(viewer.terrainProvider, pos).then(function (pos) {
 				var addCZMLItemTasks = [];
 				for (var k=0; k<p.length; k++) {
 					var img = new Image();
