@@ -452,12 +452,12 @@ var tmMap = (function () {
 		for (var k=0; k<tmBaseMapLayers.length; k++) {
 			if (tmBaseMapLayers[k].default3D) {dflt = k;}
 			$('#basemap-layer-control').append(
-				'<label><input id="basemap-layer" value="' + k + '" type="radio" class="leaflet-control-layers-selector" name="leaflet-base-layers"' +
+				'<label><input value="' + k + '" type="radio" class="basemap-layer leaflet-control-layers-selector" name="leaflet-base-layers"' +
 			 	((tmBaseMapLayers[k].default3D) ? 'checked="checked"' : '' ) +  '><span> ' + tmBaseMapLayers[k].layerName + '</span></label>');
 		}
 
 		$('#basemap-layer-control').change(function() {
-			var selectedLayer = $('#basemap-layer:checked').val();
+			var selectedLayer = $('.basemap-layer:checked').val();
 			viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
 			viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({
 				url: tmBaseMapLayers[selectedLayer].layerUrl,
