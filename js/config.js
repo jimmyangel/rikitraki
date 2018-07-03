@@ -2,13 +2,14 @@
 /* exported tmConfig, tmMessages, tmConstants, tmBaseMapLayers */
 
 var tmConfig = (function () {
+
 	// Development port numbers
 	var DEV_WEB_PORT = '8080';
 	var DEV_WS_PORT = '3000';
 
 	// This function assumes that the api and the web page are colocated, if that is not the case it will need to be changed
 	var getApiBaseUrl = function () {
-		// return 'https://www.rikitraki.com/api'; // Comment this out before pushing to prod
+		return 'https://www.rikitraki.com/api'; // Comment this out before pushing to prod
 		if (window.location.port === DEV_WEB_PORT) {
 			return window.location.protocol + '//' + window.location.hostname + ':' + DEV_WS_PORT + '/api';
 		}
@@ -106,7 +107,9 @@ var tmConstants = {
 	CAMERA_OFFSET: 6000,
 	FLY_TIME: 2,
 	MIN_SAMPLE_DISTANCE: 10,
-	AUTOPLAY_DELAY: 5000
+	AUTOPLAY_DELAY: 5000,
+  CESIUM_ACCESS_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMzE3NzI4MC1kM2QxLTQ4OGItOTRmMy1jZjNiMzgyZWNjMTEiLCJpZCI6ODMxLCJpYXQiOjE1MjU5Nzg4MDN9.Aw5ul-R15-PWF1eziTS9fOffIMjm02TL0eRtOD59v2s'
+
 };
 
 var tmMessages = {

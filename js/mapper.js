@@ -452,12 +452,12 @@ var tmMap = (function () {
 		for (var k=0; k<tmBaseMapLayers.length; k++) {
 			if (tmBaseMapLayers[k].default3D) {dflt = k;}
 			$('#basemap-layer-control').append(
-				'<label><input id="basemap-layer" value="' + k + '" type="radio" class="leaflet-control-layers-selector" name="leaflet-base-layers"' +
+				'<label><input value="' + k + '" type="radio" class="basemap-layer leaflet-control-layers-selector" name="leaflet-base-layers"' +
 			 	((tmBaseMapLayers[k].default3D) ? 'checked="checked"' : '' ) +  '><span> ' + tmBaseMapLayers[k].layerName + '</span></label>');
 		}
 
 		$('#basemap-layer-control').change(function() {
-			var selectedLayer = $('#basemap-layer:checked').val();
+			var selectedLayer = $('.basemap-layer:checked').val();
 			viewer.imageryLayers.remove(viewer.imageryLayers.get(0));
 			viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({
 				url: tmBaseMapLayers[selectedLayer].layerUrl,
@@ -490,6 +490,8 @@ var tmMap = (function () {
 
 		var defaultBaseMapLayer = populateBaseMapLayerControl();
 
+    Cesium.Ion.defaultAccessToken = tmConstants.CESIUM_ACCESS_TOKEN;
+
 		viewer = new Cesium.Viewer('globe', {
 							// scene3DOnly: true,
 							baseLayerPicker: false,
@@ -512,11 +514,13 @@ var tmMap = (function () {
 							creditContainer: 'creditContainer'
 							});
 
-		var terrainProvider = new Cesium.CesiumTerrainProvider({
+		/* var terrainProvider = new Cesium.CesiumTerrainProvider({
 			url : 'https://assets.agi.com/stk-terrain/world',
 			requestWaterMask : false,
 			requestVertexNormals : true
-		});
+		}); */
+
+    var terrainProvider = Cesium.createWorldTerrain();
 
 		var removeHandler = viewer.scene.postRender.addEventListener(function () {
 			$('#loadingOverlay').hide();
