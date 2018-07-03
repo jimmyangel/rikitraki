@@ -490,6 +490,8 @@ var tmMap = (function () {
 
 		var defaultBaseMapLayer = populateBaseMapLayerControl();
 
+    Cesium.Ion.defaultAccessToken = tmConstants.CESIUM_ACCESS_TOKEN;
+
 		viewer = new Cesium.Viewer('globe', {
 							// scene3DOnly: true,
 							baseLayerPicker: false,
@@ -512,11 +514,13 @@ var tmMap = (function () {
 							creditContainer: 'creditContainer'
 							});
 
-		var terrainProvider = new Cesium.CesiumTerrainProvider({
+		/* var terrainProvider = new Cesium.CesiumTerrainProvider({
 			url : 'https://assets.agi.com/stk-terrain/world',
 			requestWaterMask : false,
 			requestVertexNormals : true
-		});
+		}); */
+
+    var terrainProvider = Cesium.createWorldTerrain();
 
 		var removeHandler = viewer.scene.postRender.addEventListener(function () {
 			$('#loadingOverlay').hide();
