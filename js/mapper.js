@@ -488,7 +488,7 @@ export var tmMap = (function () {
 			$('#layer-control').removeClass('leaflet-control-layers-expanded');
 		});
 
-		$('#globe').on('touchstart', function() {
+		$('#globe').on('touchstart', function(event) {
 			if ((!$(event.target).closest('#layer-control').length) && ($('#layer-control').hasClass('leaflet-control-layers-expanded'))) {
 				$('#layer-control').removeClass('leaflet-control-layers-expanded');
 			}

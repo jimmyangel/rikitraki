@@ -3,17 +3,17 @@
 export var tmConfig = (function () {
 
 	// Development port numbers
-	var DEV_WEB_PORT = '8080';
-	var DEV_WS_PORT = '3000';
+	// var DEV_WEB_PORT = '8080';
+	// var DEV_WS_PORT = '3000';
 
 	// This function assumes that the api and the web page are colocated, if that is not the case it will need to be changed
 	var getApiBaseUrl = function () {
-		return 'https://www.rikitraki.com/api'; // Comment this out before pushing to prod
-		if (window.location.port === DEV_WEB_PORT) {
+		return 'https://services.rikitraki.com/api'; // Comment this out before pushing to prod
+		/* if (window.location.port === DEV_WEB_PORT) {
 			return window.location.protocol + '//' + window.location.hostname + ':' + DEV_WS_PORT + '/api';
 		}
 		// Hosted in same nodejs container (local or remote)
-		return window.location.protocol + '//' + window.location.host + '/api';
+		return window.location.protocol + '//' + window.location.host + '/api'; */
 	};
 
 	var getTrackId = function () {
