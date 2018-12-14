@@ -22,7 +22,7 @@
   "dependencies": {
     "blueimp-canvas-to-blob": "^2.2.4",
     "bootstrap": "^3.3.7",
-    "country-region-selector": "^0.5.1",
+    "country-region-selector": "^0.3.2",
     "exif-js": "~2.1.1",
     "javascript-state-machine": "^2.3.5",
     "jquery": "~2.1.4",
@@ -30,8 +30,8 @@
     "leaflet-omnivore": "~0.3.2",
     "leaflet.elevation": "git://github.com/jimmyangel/Leaflet.Elevation.git#master",
     "lightbox2": "~2.8.0",
-    "sortablejs": "~1.4.2",
     "spin.js": "~2.3.0",
-    "stupid-table-plugin": "^1.1.3"
+    "stupid-table-plugin": "^1.1.3",
+    "d3": "~3.5.5"
   }
 }
