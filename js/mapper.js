@@ -1,6 +1,7 @@
 'use strict';
 
 import L from 'leaflet';
+window.d3 = require ('d3');
 require ('leaflet.elevation/dist/leaflet.elevation-0.0.4.min.js');
 require ('../bower_components/Leaflet.MakiMarkers/Leaflet.MakiMarkers.js');
 require ('../bower_components/leaflet.markercluster/dist/leaflet.markercluster.js');
