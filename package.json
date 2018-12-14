@@ -3,7 +3,8 @@
   "version": "0.6.3",
   "scripts": {
     "dev": "parcel index.html -d public",
-    "build": "parcel build index.html -d public"
+    "build": "parcel build index.html -d public",
+    "test": "jshint js"
   },
   "assetsPath": "static",
   "devDependencies": {
@@ -16,11 +17,11 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-processhtml": "^0.3.7",
     "grunt-wiredep": "^2.0.0",
+    "jshint": "^2.9.7",
     "jshint-stylish": "^1.0.2",
     "load-grunt-tasks": "^3.1.0",
     "parcel-bundler": "^1.10.3",
-    "parcel-plugin-asset-copier": "^1.0.0",
-    "parcel-plugin-static-files-copy": "^1.2.4"
+    "parcel-plugin-asset-copier": "^1.0.0"
   },
   "dependencies": {
     "blueimp-canvas-to-blob": "^2.2.4",
