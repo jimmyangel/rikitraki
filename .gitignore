@@ -3,6 +3,5 @@ dist
 .tmp
 .cache
 bower_components
-components
 stuff
 test

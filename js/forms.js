@@ -11,7 +11,7 @@ require('exif-js');
 require('blueimp-canvas-to-blob');
 var crs = require('country-region-selector');
 require('country-region-selector/dist/jquery.crs.js');
-require ('../bower_components/Sortable/jquery.fn.sortable.min.js');
+require ('../components/Sortable/jquery.fn.sortable.min.js');
 
 export var tmForms = (function () {
 

@@ -13,7 +13,7 @@ import {tmMap} from './mapper.js';
 
 // Globals (fix later)
 window.API_BASE_URL = tmConfig.getApiBaseUrl();
-window.CESIUM_BASE_URL = 'components/Cesium/';
+window.CESIUM_BASE_URL = 'lib/Cesium/';
 
 window.isMobile = tmConfig.getOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 window.isWebGlSupported = false;
@@ -36,7 +36,7 @@ function setUpMap() {
 
 		// Now figure out what view to set up
 		if ((tmConfig.getTerrainFlag() || tmConfig.getGlobeFlag()) && isWebGlSupported) {
-			$.getScript('components/Cesium/Cesium.js', function () {
+			$.getScript('lib/Cesium/Cesium.js', function () {
 				tmMap.setUp3DView(data.tracks, (trackId in data.tracks) ? data.tracks[trackId] : undefined);
 			});
 		} else {

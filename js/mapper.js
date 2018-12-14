@@ -3,9 +3,9 @@
 import L from 'leaflet';
 window.d3 = require ('d3');
 require ('leaflet.elevation/dist/leaflet.elevation-0.0.4.min.js');
-require ('../bower_components/Leaflet.MakiMarkers/Leaflet.MakiMarkers.js');
-require ('../bower_components/leaflet.markercluster/dist/leaflet.markercluster.js');
-var omnivore = require ('../bower_components/leaflet-omnivore/leaflet-omnivore.js');
+require ('../components/Leaflet.MakiMarkers/Leaflet.MakiMarkers.js');
+require ('../components/leaflet.markercluster/dist/leaflet.markercluster.js');
+var omnivore = require ('../components/leaflet-omnivore/leaflet-omnivore.js');
 var StateMachine = require ('javascript-state-machine');
 var lightbox = require ('lightbox2');
 import {tmForms} from './forms.js';
