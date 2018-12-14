@@ -1,4 +1,5 @@
 {
+        "node": true,
         "esnext": true,
         "bitwise": true,
         "camelcase": true,
@@ -6,7 +7,7 @@
         "eqeqeq": true,
         "immed": true,
         "indent": 2,
-        "latedef": true,
+        "latedef": false,
         "newcap": true,
         "noarg": true,
         "quotmark": "single",
@@ -14,5 +15,24 @@
         "unused": true,
         "trailing": true,
         "smarttabs": true,
-        "globalstrict": true
+        "globalstrict": true,
+        "globals": {
+          "$": true,
+          "window": true,
+          "document": true,
+          "btoa": true,
+          "location": true,
+          "URL": true,
+          "FileReader": true,
+          "navigator": true,
+          "history": true,
+          "localStorage": true,
+          "sessionStorage": true,
+          "Image": true,
+          "API_BASE_URL": true,
+          "Cesium": true,
+          "L": true,
+          "isWebGlSupported": true,
+          "isMobile": true
+        }
 }
