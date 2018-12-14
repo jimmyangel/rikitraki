@@ -1,8 +1,8 @@
 'use strict';
-/* exported tmUtils */
-/* globals L, Cesium, tmConstants */
 
-var tmUtils = (function () {
+import {tmConstants} from './config.js';
+
+export var tmUtils = (function () {
 	var calculateTrackMetrics = function(feature, tm) {
 		if (!Array.isArray(feature.geometry.coordinates)) {
 			// Some gps tracks misbehave, so skip offending part

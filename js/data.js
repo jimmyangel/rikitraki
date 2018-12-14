@@ -1,8 +1,6 @@
 'use strict';
-/* exported tmData */
-/* globals API_BASE_URL */
 
-var tmData = (function () {
+export var tmData = (function () {
 
 	var getTrackInfo = function (successCallback) {
 		var filter = localStorage.getItem('rikitraki-filter');

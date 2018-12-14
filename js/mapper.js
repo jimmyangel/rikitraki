@@ -1,8 +1,18 @@
 'use strict';
-/* exported tmMap */
-/* globals L, omnivore, tmForms, tmData, tmUtils, tmConfig, tmConstants, tmMessages, lightbox, Cesium, isMobile, isWebGlSupported, API_BASE_URL, tmBaseMapLayers, StateMachine */
 
-var tmMap = (function () {
+import L from 'leaflet';
+require ('leaflet.elevation/dist/leaflet.elevation-0.0.4.min.js');
+require ('../bower_components/Leaflet.MakiMarkers/Leaflet.MakiMarkers.js');
+require ('../bower_components/leaflet.markercluster/dist/leaflet.markercluster.js');
+var omnivore = require ('../bower_components/leaflet-omnivore/leaflet-omnivore.js');
+var StateMachine = require ('javascript-state-machine');
+var lightbox = require ('lightbox2');
+import {tmForms} from './forms.js';
+import {tmData} from './data.js';
+import {tmUtils} from './utils.js';
+import {tmConfig, tmConstants, tmBaseMapLayers, tmMessages} from './config.js';
+
+export var tmMap = (function () {
 	var map; // For leaflet
 	var viewer; //For Cesium
 	var fsm3D; // Finite state machine for 3D functionality

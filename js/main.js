@@ -1,15 +1,22 @@
 'use strict';
+var jquery = require('jquery');
+window.$ = window.jQuery = jquery;
 
-// The below is to stop jshint barking at undefined variables
-/* globals tmConfig, tmMap, tmData */
-/* exported map, isMobile, API_BASE_URL, CESIUM_BASE_URL */
+require('bootstrap');
+require('stupid-table-plugin');
+require('spin.js');
+require('spin.js/jquery.spin.js');
 
-// Globals
-var API_BASE_URL = tmConfig.getApiBaseUrl();
-var CESIUM_BASE_URL = 'components/Cesium/';
+import {tmConfig} from './config.js';
+import {tmData} from './data.js';
+import {tmMap} from './mapper.js';
 
-var isMobile = tmConfig.getOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-var isWebGlSupported = false;
+// Globals (fix later)
+window.API_BASE_URL = tmConfig.getApiBaseUrl();
+window.CESIUM_BASE_URL = 'components/Cesium/';
+
+window.isMobile = tmConfig.getOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+window.isWebGlSupported = false;
 
 $('#loadingSpinner').spin();
 

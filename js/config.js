@@ -1,7 +1,6 @@
 'use strict';
-/* exported tmConfig, tmMessages, tmConstants, tmBaseMapLayers */
 
-var tmConfig = (function () {
+export var tmConfig = (function () {
 
 	// Development port numbers
 	var DEV_WEB_PORT = '8080';
@@ -9,7 +8,7 @@ var tmConfig = (function () {
 
 	// This function assumes that the api and the web page are colocated, if that is not the case it will need to be changed
 	var getApiBaseUrl = function () {
-		// return 'https://www.rikitraki.com/api'; // Comment this out before pushing to prod
+		return 'https://www.rikitraki.com/api'; // Comment this out before pushing to prod
 		if (window.location.port === DEV_WEB_PORT) {
 			return window.location.protocol + '//' + window.location.hostname + ':' + DEV_WS_PORT + '/api';
 		}
@@ -95,7 +94,7 @@ var tmConfig = (function () {
 	};
 })();
 
-var tmConstants = {
+export var tmConstants = {
 	TRAIL_MARKER_COLOR: '7A5C1E',
 	WAYPOINT_COLOR: '#3887BE',
 	TRACK_COLOR: '#8D6E27',
@@ -112,7 +111,7 @@ var tmConstants = {
 
 };
 
-var tmMessages = {
+export var tmMessages = {
   VALID_USERNAME_PASSWORD: 'Please enter valid username and password',
   ACCOUNT_MUST_BE_ACTIVATED: 'Account must be activated before use. Please check your email',
   UNEXPECTED_ERROR: 'Oops! An unexpected error occurred. Please try again later',
@@ -135,7 +134,7 @@ var tmMessages = {
 	SOCIAL_DEFAULT_MSG: 'Check our GPS tracks on RikiTraki'
 };
 
-var tmBaseMapLayers = [
+export var tmBaseMapLayers = [
 		{
 			layerName: 'ESRI World Topo',
 			layerUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
