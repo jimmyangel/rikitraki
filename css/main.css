@@ -1,5 +1,5 @@
 /* Here goes my styling */
-@import url(../components/Cesium/Widgets/widgets.css);
+@import url(../static/lib/Cesium/Widgets/widgets.css);
 
 .browsehappy {
   margin: 0.2em 0;
