@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="/favicon.ico">
 
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" />
     <!-- endbower -->
 
 
@@ -62,48 +62,6 @@
       </div>
     </div>
 
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="js/config.js"></script>
-
-    <script>
-
-    function setUpForm () {
-      var urlVars = tmConfig.getUrlVars();
-      var username = urlVars.username;
-      var token = urlVars.token;
-      $('#hi-username').text(username);
-
-      $('#activateModal').modal('show');
-
-      $('#activateAccountButton').click(function() {
-        $('#activationError').hide();
-
-        $.ajax({
-          url: tmConfig.getApiBaseUrl() + '/v1/users/' + username + '/activation',
-          type: 'PUT',
-          headers: {
-            'Authorization': 'JWT ' + token
-           },
-          contentType: 'application/json; charset=utf-8',
-          success: function () {
-            localStorage.setItem('rikitraki-token', token);
-            localStorage.setItem('rikitraki-username', username);
-            $('#activationMessage').fadeIn('slow');
-            setTimeout(function () {
-              window.location.href='/';
-            }, 2000);
-          },
-          error: function (jqxhr) {
-            $('#activationErrorText').text('Activation error, status ' + jqxhr.status + ' - ' + jqxhr.responseText);
-            $('#activationError').show();
-          }
-        });
-        return false;
-      });
-    }
-
-    window.onload = setUpForm;
-    </script>
+    <script src="js/activate.js"></script>
 </body>
 </html>
