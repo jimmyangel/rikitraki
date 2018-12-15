@@ -1,6 +1,6 @@
 {
   "name": "rikitraki",
-  "version": "0.6.3",
+  "version": "0.7.2",
   "scripts": {
     "clean": "rm -rf public; mkdir public && mkdir public/lib && mkdir public/images && cp -r ./static/lib/Cesium* ./public/lib && cp -r ./static/images/* ./public/images",
     "dev": "npm run clean && parcel *.html -d public",
