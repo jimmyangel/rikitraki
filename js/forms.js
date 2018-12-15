@@ -8,7 +8,7 @@ import {tmMessages} from './config.js';
 import {tmUtils} from './utils.js';
 import {tmData} from './data.js';
 
-require('exif-js');
+var EXIF = require('exif-js');
 require('blueimp-canvas-to-blob');
 var crs = require('country-region-selector');
 require('country-region-selector/dist/jquery.crs.js');
