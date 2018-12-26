@@ -2,7 +2,7 @@
 
 import L from 'leaflet';
 window.d3 = require ('d3');
-require ('leaflet.elevation/dist/leaflet.elevation-0.0.4.min.js');
+require ('leaflet.elevation/dist/leaflet.elevation.min.js');
 require ('../components/Leaflet.MakiMarkers/Leaflet.MakiMarkers.js');
 require ('../components/leaflet.markercluster/dist/leaflet.markercluster.js');
 var omnivore = require ('../components/leaflet-omnivore/leaflet-omnivore.js');
