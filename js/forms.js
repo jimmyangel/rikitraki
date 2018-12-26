@@ -1,9 +1,21 @@
 'use strict';
-/* exported tmForms */
-/* globals tmData, omnivore, tmUtils, tmMessages, EXIF */
-/* jshint camelcase: false */
+/* globals EXIF */
 
-var tmForms = (function () {
+var jquery = require('jquery');
+window.$ = window.jQuery = jquery;
+
+import {tmMessages} from './config.js';
+import {tmUtils} from './utils.js';
+import {tmData} from './data.js';
+
+var EXIF = require('exif-js');
+require('blueimp-canvas-to-blob');
+var crs = require('country-region-selector');
+require('country-region-selector/dist/jquery.crs.js');
+require ('../components/Sortable/jquery.fn.sortable.min.js');
+var omnivore = require ('../components/leaflet-omnivore/leaflet-omnivore.js');
+
+export var tmForms = (function () {
 
 	var MAX_IMAGE_SIZE = 1000000;
 	var IMAGE_RESIZE_WIDTH = 1200;
@@ -457,7 +469,7 @@ var tmForms = (function () {
 		$('#upload-btn').click(function() {
 			// Needed to fix crs annoying issue
 			$('#track-country').attr('data-crs-loaded', 'false');
-			window.crs.init();
+			crs.init();
 
 			$('#uploadTrackModal').modal('show');
 			return false;
@@ -717,7 +729,7 @@ var tmForms = (function () {
 
 				// Needed to fix crs annoying issue
 				$('#edit-track-country').attr('data-crs-loaded', 'false');
-				window.crs.init();
+				crs.init();
 
 				if (track.trackRegionTags[1]) {
 					$('#edit-track-region').val(track.trackRegionTags[1]);
@@ -750,6 +762,7 @@ var tmForms = (function () {
 			});
 
 			$('#saveButton').removeAttr('disabled');
+
 			$('#editTrackModal').modal('show');
 			return false;
 		});
@@ -1012,7 +1025,7 @@ var tmForms = (function () {
 
 					// Needed to fix crs annoying issue
 					$('#filter-country').attr('data-crs-loaded', 'false');
-					window.crs.init();
+					crs.init();
 				}
 				if (filter.region) {
 					$('#filter-region').val(filter.region);
@@ -1020,7 +1033,7 @@ var tmForms = (function () {
 			} else {
 				// Needed to fix crs annoying issue
 				$('#filter-country').attr('data-crs-loaded', 'false');
-				window.crs.init();
+				crs.init();
 			}
 
 			// Below needed to fix annoying crs issue

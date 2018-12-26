@@ -1,7 +1,8 @@
 node_modules
 dist
 .tmp
+.cache
 bower_components
-components
 stuff
 test
+public

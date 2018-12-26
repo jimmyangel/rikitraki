@@ -1,17 +1,29 @@
 {
   "name": "rikitraki",
-  "version": "0.6.3",
+  "version": "0.7.2",
+  "scripts": {
+    "clean": "rm -rf public; mkdir public && mkdir public/lib && mkdir public/images && cp -r ./static/lib/Cesium* ./public/lib && cp -r ./static/images/* ./public/images",
+    "dev": "npm run clean && parcel index.html -d public",
+    "build": "npm run clean && parcel build *.html -d public",
+    "test": "jshint js"
+  },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-bower": "^0.19.0",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-connect": "^0.10.1",
-    "grunt-contrib-copy": "^0.8.0",
-    "grunt-contrib-jshint": "^0.11.2",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-processhtml": "^0.3.7",
-    "grunt-wiredep": "^2.0.0",
-    "jshint-stylish": "^1.0.2",
-    "load-grunt-tasks": "^3.1.0"
+    "jshint": "^2.9.7",
+    "parcel-bundler": "^1.10.3"
+  },
+  "dependencies": {
+    "blueimp-canvas-to-blob": "^2.2.4",
+    "bootstrap": "^3.3.7",
+    "country-region-selector": "^0.3.2",
+    "d3": "~3.5.5",
+    "exif-js": "~2.1.1",
+    "javascript-state-machine": "^2.3.5",
+    "jquery": "~2.1.4",
+    "leaflet": "~0.7.3",
+    "leaflet-omnivore": "~0.3.2",
+    "leaflet.elevation": "git://github.com/jimmyangel/Leaflet.Elevation.git#master",
+    "lightbox2": "~2.8.0",
+    "spin.js": "~2.3.0",
+    "stupid-table-plugin": "^1.1.3"
   }
 }
