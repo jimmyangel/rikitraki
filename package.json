@@ -1,12 +1,17 @@
 {
   "name": "rikitraki",
   "version": "0.7.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jimmyangel/rikitraki.git"
+  },
   "scripts": {
     "clean": "rm -rf public; mkdir public && mkdir public/lib && mkdir public/images && cp -r ./static/lib/Cesium* ./public/lib && cp -r ./static/images/* ./public/images",
     "dev": "npm run clean && parcel index.html -d public",
     "build": "npm run clean && parcel build *.html -d public",
     "test": "jshint js"
   },
+  "license": "MIT",
   "devDependencies": {
     "jshint": "^2.9.7",
     "parcel-bundler": "^1.10.3"
