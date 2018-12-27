@@ -6,7 +6,7 @@
     "url": "https://github.com/jimmyangel/rikitraki.git"
   },
   "scripts": {
-    "clean": "rm -rf public; mkdir public && mkdir public/lib && mkdir public/images && cp -r ./static/lib/Cesium* ./public/lib && cp -r ./static/images/* ./public/images",
+    "clean": "rm -rf public; mkdir public && mkdir public/lib && mkdir public/images && cp -r ./static/lib/Cesium* ./public/lib && cp -r ./static/images/* ./public/images && cp ./favicon.ico ./public",
     "dev": "npm run clean && parcel index.html -d public",
     "build": "npm run clean && parcel build *.html -d public",
     "test": "jshint js"
