@@ -2,7 +2,8 @@
 
 export var tmConfig = {
   	getApiBaseUrl: function () {
-  		return 'https://services.rikitraki.com/api';
+  		return 'http://localhost:3000/api';
+      // return 'https://services.rikitraki.com/api';
   	},
   	getTrackId: function () {
   		return this.getUrlVars().track;
@@ -137,3 +138,28 @@ export var tmBaseMapLayers = [
 			maxZoom: 15
 		}
 ];
+
+export var tmEmptyDBTracks = {
+  tracks: {
+    emptydb: {
+        trackLatLng: [
+            51.4934,
+            0.0098
+        ],
+        trackRegionTags: [
+            "United Kingdom",
+            "London"
+        ],
+        trackLevel: "Easy",
+        trackType: "Flying",
+        trackFav: false,
+        trackGPX: "none.gpx",
+        trackName: "Empty Database",
+        trackDescription: "The database has no tracks",
+        hasPhotos: false,
+        trackId: "emptydb",
+        username: "nobody",
+        isDraft: true
+    }
+  }
+}

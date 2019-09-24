@@ -7,7 +7,7 @@ require('stupid-table-plugin');
 require('spin.js');
 require('spin.js/jquery.spin.js');
 
-import {tmConfig} from './config.js';
+import {tmConfig, tmEmptyDBTracks} from './config.js';
 import {tmData} from './data.js';
 import {tmMap} from './mapper.js';
 
@@ -31,6 +31,12 @@ function setUpMap() {
 
 	// Get track data and wait before populating info onto the map
 	tmData.getTrackInfo(function(data) {
+
+    // Suppprt empty database
+    if (data === undefined) {
+      console.log('Warning: database appears to be empty');
+      data = tmEmptyDBTracks;
+    }
 		// Set up common bootstrap stuff and get the regions
 		var regions = tmMap.setUpCommon(data.tracks);
 
