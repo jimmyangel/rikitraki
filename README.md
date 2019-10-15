@@ -6,4 +6,12 @@ The vision for this project is to create a free and open source and data capabil
 
 The server side code for the application is under the rikitrakiws repository [here](https://github.com/jimmyangel/rikitrakiws).
 
+## Run your own
+
+* Clone the repository
+* ```npm install```
+* Make sure you have a copy of [rikitrakiws](https://github.com/jimmyangel/rikitrakiws) up and running
+* ```npm run dev``` Development server
+* ```npm run build``` Build, result in ```public``` folder
+
 **RikiTraki is currently in beta release. Comments and feedback are greatly appreciated**
