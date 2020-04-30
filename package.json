@@ -23,7 +23,7 @@
     "d3": "~3.5.5",
     "exif-js": "~2.1.1",
     "javascript-state-machine": "^2.3.5",
-    "jquery": "~2.1.4",
+    "jquery": "~3.5.0",
     "leaflet": "~0.7.3",
     "leaflet-omnivore": "~0.3.2",
     "leaflet.elevation": "git://github.com/jimmyangel/Leaflet.Elevation.git#master",
