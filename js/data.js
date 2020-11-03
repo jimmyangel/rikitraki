@@ -3,8 +3,8 @@
 export var tmData = {
 	getTrackInfo: function (successCallback) {
 		var filter = localStorage.getItem('rikitraki-filter');
-		filter = (filter) ? ('/?filter=' + filter) : ('');
-		$.getJSON(API_BASE_URL + '/v1/tracks' + filter, successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
+		filter = (filter) ? ('&filter=' + filter) : ('');
+		$.getJSON(API_BASE_URL + '/v1/tracks/?proj=small' + filter, successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
 	},
 	getNumberOfTracks: function (filter, successCallback) {
 		// var filter = localStorage.getItem('rikitraki-filter');
@@ -14,6 +14,13 @@ export var tmData = {
 	getGeoTags: function (tId, successCallback, errorCallback) {
 		$.getJSON(API_BASE_URL + '/v1/tracks/' + tId + '/geotags/', successCallback).fail(errorCallback);
 	},
+  getTrackInfoDetail: function (track, successCallback) {
+    if (track.trackDescription) {
+      successCallback(track)
+    } else {
+      $.getJSON(API_BASE_URL + '/v1/tracks/' + track.trackId, successCallback).fail(function(jqxhr, textStatus, error) {throw error;});
+    }
+  },
 
 	getMotd: function (successCallback) {
 		$.getJSON(API_BASE_URL + '/v1/motd', successCallback).fail(function(jqxhr, textStatus, error) {throw error;});

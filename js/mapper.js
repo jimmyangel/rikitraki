@@ -318,144 +318,147 @@ export var tmMap = (function () {
 
 	var setUpSingleTrackView = function(track, tracks, layerControl) {
 
-		var trackMarkersLayerGroup = setUpMarkersForAllTracks(tracks, track.trackId);
-		layerControl.addOverlay(trackMarkersLayerGroup, 'Show markers for all tracks');
+    tmData.getTrackInfoDetail(track, function(track) {
 
-		// If region is US, we use imperial units
-		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
+  		var trackMarkersLayerGroup = setUpMarkersForAllTracks(tracks, track.trackId);
+  		layerControl.addOverlay(trackMarkersLayerGroup, 'Show markers for all tracks');
 
-		// Create the elevation control first
-		var el = L.control.elevation({
-			position: 'bottomleft',
-			theme: 'blackwhite-theme',
-			width: $(window).width() < 400 ? 300: 400,
-			height: 125,
-			collapsed: true,
-			imperial: imperial
-		});
-		el.addTo(map);
+  		// If region is US, we use imperial units
+  		var imperial = (track.trackRegionTags.indexOf('US') === -1) ? false : true;
 
-		// Set up terrain button (but only if WebGL is supported)
-		if (isWebGlSupported) {
-			var terrainControl = L.control({position: 'topleft'});
-			terrainControl.onAdd = function () {
-				var terrainControlContainer = L.DomUtil.create('div', 'leaflet-control leaflet-bar terrain-control');
-				terrainControlContainer.innerHTML = '<a id="terrainControl" style="text-shadow: 2px 2px 2px #666666;" href="#" title="3D Terrain">3D</a>';
-				return terrainControlContainer;
-			};
-			terrainControl.addTo(map);
-			$('.terrain-control').on('click', function () {
-				window.location.href='?track=' + track.trackId + '&terrain=yes';
-				return false;
-			});
-		}
-		// Later control should always be the last one
-		layerControl.addTo(map);
+  		// Create the elevation control first
+  		var el = L.control.elevation({
+  			position: 'bottomleft',
+  			theme: 'blackwhite-theme',
+  			width: $(window).width() < 400 ? 300: 400,
+  			height: 125,
+  			collapsed: true,
+  			imperial: imperial
+  		});
+  		el.addTo(map);
 
-		// We use a custom layer to have more control over track display
-		var customLayer = L.geoJson(null, {
-			// Set the track color
-		    style: function() {
-		        return {color: tmConstants.TRACK_COLOR, opacity: 0.8, weight: 8};
-		    }
-		});
+  		// Set up terrain button (but only if WebGL is supported)
+  		if (isWebGlSupported) {
+  			var terrainControl = L.control({position: 'topleft'});
+  			terrainControl.onAdd = function () {
+  				var terrainControlContainer = L.DomUtil.create('div', 'leaflet-control leaflet-bar terrain-control');
+  				terrainControlContainer.innerHTML = '<a id="terrainControl" style="text-shadow: 2px 2px 2px #666666;" href="#" title="3D Terrain">3D</a>';
+  				return terrainControlContainer;
+  			};
+  			terrainControl.addTo(map);
+  			$('.terrain-control').on('click', function () {
+  				window.location.href='?track=' + track.trackId + '&terrain=yes';
+  				return false;
+  			});
+  		}
+  		// Later control should always be the last one
+  		layerControl.addTo(map);
 
-		// Get gpx track data and put it on the map
-		var tl = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null, customLayer).on('ready', function() {
-			// If the user is logged in and owns the track then allow editing, passing track layer, in case we need to geotag pics
-			tmForms.enableEditButton(track, tl);
-			// Change the default icon for waypoints
-	    var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: tmConstants.WAYPOINT_COLOR, size: 's'});
-	    // Now let's iterate over the features to customize the popups and markers
-			this.eachLayer(function (layer) {
-				layer.bindPopup(layer.feature.properties.name, {maxWidth: 200});
-				// Set the icon for Point markers
-	    	if (layer.feature.geometry.type === 'Point'){
-	    		layer.setIcon(wpIcon);
-	    	}
-			});
-			// Fit th map to the trail boundaries leaving 50% room for the info panel
-	    	// map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
-	    	// map.fitBounds(tl.getBounds(), {maxZoom: map.getBoundsZoom(tl.getBounds())-1, paddingBottomRight: [($('#map').width())*.5, 0]});
-	    	// map.setZoom(map.getBoundsZoom(tl.getBounds())-1); // For some reason this has a glitch on iPad
+  		// We use a custom layer to have more control over track display
+  		var customLayer = L.geoJson(null, {
+  			// Set the track color
+  		    style: function() {
+  		        return {color: tmConstants.TRACK_COLOR, opacity: 0.8, weight: 8};
+  		    }
+  		});
 
-	    // Go ahead and draw the inside line (thinner and bright color like yellow)
-			var insideT = {type: 'FeatureCollection', features: []}; // Here we will put the inside line of the track in a different color
-			insideT.features.push(tmUtils.extractSingleLineString(tl.toGeoJSON()));
-			L.geoJson(insideT, {
-				style: function () {
-					return {color: tmConstants.INSIDE_TRACK_COLOR, weight: 2, opacity: 1};
-				},
-				onEachFeature: el.addData.bind(el)
-			}).addTo(map);
+  		// Get gpx track data and put it on the map
+  		var tl = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null, customLayer).on('ready', function() {
+  			// If the user is logged in and owns the track then allow editing, passing track layer, in case we need to geotag pics
+  			tmForms.enableEditButton(track, tl);
+  			// Change the default icon for waypoints
+  	    var wpIcon = L.MakiMarkers.icon({icon: 'embassy', color: tmConstants.WAYPOINT_COLOR, size: 's'});
+  	    // Now let's iterate over the features to customize the popups and markers
+  			this.eachLayer(function (layer) {
+  				layer.bindPopup(layer.feature.properties.name, {maxWidth: 200});
+  				// Set the icon for Point markers
+  	    	if (layer.feature.geometry.type === 'Point'){
+  	    		layer.setIcon(wpIcon);
+  	    	}
+  			});
+  			// Fit th map to the trail boundaries leaving 50% room for the info panel
+  	    	// map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
+  	    	// map.fitBounds(tl.getBounds(), {maxZoom: map.getBoundsZoom(tl.getBounds())-1, paddingBottomRight: [($('#map').width())*.5, 0]});
+  	    	// map.setZoom(map.getBoundsZoom(tl.getBounds())-1); // For some reason this has a glitch on iPad
 
-			// Set up trailhead marker assuming the very first point is at the trailhead
-			var tLatLngs = tl.getLayers()[0].getLatLngs();
-			if (Array.isArray(tLatLngs[0])) { // If this is true, we have a MultiLineString
-				tLatLngs = tLatLngs[0];
-			}
+  	    // Go ahead and draw the inside line (thinner and bright color like yellow)
+  			var insideT = {type: 'FeatureCollection', features: []}; // Here we will put the inside line of the track in a different color
+  			insideT.features.push(tmUtils.extractSingleLineString(tl.toGeoJSON()));
+  			L.geoJson(insideT, {
+  				style: function () {
+  					return {color: tmConstants.INSIDE_TRACK_COLOR, weight: 2, opacity: 1};
+  				},
+  				onEachFeature: el.addData.bind(el)
+  			}).addTo(map);
 
-			var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
-			var marker = L.marker(tLatLngs[0], {zIndexOffset: 1000, icon: L.divIcon({html: '<img src="images/' + thIconName + '.png">'})}).addTo(map);
-			// Google directions hyperlink
-			marker.bindPopup('<a href="https://www.google.com/maps/dir//' + tLatLngs[0].lat + ',' + tLatLngs[0].lng + '/" target="_blank">' + 'Google Maps<br>Directions to Trailhead' + '</a>');
+  			// Set up trailhead marker assuming the very first point is at the trailhead
+  			var tLatLngs = tl.getLayers()[0].getLatLngs();
+  			if (Array.isArray(tLatLngs[0])) { // If this is true, we have a MultiLineString
+  				tLatLngs = tLatLngs[0];
+  			}
 
-			// Set up info panel control
-			var infoPanelContainer = L.DomUtil.create('div', 'info infoPanelContainer');
+  			var thIconName = track.trackType ? track.trackType.toLowerCase() : 'hiking'; // Hiking is default icon
+  			var marker = L.marker(tLatLngs[0], {zIndexOffset: 1000, icon: L.divIcon({html: '<img src="images/' + thIconName + '.png">'})}).addTo(map);
+  			// Google directions hyperlink
+  			marker.bindPopup('<a href="https://www.google.com/maps/dir//' + tLatLngs[0].lat + ',' + tLatLngs[0].lng + '/" target="_blank">' + 'Google Maps<br>Directions to Trailhead' + '</a>');
 
-			var infoPanel = L.control({position: 'topright'});
+  			// Set up info panel control
+  			var infoPanelContainer = L.DomUtil.create('div', 'info infoPanelContainer');
 
-			var photoLayerGroup = L.layerGroup();
-			infoPanel.onAdd = function () {
-				$(infoPanelContainer).append(buildTrackInfoPanel(track, insideT, infoPanelContainer, function(geoTagPhotos) {
-					var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
-							 geoTagPhotos.picIndex +
-							 '" data-lightbox="picture' + '" data-title="' + geoTagPhotos.picCaption +
-							 '" ><img geoTagRef="' + geoTagPhotos.picIndex + '"picLatLng="' + geoTagPhotos.picLatLng.toString() +
-							 '" src="data:image/jpeg;base64,' + geoTagPhotos.picThumbBlob + '" width="40" height="40"/></a>';
-					var photoMarker = L.marker(geoTagPhotos.picLatLng, {
-						clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
-						icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
-					});
-					photoLayerGroup.addLayer(photoMarker);
-				}, function() {
-					if (photoLayerGroup.getLayers().length) {
-						photoLayerGroup.addTo(map);
-						layerControl.addOverlay(photoLayerGroup, 'Show track photos');
-						// If the track title is small we need to update map bounds to account for added pictures
-						map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
-						// Highlight geolocated thumbnail associated with hovered picture in info panel
-						$('.slideShowContainer img').hover(
-							function() {
-								var el = $('[geoTagRef=' + $(this).attr('geoTagXRef') + ']');
-								if (el.length) {
-									$(this).css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
-									el.parent().parent().css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
-								}
-							},
-							function() {
-								var el = $('[geoTagRef=' + $(this).attr('geoTagXRef') + ']');
-								if (el.length) {
-									$(this).css('border-color', '#fff');
-									el.parent().parent().css('border-color', '#fff');
-								}
-							}
-						);
-					}
-				}));
-				return infoPanelContainer;
-			};
+  			var infoPanel = L.control({position: 'topright'});
 
-			infoPanel.addTo(map);
-			setUpInfoPanelEventHandling();
+  			var photoLayerGroup = L.layerGroup();
+  			infoPanel.onAdd = function () {
+  				$(infoPanelContainer).append(buildTrackInfoPanel(track, insideT, infoPanelContainer, function(geoTagPhotos) {
+  					var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
+  							 geoTagPhotos.picIndex +
+  							 '" data-lightbox="picture' + '" data-title="' + geoTagPhotos.picCaption +
+  							 '" ><img geoTagRef="' + geoTagPhotos.picIndex + '"picLatLng="' + geoTagPhotos.picLatLng.toString() +
+  							 '" src="data:image/jpeg;base64,' + geoTagPhotos.picThumbBlob + '" width="40" height="40"/></a>';
+  					var photoMarker = L.marker(geoTagPhotos.picLatLng, {
+  						clickable: false, // This is necessary to prevent leaflet from hijacking the click from lightbox
+  						icon: L.divIcon({html: img, className: 'leaflet-marker-photo', iconSize: [44, 44]})
+  					});
+  					photoLayerGroup.addLayer(photoMarker);
+  				}, function() {
+  					if (photoLayerGroup.getLayers().length) {
+  						photoLayerGroup.addTo(map);
+  						layerControl.addOverlay(photoLayerGroup, 'Show track photos');
+  						// If the track title is small we need to update map bounds to account for added pictures
+  						map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
+  						// Highlight geolocated thumbnail associated with hovered picture in info panel
+  						$('.slideShowContainer img').hover(
+  							function() {
+  								var el = $('[geoTagRef=' + $(this).attr('geoTagXRef') + ']');
+  								if (el.length) {
+  									$(this).css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
+  									el.parent().parent().css('border-color', tmConstants.SELECTED_THUMBNAIL_COLOR);
+  								}
+  							},
+  							function() {
+  								var el = $('[geoTagRef=' + $(this).attr('geoTagXRef') + ']');
+  								if (el.length) {
+  									$(this).css('border-color', '#fff');
+  									el.parent().parent().css('border-color', '#fff');
+  								}
+  							}
+  						);
+  					}
+  				}));
+  				return infoPanelContainer;
+  			};
 
-			// Fit th map to the trail boundaries leaving 50% room for the info panel
-	    map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
+  			infoPanel.addTo(map);
+  			setUpInfoPanelEventHandling();
 
-		}).addTo(map);
+  			// Fit th map to the trail boundaries leaving 50% room for the info panel
+  	    map.fitBounds(tl.getBounds(), {paddingBottomRight: [($('.infoPanelContainer').width()), 0]});
 
-		// Set up twitter and facebook links and such
-		setUpSocialButtons(track.trackName);
+  		}).addTo(map);
+
+  		// Set up twitter and facebook links and such
+  		setUpSocialButtons(track.trackName);
+    });
 	};
 
 	function populateBaseMapLayerControl() {
@@ -674,26 +677,28 @@ export var tmMap = (function () {
 
 	// Enter Track state
 	function goto3DTrack(event, from, to, t, tracks, leaveState) {
-		// Remove old track datasources
-		removeTrackDataSources();
+    tmData.getTrackInfoDetail(t, function(t) {
+  		// Remove old track datasources
+  		removeTrackDataSources();
 
-		grabAndRender3DTrack (t, tmConfig.getVDPlayFlag(), (from === 'Init') ? false : true);
-		$('.help3d').show();
-		if (from === 'Init') {
-			history.replaceState({trackId: t.trackId}, '', '?track=' + t.trackId + '&terrain=yes');
-		} else {
-			if (!leaveState) {
-				history.pushState({trackId: t.trackId}, '', '?track=' + t.trackId + '&terrain=yes');
-			}
-		}
-		if ($('#show-markers').is(':checked')) {
-			showMarkers(tracks);
-		} else {
-			hideMarkers(tracks);
-		}
-		$('#overlay-layer-control').show();
-		$('.leaflet-popup-close-button').click();
-		setUpSocialButtons(t.trackName);
+  		grabAndRender3DTrack (t, tmConfig.getVDPlayFlag(), (from === 'Init') ? false : true);
+  		$('.help3d').show();
+  		if (from === 'Init') {
+  			history.replaceState({trackId: t.trackId}, '', '?track=' + t.trackId + '&terrain=yes');
+  		} else {
+  			if (!leaveState) {
+  				history.pushState({trackId: t.trackId}, '', '?track=' + t.trackId + '&terrain=yes');
+  			}
+  		}
+  		if ($('#show-markers').is(':checked')) {
+  			showMarkers(tracks);
+  		} else {
+  			hideMarkers(tracks);
+  		}
+  		$('#overlay-layer-control').show();
+  		$('.leaflet-popup-close-button').click();
+  		setUpSocialButtons(t.trackName);
+    })
 	}
 
 	function removeTrackDataSources() {
