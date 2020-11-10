@@ -339,7 +339,8 @@ export var tmForms = (function () {
 				fieldId: '#track-name',
 				errorMsg: tmMessages.ENTER_TRACK_NAME,
 			 	isValid: function () {
-			 		return ($(this.fieldId).val() === '') ? false : true;
+			 		//return ($(this.fieldId).val() === '') ? false : true;
+          return ($(this.fieldId).val().length < 20) ? false : true;
 			 		// return (!($(this.fieldId).val() === ''));
 				}
 			},
@@ -347,7 +348,8 @@ export var tmForms = (function () {
 				fieldId: '#track-description',
 				errorMsg: tmMessages.ENTER_TRACK_DESCRIPTION,
 			 	isValid: function () {
-			 		return ($(this.fieldId).val() === '') ? false : true;
+			 		//return ($(this.fieldId).val() === '') ? false : true;
+          return ($(this.fieldId).val().length < 20) ? false : true;
 			 		// return !($(this.fieldId).val() === '');
 				}
 			},
