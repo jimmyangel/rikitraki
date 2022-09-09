@@ -26,7 +26,7 @@
     "jquery": "~2.1.4",
     "leaflet": "~0.7.3",
     "leaflet-omnivore": "~0.3.2",
-    "leaflet.elevation": "git://github.com/jimmyangel/Leaflet.Elevation.git#master",
+    "leaflet.elevation": "https://github.com/jimmyangel/Leaflet.Elevation.git#master",
     "lightbox2": "~2.8.0",
     "spin.js": "~2.3.0",
     "stupid-table-plugin": "^1.1.3"
