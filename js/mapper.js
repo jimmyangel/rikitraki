@@ -1,9 +1,10 @@
 'use strict';
 
 import L from 'leaflet';
+import MakiMarkers from 'leaflet-makimarkers';
 window.d3 = require ('d3');
 require ('leaflet.elevation/dist/leaflet.elevation.min.js');
-require ('../components/Leaflet.MakiMarkers/Leaflet.MakiMarkers.js');
+//require ('../components/Leaflet.MakiMarkers/Leaflet.MakiMarkers.js');
 require ('../components/leaflet.markercluster/dist/leaflet.markercluster.js');
 var omnivore = require ('../components/leaflet-omnivore/leaflet-omnivore.js');
 var StateMachine = require ('javascript-state-machine');
@@ -20,6 +21,8 @@ export var tmMap = (function () {
 	var trackDataSource;
 	var geoTagsDataSource;
 	var savedTrackMarkerEntity;
+
+  L.MakiMarkers.accessToken = 'pk.eyJ1IjoiamltbXlhbmdlbCIsImEiOiJjaW5sMGR0cDkweXN2dHZseXl6OWM4YnloIn0.v2Sv_ODztWuLuk78rUoiqg';
 
 	var setUpCommon = function (tracks) {
 
