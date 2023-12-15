@@ -25,6 +25,7 @@
     "javascript-state-machine": "^2.3.5",
     "jquery": "~2.1.4",
     "leaflet": "~0.7.3",
+    "leaflet-makimarkers": "^3.1.0",
     "leaflet-omnivore": "~0.3.2",
     "leaflet.elevation": "https://github.com/jimmyangel/Leaflet.Elevation.git#master",
     "lightbox2": "~2.8.0",
