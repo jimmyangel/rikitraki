@@ -30,6 +30,7 @@
           "sessionStorage": true,
           "Image": true,
           "API_BASE_URL": true,
+          "APIV2_BASE_URL": true,
           "Cesium": true,
           "L": true,
           "isWebGlSupported": true,
