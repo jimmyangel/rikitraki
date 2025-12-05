@@ -14,7 +14,7 @@
   "license": "MIT",
   "devDependencies": {
     "jshint": "^2.9.7",
-    "parcel-bundler": "^1.10.3"
+    "parcel-bundler": "^1.12.5"
   },
   "dependencies": {
     "blueimp-canvas-to-blob": "^2.2.4",

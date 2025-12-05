@@ -5,6 +5,9 @@ export var tmConfig = {
   		// return 'http://localhost:3000/api';
       return 'https://services.rikitraki.com/api';
   	},
+  	getApiV2BaseUrl: function () {
+      return 'https://ycuzyqqrab.execute-api.us-west-2.amazonaws.com/Prod';
+  	},
   	getTrackId: function () {
   		return this.getUrlVars().track;
   	},

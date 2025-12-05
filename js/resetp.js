@@ -30,10 +30,10 @@ function setUpForm () {
       $('#profileError').show();
     } else {
       $.ajax({
-        url: tmConfig.getApiBaseUrl() + '/v1/users/' + username,
+        url: tmConfig.getApiV2BaseUrl() + '/users/' + username,
         type: 'PUT',
         headers: {
-          'Authorization': 'JWT ' + token
+          'Authorization': 'Bearer ' + token
          },
         data: JSON.stringify({password: password}),
         contentType: 'application/json; charset=utf-8',

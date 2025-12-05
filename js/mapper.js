@@ -250,7 +250,7 @@ export var tmMap = (function () {
 		infoPanelTitle.innerHTML = '<button class="close" aria-hidden="true">&times;</button><b>What\'s New...</b>';
 		var motdHTML = '<table id="motdTable" class="table table-condensed table-hover"><tbody>';
 		for (var i=0; i<data.motd.motdTracks.length; i++) {
-			motdHTML += '<tr><td><img class="motdThumbs" src=' + API_BASE_URL + '/v1/tracks/' + data.motd.motdTracks[i][0] + '/thumbnail/' + data.motd.motdTracks[i][1] +
+			motdHTML += '<tr><td><img class="motdThumbs" src=' + APIV2_BASE_URL + '/tracks/' + data.motd.motdTracks[i][0] + '/thumbnail/' + data.motd.motdTracks[i][1] +
 						// '></td><td>' +
 						'></td><td>' +
 						data.motd.motdTracks[i][2] +
@@ -366,7 +366,7 @@ export var tmMap = (function () {
   		});
 
   		// Get gpx track data and put it on the map
-  		var tl = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null, customLayer).on('ready', function() {
+  		var tl = omnivore.gpx(APIV2_BASE_URL + '/tracks/' + track.trackId + '/GPX', null, customLayer).on('ready', function() {
   			// If the user is logged in and owns the track then allow editing, passing track layer, in case we need to geotag pics
   			tmForms.enableEditButton(track, tl);
   			// Change the default icon for waypoints
@@ -413,7 +413,7 @@ export var tmMap = (function () {
   			var photoLayerGroup = L.layerGroup();
   			infoPanel.onAdd = function () {
   				$(infoPanelContainer).append(buildTrackInfoPanel(track, insideT, infoPanelContainer, function(geoTagPhotos) {
-  					var img ='<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
+  					var img ='<a href="' + APIV2_BASE_URL + '/tracks/' + track.trackId + '/picture/' +
   							 geoTagPhotos.picIndex +
   							 '" data-lightbox="picture' + '" data-title="' + geoTagPhotos.picCaption +
   							 '" ><img geoTagRef="' + geoTagPhotos.picIndex + '"picLatLng="' + geoTagPhotos.picLatLng.toString() +
@@ -718,7 +718,7 @@ export var tmMap = (function () {
 	function grabAndRender3DTrack (track, autoPlay, fly) {
 		$('#show-photos-label').hide();
 		savedTrackMarkerEntity = viewer.entities.getById(track.trackId);
-		var lGPX = omnivore.gpx(API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
+		var lGPX = omnivore.gpx(APIV2_BASE_URL + '/tracks/' + track.trackId + '/GPX', null).on('ready', function() {
 			// First grab the GeoJSON data from omnivore
 			var trackGeoJSON = {type: 'FeatureCollection', features: []};
 			trackGeoJSON.features.push(tmUtils.extractSingleLineString(this.toGeoJSON()));
@@ -815,7 +815,7 @@ export var tmMap = (function () {
 					' <b>Min Elevation:</b> ' + (imperial ? ((Math.round(trackMetrics[3] * 3.28084)) + 'ft') : (trackMetrics[3] + 'm')) +
 					'<br><b>Region:</b> ' + track.trackRegionTags + '<br><b>Date Recorded:</b> ' + trackDate +
 					'<hr>' + track.trackDescription.replace(/$/mg,'<br>') + '<br><br><b>By: </b>' + track.username + '<hr>' +
-					'<a href="' + API_BASE_URL + '/v1/tracks/' + track.trackId + '/GPX' + '" download>Download GPS track</a>' +
+					'<a href="' + APIV2_BASE_URL + '/tracks/' + track.trackId + '/GPX' + '" download>Download GPS track</a>' +
 				'</div>';
 
 		infoPanelHTML +='</div>';
@@ -841,7 +841,7 @@ export var tmMap = (function () {
 					if (data.geoTags.trackPhotos[k].picIndex === undefined) {
 						data.geoTags.trackPhotos[k].picIndex = k;
 					}
-					thumbnailsHTML += '<a href="'+ API_BASE_URL + '/v1/tracks/' + track.trackId + '/picture/' +
+					thumbnailsHTML += '<a href="'+ APIV2_BASE_URL + '/tracks/' + track.trackId + '/picture/' +
 											data.geoTags.trackPhotos[k].picIndex +
 											'" data-lightbox="slideshow" data-title="' + data.geoTags.trackPhotos[k].picCaption + '"' +
 											'><img  nopin="nopin" class="infoThumbs" geoTagXRef="' + data.geoTags.trackPhotos[k].picIndex +

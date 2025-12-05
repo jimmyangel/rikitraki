@@ -18,10 +18,10 @@ function setUpForm () {
     $('#activationError').hide();
 
     $.ajax({
-      url: tmConfig.getApiBaseUrl() + '/v1/users/' + username + '/activation',
+      url: tmConfig.getApiV2BaseUrl() + '/users/' + username + '/activation',
       type: 'PUT',
       headers: {
-        'Authorization': 'JWT ' + token
+        'Authorization': 'Bearer ' + token
        },
       contentType: 'application/json; charset=utf-8',
       success: function () {
