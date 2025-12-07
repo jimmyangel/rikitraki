@@ -131,7 +131,7 @@ export var tmData = {
 	},
 	removeTrack: function (trackId, token, successCallback, errorCallback) {
 		$.ajax({
-			url: APIAPIV2_BASE_URL_BASE_URL + '/tracks/' + trackId,
+			url: APIV2_BASE_URL + '/tracks/' + trackId,
 			type: 'DELETE',
 			headers: {
 				'Authorization': 'Bearer ' + token
