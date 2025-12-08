@@ -10,7 +10,7 @@ The server side code for the application is under the rikitrakilambda repository
 
 * Clone the repository
 * ```npm install```
-* Make sure you have a copy of [rikitrakiws](https://github.com/jimmyangel/rikitrakilambda) up and running in your own aws account
+* Make sure you have a copy of [rikitrakilambda](https://github.com/jimmyangel/rikitrakilambda) up and running in your own aws account
 * ```npm run dev``` Development server
 * ```npm run build``` Build, result in ```public``` folder
 
