@@ -14,6 +14,7 @@ import {tmMap} from './mapper.js';
 // Globals (fix later)
 window.API_BASE_URL = tmConfig.getApiBaseUrl();
 window.CESIUM_BASE_URL = 'lib/Cesium/';
+window.APIV2_BASE_URL = tmConfig.getApiV2BaseUrl();
 
 window.isMobile = tmConfig.getOverride() ? false : /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 window.isWebGlSupported = false;
