@@ -189,7 +189,7 @@ export var tmMap = (function () {
 			setTimeout(function() {
 				$('#welcomeMessage').modal('show');
 				sessionStorage.setItem('rikitraki-hasSeenWelcome', true);
-			}, 1000);
+			}, 1500);
 
 			setTimeout(function() {
 				$('#welcomeMessage').modal('hide');
