@@ -185,7 +185,7 @@ export var tmMap = (function () {
 		setUpSocialButtons(tmMessages.SOCIAL_DEFAULT_MSG);
 
 		// Welcome message
-		if (!localStorage.getItem('rikitraki-noWelcome') && !(sessionStorage.getItem('rikitraki-hasSeenWelcome'))) {
+		if (!localStorage.getItem('rikitraki-noWelcomeUpdate') && !(sessionStorage.getItem('rikitraki-hasSeenWelcome'))) {
 			setTimeout(function() {
 				$('#welcomeMessage').modal('show');
 				sessionStorage.setItem('rikitraki-hasSeenWelcome', true);
@@ -201,7 +201,7 @@ export var tmMap = (function () {
 
 			$('#welcomeMessage').on('hide.bs.modal', function () {
 				if ($('#welcome-optout').is(':checked')) {
-					localStorage.setItem('rikitraki-noWelcome', true);
+					localStorage.setItem('rikitraki-noWelcomeUpdate', true);
 				}
 			});
 		}
